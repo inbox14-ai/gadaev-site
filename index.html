@@ -24,7 +24,6 @@
             --nav-bg: rgba(20, 20, 20, 0.85);
             --nav-active: #ffffff;
             --nav-inactive: #555555;
-            --level-color: #39FF14; /* Кислотный зеленый */
         }
 
         body {
@@ -44,10 +43,10 @@
             padding-bottom: env(safe-area-inset-bottom);
         }
 
-        /* КНОПКА ЗАКРЫТЬ */
+        /* КНОПКА ЗАКРЫТЬ (КРЕСТИК) */
         .close-btn {
             position: fixed;
-            top: calc(20px + env(safe-area-inset-top));
+            top: 20px;
             right: 20px;
             width: 40px;
             height: 40px;
@@ -61,9 +60,19 @@
             z-index: 2000;
             transition: all 0.2s ease;
             border: 1px solid rgba(255,255,255,0.1);
+            /* Учитываем безопасную зону сверху для iPhone */
+            top: calc(20px + env(safe-area-inset-top)); 
         }
-        .close-btn:active { background: rgba(255, 255, 255, 0.2); transform: scale(0.9); }
-        .close-btn svg { width: 20px; height: 20px; fill: #ffffff; opacity: 0.7; }
+        .close-btn:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(0.9);
+        }
+        .close-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #ffffff;
+            opacity: 0.7;
+        }
 
         .slider-container {
             display: flex;
@@ -99,104 +108,20 @@
             padding-top: 20px;
         }
         
-        /* --- ПРОФЕССИОНАЛЬНЫЙ УРОВЕНЬ --- */
-        .level-wrapper {
+        .logo-container {
             position: relative;
-            width: 280px; /* Ширина под кнопку */
-            height: 280px;
-            margin: 0 auto 25px auto;
-            border-radius: 50%;
-            background: #111;
-            box-shadow: 
-                inset 0 0 30px rgba(0,0,0,0.9),
-                0 0 0 1px #333,
-                0 15px 35px rgba(0,0,0,0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: inline-block;
+            margin-bottom: 15px;
             overflow: hidden;
-            border: 2px solid #222;
-        }
-
-        /* Шкала с градусами */
-        .level-scale {
-            position: absolute;
-            width: 100%;
-            height: 100%;
             border-radius: 50%;
-            z-index: 1;
-            /* Генерируем риски через конический градиент */
-            background-image: 
-                conic-gradient(from 180deg, 
-                    #fff 0deg, #fff 1deg, transparent 1deg, transparent 5deg, /* Главная риска 0 */
-                    #666 5deg, #666 6deg, transparent 6deg, transparent 10deg, /* 30 град */
-                    #666 10deg, #666 11deg, transparent 11deg, transparent 15deg,
-                    #fff 15deg, #fff 16deg, transparent 16deg, transparent 20deg, /* 60 град */
-                    #666 20deg, #666 21deg, transparent 21deg, transparent 25deg,
-                    #fff 25deg, #fff 26deg, transparent 26deg, transparent 30deg, /* 90 град */
-                    #666 30deg, #666 31deg, transparent 31deg, transparent 35deg,
-                    #fff 35deg, #fff 36deg, transparent 36deg, transparent 40deg, /* 120 град */
-                    #666 40deg, #666 41deg, transparent 41deg, transparent 45deg,
-                    #fff 45deg, #fff 46deg, transparent 46deg, transparent 50deg, /* 150 град */
-                    #666 50deg, #666 51deg, transparent 51deg, transparent 55deg,
-                    #fff 55deg, #fff 56deg, transparent 56deg, transparent 60deg /* 180 град */
-                );
-            /* Маска, чтобы оставить только внешнее кольцо */
-            mask-image: radial-gradient(transparent 55%, black 56%, black 65%, transparent 66%);
-            -webkit-mask-image: radial-gradient(transparent 55%, black 56%, black 65%, transparent 66%);
-            opacity: 0.6;
-        }
-
-        /* Цифры на шкале (упрощенно через псевдоэлементы или SVG, здесь сделаем SVG для точности) */
-        .scale-numbers {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
             pointer-events: none;
         }
-
-        /* Жидкость (Зеленый круг) */
-        .liquid {
-            position: absolute;
-            width: 70%; /* Размер внутренней колбы */
-            height: 70%;
+        .logo {
+            width: 100px;
+            height: auto;
+            display: block;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #4dff4d, var(--level-color));
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-            z-index: 3;
-            overflow: hidden; /* Чтобы пузырек не вылетал за пределы жидкости визуально */
-            border: 1px solid rgba(255,255,255,0.1);
         }
-
-        /* Пузырек воздуха */
-        .bubble {
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            background: radial-gradient(circle at 30% 30%, #ffffff, #cccccc);
-            border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            z-index: 4;
-            top: 50%;
-            left: 50%;
-            margin-top: -8px;
-            margin-left: -8px;
-            transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1); /* Инерция жидкости */
-        }
-
-        /* Логотип Р (SVG) поверх всего */
-        .logo-svg {
-            position: absolute;
-            width: 50%;
-            height: 50%;
-            z-index: 5;
-            fill: #ffffff;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-            pointer-events: none;
-        }
-
-        /* Остальные стили */
         h1 { font-size: 22px; font-weight: 700; margin: 0 0 5px 0; letter-spacing: 1.5px; text-transform: uppercase; }
         p.subtitle { font-size: 13px; color: var(--text-sec); margin: 0 0 40px 0; font-weight: 400; letter-spacing: 0.5px; }
 
@@ -291,39 +216,13 @@
         @keyframes flash { 0% { left: -100%; } 15% { left: 200%; } 100% { left: 200%; } }
         
         .placeholder-text { color: #333; font-size: 12px; margin-top: 20px; }
-
-        /* Кнопка запроса для iOS */
-        #gyro-permission {
-            position: fixed;
-            bottom: 100px; left: 50%; transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 15px 25px; border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.2);
-            z-index: 3000; display: none;
-            flex-direction: column; align-items: center; text-align: center;
-            width: 80%; max-width: 300px;
-            animation: fadeIn 0.5s ease;
-        }
-        #gyro-permission.show { display: flex; }
-        #gyro-permission p { margin: 0 0 10px 0; font-size: 13px; color: #fff; line-height: 1.4; }
-        #gyro-permission button {
-            background: #fff; color: #000; border: none;
-            padding: 10px 20px; border-radius: 20px;
-            font-weight: 600; font-size: 13px; cursor: pointer; width: 100%;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
     </style>
 </head>
 <body>
 
+    <!-- КНОПКА ЗАКРЫТЬ -->
     <div class="close-btn" onclick="exitSite()">
         <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-    </div>
-
-    <div id="gyro-permission">
-        <p>📐 <b>Живой уровень:</b><br>Разрешите доступ к датчикам</p>
-        <button onclick="requestGyroAccess()">Разрешить</button>
     </div>
 
     <div class="slider-container" id="slider">
@@ -341,39 +240,12 @@
         </div>
         <div class="page active" id="page-2">
             <div class="container">
-                
-                <!-- УРОВЕНЬ -->
-                <div class="level-wrapper">
-                    <div class="level-scale"></div>
-                    
-                    <!-- SVG Шкала с цифрами -->
-                    <svg class="scale-numbers" viewBox="0 0 100 100">
-                        <text x="50" y="12" font-size="4" fill="#fff" text-anchor="middle" font-family="monospace">0</text>
-                        <text x="88" y="52" font-size="4" fill="#fff" text-anchor="middle" font-family="monospace">90</text>
-                        <text x="50" y="92" font-size="4" fill="#fff" text-anchor="middle" font-family="monospace">180</text>
-                        <text x="12" y="52" font-size="4" fill="#fff" text-anchor="middle" font-family="monospace">270</text>
-                        
-                        <text x="75" y="25" font-size="3" fill="#888" text-anchor="middle" font-family="monospace">45</text>
-                        <text x="75" y="75" font-size="3" fill="#888" text-anchor="middle" font-family="monospace">135</text>
-                        <text x="25" y="75" font-size="3" fill="#888" text-anchor="middle" font-family="monospace">225</text>
-                        <text x="25" y="25" font-size="3" fill="#888" text-anchor="middle" font-family="monospace">315</text>
-                    </svg>
-
-                    <div class="liquid">
-                        <div class="bubble" id="bubble"></div>
-                    </div>
-                    
-                    <!-- Логотип Р (Контурный) -->
-                    <svg class="logo-svg" viewBox="0 0 100 100">
-                        <path d="M30,10 L70,10 C85,10 90,25 90,40 C90,55 80,65 65,65 L50,65 L50,90 L30,90 Z M50,30 L50,50 L65,50 C70,50 75,45 75,40 C75,35 70,30 65,30 Z" fill="none" stroke="white" stroke-width="5" stroke-linejoin="round"/>
-                    </svg>
+                <div class="logo-container flash-effect">
+                    <img src="logo.png" alt="Логотип" class="logo">
                 </div>
-
                 <h1>РУСЛАН ГАДАЕВ</h1>
                 <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
-                
                 <a href="contact.vcf" class="btn-main flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТ</a>
-                
                 <div class="contact-section">
                     <div class="contact-title">Связаться сейчас:</div>
                     <div class="icons-row">
@@ -413,21 +285,31 @@
         let currentPage = 2; 
         const slider = document.getElementById('slider');
         const tabs = document.querySelectorAll('.tab-item');
-        const bubble = document.getElementById('bubble');
         
         window.onload = () => {
             updateSliderPosition();
-            initGyro();
         };
 
         function vibrate(duration) { if (navigator.vibrate) navigator.vibrate(duration); }
 
+        // Функция выхода
         function exitSite() {
             vibrate(30);
-            if (window.history.length > 1) window.history.back();
-            else {
+            // Пытаемся вернуться назад в истории браузера
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                // Если истории нет (открыли напрямую), пробуем закрыть окно (работает редко)
+                // Или просто показываем пустую страницу, имитируя выход
                 document.body.innerHTML = ''; 
                 document.body.style.background = '#000';
+                
+                // Для PWA (если добавлено на экран) это часто просто сворачивает приложение
+                // Так как браузер не дает явно закрыть окно по соображениям безопасности
+                if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+                   // В режиме приложения мы просто очищаем экран, пользователь сам свайпом уйдет
+                   // Это лучший возможный вариант поведения
+                }
             }
         }
 
@@ -440,82 +322,13 @@
         }
 
         function updateSliderPosition() { slider.style.transform = `translateX(-${currentPage * 100}vw)`; }
+
         function updateTabs(activeTab) {
             tabs.forEach(t => t.classList.remove('active'));
             if(activeTab) activeTab.classList.add('active');
             else tabs[currentPage].classList.add('active');
         }
 
-        // --- ГИРОСКОП ДЛЯ УРОВНЯ ---
-        function initGyro() {
-            if (localStorage.getItem('gyroAllowed') === 'true') {
-                startGyro();
-            } else {
-                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-                const needsPermission = typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function';
-                
-                if (isIOS && needsPermission) {
-                    setTimeout(() => {
-                        document.getElementById('gyro-permission').classList.add('show');
-                    }, 1500);
-                } else {
-                    startGyro();
-                }
-            }
-        }
-
-        function requestGyroAccess() {
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission()
-                    .then(response => {
-                        if (response === 'granted') {
-                            localStorage.setItem('gyroAllowed', 'true');
-                            document.getElementById('gyro-permission').classList.remove('show');
-                            startGyro();
-                        } else {
-                            document.getElementById('gyro-permission').style.display = 'none';
-                        }
-                    })
-                    .catch(console.error);
-            }
-        }
-
-        function startGyro() {
-            window.addEventListener('deviceorientation', handleOrientation);
-        }
-
-        function handleOrientation(event) {
-            // gamma: наклон влево/вправо (-90 до 90)
-            // beta: наклон вперед/назад (-180 до 180)
-            let tiltY = event.gamma; 
-            let tiltX = event.beta;
-
-            // Реалистичная физика пузырька
-            // Максимальный сдвиг в пикселях (чтобы не упирался в край)
-            // Радиус liquid ~70px, радиус bubble ~8px. Оставляем запас.
-            const maxMove = 55; 
-
-            // Чувствительность: делим на 30 градусов. 
-            // При наклоне 30 град пузырек сдвигается на макс.
-            let moveX = (tiltY || 0) / 30 * maxMove;
-            let moveY = (tiltX || 0) / 30 * maxMove;
-
-            // Ограничиваем диапазон (clamp), чтобы пузырек не вылетал за пределы жидкости
-            moveX = Math.min(Math.max(moveX, -maxMove), maxMove);
-            moveY = Math.min(Math.max(moveY, -maxMove), maxMove);
-
-            // Двигаем пузырек
-            // При наклоне телефона ВЛЕВО (gamma < 0), пузырек едет ВЛЕВО (-X).
-            // При наклоне телефона НА СЕБЯ (beta > 0), пузырек едет ВНИЗ (+Y в CSS, но у нас инверсия для реалистичности).
-            // В уровне: если наклоняем верх телефона на себя, пузырек уходит ВНИЗ (от нас).
-            
-            if (bubble) {
-                // Инвертируем Y, так как в CSS положительный Y идет вниз, а пузырек должен "всплывать" вверх относительно наклона
-                bubble.style.transform = `translate(${moveX}px, ${-moveY}px)`;
-            }
-        }
-
-        // Свайпы
         let startX = 0, isDragging = false;
         document.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; isDragging = true; }, { passive: true });
         document.addEventListener('touchmove', (e) => { if (!isDragging) return; }, { passive: true });
@@ -532,3 +345,4 @@
     </script>
 </body>
 </html>
+
