@@ -2,24 +2,19 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- Основные настройки вида -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- ТЕГИ ДЛЯ РЕЖИМА ПРИЛОЖЕНИЯ (iOS & Android) -->
+    <!-- PWA Теги -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-title" content="Гадаев Руслан">
-    
-    <!-- Иконка для главного экрана (используем твой логотип) -->
     <link rel="apple-touch-icon" href="logo.png">
     <link rel="icon" type="image/png" href="logo.png">
+    <link rel="manifest" href='data:application/manifest+json,{"name":"Руслан Гадаев","short_name":"Гадаев Руслан","start_url":"/","display":"standalone","background_color":"#000000","theme_color":"#000000","icons":[{"src":"logo.png","sizes":"192x192","type":"image/png"}]}'>
 
     <title>Руслан Гадаев | Инженер ПГС</title>
-    
-    <!-- Встроенный манифест для Android (чтобы работало как приложение) -->
-    <link rel="manifest" href='data:application/manifest+json,{"name":"Руслан Гадаев","short_name":"Гадаев Руслан","start_url":"/","display":"standalone","background_color":"#000000","theme_color":"#000000","icons":[{"src":"logo.png","sizes":"192x192","type":"image/png"}]}'>
 
     <style>
         :root {
@@ -44,9 +39,39 @@
             -webkit-user-select: none;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
-            /* Безопасные зоны для iPhone X и новее */
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* КНОПКА ЗАКРЫТЬ (КРЕСТИК) */
+        .close-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2000;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+            /* Учитываем безопасную зону сверху для iPhone */
+            top: calc(20px + env(safe-area-inset-top)); 
+        }
+        .close-btn:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(0.9);
+        }
+        .close-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #ffffff;
+            opacity: 0.7;
         }
 
         .slider-container {
@@ -97,20 +122,8 @@
             display: block;
             border-radius: 50%;
         }
-        h1 {
-            font-size: 22px;
-            font-weight: 700;
-            margin: 0 0 5px 0;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-        p.subtitle {
-            font-size: 13px;
-            color: var(--text-sec);
-            margin: 0 0 40px 0;
-            font-weight: 400;
-            letter-spacing: 0.5px;
-        }
+        h1 { font-size: 22px; font-weight: 700; margin: 0 0 5px 0; letter-spacing: 1.5px; text-transform: uppercase; }
+        p.subtitle { font-size: 13px; color: var(--text-sec); margin: 0 0 40px 0; font-weight: 400; letter-spacing: 0.5px; }
 
         .btn-main {
             display: inline-block;
@@ -175,7 +188,6 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             border: 1px solid rgba(255,255,255,0.05);
             z-index: 1000;
-            /* Учет безопасной зоны снизу для iPhone */
             padding-bottom: calc(10px + env(safe-area-inset-bottom));
         }
 
@@ -192,32 +204,14 @@
             -webkit-tap-highlight-color: transparent;
         }
         .tab-item span { font-size: 11px; font-weight: 500; margin-top: 4px; letter-spacing: 0.5px; }
-        .tab-icon {
-            width: 6px; height: 6px;
-            background-color: currentColor;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
+        .tab-icon { width: 6px; height: 6px; background-color: currentColor; border-radius: 50%; transition: all 0.3s ease; }
         .tab-item.active { color: var(--nav-active); }
-        .tab-item.active .tab-icon {
-            width: 20px; height: 6px;
-            border-radius: 3px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(255,255,255,0.5);
-        }
+        .tab-item.active .tab-icon { width: 20px; height: 6px; border-radius: 3px; background-color: #ffffff; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
         .flash-effect::after {
-            content: ''; 
-            position: absolute; 
-            top: 0; 
-            left: -100%;
-            width: 50%; 
-            height: 100%;
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
             background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
-            transform: skewX(-25deg);
-            animation: flash 5s infinite;
-            pointer-events: none;
-            z-index: 10;
+            transform: skewX(-25deg); animation: flash 5s infinite; pointer-events: none; z-index: 10;
         }
         @keyframes flash { 0% { left: -100%; } 15% { left: 200%; } 100% { left: 200%; } }
         
@@ -226,25 +220,24 @@
 </head>
 <body>
 
+    <!-- КНОПКА ЗАКРЫТЬ -->
+    <div class="close-btn" onclick="exitSite()">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    </div>
+
     <div class="slider-container" id="slider">
-        
-        <!-- ВКЛАДКА 1: ГЛАВНАЯ -->
         <div class="page" id="page-0">
             <div class="container">
                 <h1>Главная</h1>
                 <p class="placeholder-text">Раздел в разработке</p>
             </div>
         </div>
-
-        <!-- ВКЛАДКА 2: РАСЧЕТ -->
         <div class="page" id="page-1">
             <div class="container">
                 <h1>Расчет стоимости</h1>
                 <p class="placeholder-text">Калькулятор скоро появится</p>
             </div>
         </div>
-
-        <!-- ВКЛАДКА 3: КОНТАКТЫ -->
         <div class="page active" id="page-2">
             <div class="container">
                 <div class="logo-container flash-effect">
@@ -252,9 +245,7 @@
                 </div>
                 <h1>РУСЛАН ГАДАЕВ</h1>
                 <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
-                
                 <a href="contact.vcf" class="btn-main flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТ</a>
-                
                 <div class="contact-section">
                     <div class="contact-title">Связаться сейчас:</div>
                     <div class="icons-row">
@@ -275,7 +266,6 @@
         </div>
     </div>
 
-    <!-- НИЖНЕЕ МЕНЮ -->
     <div class="tab-bar">
         <div class="tab-item active" onclick="goToPage(0, this)">
             <div class="tab-icon"></div>
@@ -300,8 +290,27 @@
             updateSliderPosition();
         };
 
-        function vibrate(duration) {
-            if (navigator.vibrate) navigator.vibrate(duration);
+        function vibrate(duration) { if (navigator.vibrate) navigator.vibrate(duration); }
+
+        // Функция выхода
+        function exitSite() {
+            vibrate(30);
+            // Пытаемся вернуться назад в истории браузера
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                // Если истории нет (открыли напрямую), пробуем закрыть окно (работает редко)
+                // Или просто показываем пустую страницу, имитируя выход
+                document.body.innerHTML = ''; 
+                document.body.style.background = '#000';
+                
+                // Для PWA (если добавлено на экран) это часто просто сворачивает приложение
+                // Так как браузер не дает явно закрыть окно по соображениям безопасности
+                if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+                   // В режиме приложения мы просто очищаем экран, пользователь сам свайпом уйдет
+                   // Это лучший возможный вариант поведения
+                }
+            }
         }
 
         function goToPage(index, tabElement) {
@@ -312,42 +321,25 @@
             vibrate(30);
         }
 
-        function updateSliderPosition() {
-            slider.style.transform = `translateX(-${currentPage * 100}vw)`;
-        }
+        function updateSliderPosition() { slider.style.transform = `translateX(-${currentPage * 100}vw)`; }
 
         function updateTabs(activeTab) {
             tabs.forEach(t => t.classList.remove('active'));
             if(activeTab) activeTab.classList.add('active');
-            else {
-                tabs[currentPage].classList.add('active');
-            }
+            else tabs[currentPage].classList.add('active');
         }
 
-        let startX = 0;
-        let isDragging = false;
-
-        document.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            isDragging = true;
-        }, { passive: true });
-
-        document.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-        }, { passive: true });
-
+        let startX = 0, isDragging = false;
+        document.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; isDragging = true; }, { passive: true });
+        document.addEventListener('touchmove', (e) => { if (!isDragging) return; }, { passive: true });
         document.addEventListener('touchend', (e) => {
             if (!isDragging) return;
             isDragging = false;
             const endX = e.changedTouches[0].clientX;
             const diff = startX - endX;
-
             if (Math.abs(diff) > 50) {
-                if (diff > 0) {
-                    if (currentPage < 2) goToPage(currentPage + 1, null);
-                } else {
-                    if (currentPage > 0) goToPage(currentPage - 1, null);
-                }
+                if (diff > 0) { if (currentPage < 2) goToPage(currentPage + 1, null); }
+                else { if (currentPage > 0) goToPage(currentPage - 1, null); }
             }
         });
     </script>
