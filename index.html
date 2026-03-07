@@ -24,7 +24,7 @@
             --nav-bg: rgba(20, 20, 20, 0.85);
             --nav-active: #ffffff;
             --nav-inactive: #555555;
-            --accent: #ffffff;
+            --level-color: #39FF14; /* Кислотный зеленый */
         }
 
         body {
@@ -99,75 +99,101 @@
             padding-top: 20px;
         }
         
-        /* --- ПУЗЫРЬКОВЫЙ УРОВЕНЬ (LOGO) --- */
+        /* --- ПРОФЕССИОНАЛЬНЫЙ УРОВЕНЬ --- */
         .level-wrapper {
             position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 20px auto;
+            width: 280px; /* Ширина под кнопку */
+            height: 280px;
+            margin: 0 auto 25px auto;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #2a2a2a, #000000);
+            background: #111;
             box-shadow: 
-                inset 0 0 20px rgba(0,0,0,0.8),
-                0 0 0 2px #333,
-                0 10px 20px rgba(0,0,0,0.5);
+                inset 0 0 30px rgba(0,0,0,0.9),
+                0 0 0 1px #333,
+                0 15px 35px rgba(0,0,0,0.6);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            border: 2px solid #222;
         }
 
-        /* Шкала уровня (разметка) */
+        /* Шкала с градусами */
         .level-scale {
             position: absolute;
             width: 100%;
             height: 100%;
             border-radius: 50%;
+            z-index: 1;
+            /* Генерируем риски через конический градиент */
             background-image: 
                 conic-gradient(from 180deg, 
-                    transparent 0deg, 
-                    #444 1deg, 
-                    transparent 2deg, 
-                    transparent 10deg,
-                    #444 11deg, 
-                    transparent 12deg,
-                    transparent 20deg,
-                    #fff 21deg, /* Центр */
-                    transparent 22deg,
-                    transparent 30deg,
-                    #444 31deg, 
-                    transparent 32deg
+                    #fff 0deg, #fff 1deg, transparent 1deg, transparent 5deg, /* Главная риска 0 */
+                    #666 5deg, #666 6deg, transparent 6deg, transparent 10deg, /* 30 град */
+                    #666 10deg, #666 11deg, transparent 11deg, transparent 15deg,
+                    #fff 15deg, #fff 16deg, transparent 16deg, transparent 20deg, /* 60 град */
+                    #666 20deg, #666 21deg, transparent 21deg, transparent 25deg,
+                    #fff 25deg, #fff 26deg, transparent 26deg, transparent 30deg, /* 90 град */
+                    #666 30deg, #666 31deg, transparent 31deg, transparent 35deg,
+                    #fff 35deg, #fff 36deg, transparent 36deg, transparent 40deg, /* 120 град */
+                    #666 40deg, #666 41deg, transparent 41deg, transparent 45deg,
+                    #fff 45deg, #fff 46deg, transparent 46deg, transparent 50deg, /* 150 град */
+                    #666 50deg, #666 51deg, transparent 51deg, transparent 55deg,
+                    #fff 55deg, #fff 56deg, transparent 56deg, transparent 60deg /* 180 град */
                 );
-            opacity: 0.5;
-            mask-image: radial-gradient(transparent 65%, black 66%);
-            -webkit-mask-image: radial-gradient(transparent 65%, black 66%);
+            /* Маска, чтобы оставить только внешнее кольцо */
+            mask-image: radial-gradient(transparent 55%, black 56%, black 65%, transparent 66%);
+            -webkit-mask-image: radial-gradient(transparent 55%, black 56%, black 65%, transparent 66%);
+            opacity: 0.6;
         }
 
-        /* Логотип Буква Р */
-        .logo-letter {
-            font-size: 60px;
-            font-weight: 900;
-            color: #fff;
+        /* Цифры на шкале (упрощенно через псевдоэлементы или SVG, здесь сделаем SVG для точности) */
+        .scale-numbers {
+            position: absolute;
+            width: 100%;
+            height: 100%;
             z-index: 2;
-            letter-spacing: -2px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            font-family: 'Arial', sans-serif; /* Строгий шрифт */
+            pointer-events: none;
         }
 
-        /* Пузырек (Белая точка) */
+        /* Жидкость (Зеленый круг) */
+        .liquid {
+            position: absolute;
+            width: 70%; /* Размер внутренней колбы */
+            height: 70%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #4dff4d, var(--level-color));
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            z-index: 3;
+            overflow: hidden; /* Чтобы пузырек не вылетал за пределы жидкости визуально */
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Пузырек воздуха */
         .bubble {
             position: absolute;
-            width: 14px;
-            height: 14px;
-            background: radial-gradient(circle at 30% 30%, #fff, #ccc);
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #cccccc);
             border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-            z-index: 3;
-            transition: transform 0.1s ease-out; /* Плавность движения жидкости */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            z-index: 4;
             top: 50%;
             left: 50%;
-            margin-top: -7px;
-            margin-left: -7px;
+            margin-top: -8px;
+            margin-left: -8px;
+            transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1); /* Инерция жидкости */
+        }
+
+        /* Логотип Р (SVG) поверх всего */
+        .logo-svg {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            z-index: 5;
+            fill: #ffffff;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+            pointer-events: none;
         }
 
         /* Остальные стили */
@@ -295,9 +321,8 @@
         <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
     </div>
 
-    <!-- Запрос разрешения (только iOS) -->
     <div id="gyro-permission">
-        <p>📐 <b>Живой уровень:</b><br>Разрешите доступ к датчикам, чтобы пузырек двигался</p>
+        <p>📐 <b>Живой уровень:</b><br>Разрешите доступ к датчикам</p>
         <button onclick="requestGyroAccess()">Разрешить</button>
     </div>
 
@@ -317,11 +342,31 @@
         <div class="page active" id="page-2">
             <div class="container">
                 
-                <!-- ПУЗЫРЬКОВЫЙ УРОВЕНЬ С ЛОГОТИПОМ -->
+                <!-- УРОВЕНЬ -->
                 <div class="level-wrapper">
                     <div class="level-scale"></div>
-                    <div class="logo-letter">Р</div>
-                    <div class="bubble" id="bubble"></div>
+                    
+                    <!-- SVG Шкала с цифрами -->
+                    <svg class="scale-numbers" viewBox="0 0 100 100">
+                        <text x="50" y="12" font-size="4" fill="#fff" text-anchor="middle" font-family="monospace">0</text>
+                        <text x="88" y="52" font-size="4" fill="#fff" text-anchor="middle" font-family="monospace">90</text>
+                        <text x="50" y="92" font-size="4" fill="#fff" text-anchor="middle" font-family="monospace">180</text>
+                        <text x="12" y="52" font-size="4" fill="#fff" text-anchor="middle" font-family="monospace">270</text>
+                        
+                        <text x="75" y="25" font-size="3" fill="#888" text-anchor="middle" font-family="monospace">45</text>
+                        <text x="75" y="75" font-size="3" fill="#888" text-anchor="middle" font-family="monospace">135</text>
+                        <text x="25" y="75" font-size="3" fill="#888" text-anchor="middle" font-family="monospace">225</text>
+                        <text x="25" y="25" font-size="3" fill="#888" text-anchor="middle" font-family="monospace">315</text>
+                    </svg>
+
+                    <div class="liquid">
+                        <div class="bubble" id="bubble"></div>
+                    </div>
+                    
+                    <!-- Логотип Р (Контурный) -->
+                    <svg class="logo-svg" viewBox="0 0 100 100">
+                        <path d="M30,10 L70,10 C85,10 90,25 90,40 C90,55 80,65 65,65 L50,65 L50,90 L30,90 Z M50,30 L50,50 L65,50 C70,50 75,45 75,40 C75,35 70,30 65,30 Z" fill="none" stroke="white" stroke-width="5" stroke-linejoin="round"/>
+                    </svg>
                 </div>
 
                 <h1>РУСЛАН ГАДАЕВ</h1>
@@ -445,26 +490,27 @@
             let tiltY = event.gamma; 
             let tiltX = event.beta;
 
-            // Ограничиваем значения, чтобы пузырек не улетал за край слишком сильно
-            // Максимальный сдвиг пузырька (в пикселях от центра)
-            const maxMove = 40; 
+            // Реалистичная физика пузырька
+            // Максимальный сдвиг в пикселях (чтобы не упирался в край)
+            // Радиус liquid ~70px, радиус bubble ~8px. Оставляем запас.
+            const maxMove = 55; 
 
-            // Нормализуем: делим на 45 градусов. Если наклон больше 45, пузырек упрется в край.
-            let moveX = (tiltY || 0) / 45 * maxMove;
-            let moveY = (tiltX || 0) / 45 * maxMove;
+            // Чувствительность: делим на 30 градусов. 
+            // При наклоне 30 град пузырек сдвигается на макс.
+            let moveX = (tiltY || 0) / 30 * maxMove;
+            let moveY = (tiltX || 0) / 30 * maxMove;
 
-            // Ограничиваем диапазон движения (clamp)
+            // Ограничиваем диапазон (clamp), чтобы пузырек не вылетал за пределы жидкости
             moveX = Math.min(Math.max(moveX, -maxMove), maxMove);
             moveY = Math.min(Math.max(moveY, -maxMove), maxMove);
 
-            // Двигаем пузырек. 
-            // Важно: при наклоне телефона ВПРАВО (gamma > 0), пузырек должен ехать ВЛЕВО (-X).
-            // Но в CSS translate положительный X идет вправо. 
-            // Физика уровня: пузырек легче жидкости, поэтому он всплывает вверх (в сторону наклона).
-            // Если наклоняем телефон вправо, верхняя точка справа, пузырек едет ВПРАВО.
-            // Так что знаки оставляем как есть.
+            // Двигаем пузырек
+            // При наклоне телефона ВЛЕВО (gamma < 0), пузырек едет ВЛЕВО (-X).
+            // При наклоне телефона НА СЕБЯ (beta > 0), пузырек едет ВНИЗ (+Y в CSS, но у нас инверсия для реалистичности).
+            // В уровне: если наклоняем верх телефона на себя, пузырек уходит ВНИЗ (от нас).
             
             if (bubble) {
+                // Инвертируем Y, так как в CSS положительный Y идет вниз, а пузырек должен "всплывать" вверх относительно наклона
                 bubble.style.transform = `translate(${moveX}px, ${-moveY}px)`;
             }
         }
