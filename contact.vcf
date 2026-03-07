@@ -3,7 +3,7 @@ VERSION:3.0
 PRODID:-//Gadaev.pro//Expert Card//RU
 FN;CHARSET=UTF-8:РУСЛАН ГАДАЕВ
 N;CHARSET=UTF-8:ГАДАЕВ;РУСЛАН;;;
-TITLE;CHARSET=UTF-8:Инженер ПГС | Эксперт по приемке
+TITLE;CHARSET=UTF-8:Инженер ПГС | Эксперт
 TEL;TYPE=телефон:+79777075755
 EMAIL;TYPE=эл.почта:ruslan@gadaev.pro
 URL;TYPE=веб-сайт:https://gadaev.pro
@@ -131,6 +131,7 @@ PHOTO;ENCODING=b;TYPE=JPEG:/9j/4AAQSkZJRgABAQAASABIAAD/4QBMRXhpZgAATU0AKgAA
  KACiiigD/9L8E6KKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoo
  ooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/9k=
 END:VCARD
+
 
 
 
