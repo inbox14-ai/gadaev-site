@@ -60,16 +60,16 @@
             letter-spacing: 0.5px;
         }
 
-        /* ГЛАВНАЯ КНОПКА */
+        /* ГЛАВНАЯ КНОПКА (Сдержанный фон) */
         .btn-main {
             display: inline-block;
             padding: 16px 32px;
-            margin-bottom: 40px;
-            background-color: #000000;
-            color: #ffffff;
+            margin-bottom: 30px; /* Чуть меньше отступ до следующего блока */
+            background-color: #111111; /* Темно-серый, не черный */
+            color: #cccccc; /* Светло-серый текст */
             text-decoration: none;
             border-radius: 50px;
-            font-weight: 300; /* Тонкий шрифт */
+            font-weight: 300;
             font-size: 14px;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -82,35 +82,36 @@
         }
         .btn-main:hover {
             background-color: #1a1a1a;
+            color: #ffffff;
             border-color: #555555;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.05);
         }
 
         /* БЛОК СВЯЗИ */
         .contact-section {
-            margin-top: 20px;
+            margin-top: 10px;
             margin-bottom: 40px;
         }
         .contact-title {
-            font-size: 16px;
-            font-weight: 300; /* ТОНКИЙ ШРИФТ */
-            margin: 0 0 20px 0;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            font-size: 13px; /* Размер как у "ИНЖЕНЕР ПГС" */
+            font-weight: 300;
+            margin: 0 0 15px 0; /* Маленький отступ до кнопок */
+            letter-spacing: 0.5px;
             color: #ffffff;
+            text-transform: none; /* Обычные буквы */
         }
         .icons-row {
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .contact-subtitle {
             font-size: 12px;
             color: #555555;
             margin: 0;
-            font-weight: 300; /* ТОНКИЙ ШРИФТ */
+            font-weight: 300;
             letter-spacing: 0.5px;
         }
 
@@ -164,7 +165,7 @@
             left: -100%;
             width: 50%;
             height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0) 100%);
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 100%); /* Блик чуть мягче */
             transform: skewX(-25deg);
             animation: flash 5s infinite; 
             z-index: 3;
@@ -196,7 +197,7 @@
 
         <!-- БЛОК СВЯЗИ -->
         <div class="contact-section">
-            <h2 class="contact-title">Связаться сейчас</h2>
+            <div class="contact-title">Связаться сейчас:</div>
             
             <div class="icons-row">
                 <!-- Telegram -->
@@ -219,7 +220,7 @@
         </div>
 
         <div class="footer">
-            С 2015 года | Gadaev.pro
+            с 2015 года | Gadaev.pro
         </div>
     </div>
 
