@@ -2,27 +2,21 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- Важно: запрет масштабирования и фиксация ширины -->
+    <!-- Блокировка зума и фиксация -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
     <title>Руслан Гадаев | Инженер ПГС</title>
     <style>
         :root {
-            --bg-color: #0a0a0a;
-            --dot-color: #1a1a1a;
+            --bg-color: #000000; /* Чистый черный фон */
             --text-main: #ffffff;
-            --text-sec: #888888;
-            --btn-bg: #161616;
+            --text-sec: #666666;
+            --btn-bg: #111111;
             --btn-border: #333333;
         }
 
         body {
             background-color: var(--bg-color);
-            /* Эффект точки (Dot Pattern) через SVG */
-            background-image: radial-gradient(var(--dot-color) 1.5px, transparent 1.5px);
-            background-size: 20px 20px;
-            
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
@@ -33,14 +27,14 @@
             justify-content: center;
             min-height: 100vh;
             text-align: center;
-            overflow-x: hidden; /* Блок горизонтального скролла */
+            overflow-x: hidden;
             
-            /* Блокировка лишних свайпов и отскоков */
-            overscroll-behavior-y: contain; 
-            touch-action: manipulation; 
-            -webkit-user-select: none; /* Запрет выделения текста */
+            /* Блокировка лишних движений */
+            overscroll-behavior-y: contain;
+            touch-action: manipulation;
+            -webkit-user-select: none;
             user-select: none;
-            -webkit-tap-highlight-color: transparent; /* Убирает синий квадрат при тапе */
+            -webkit-tap-highlight-color: transparent;
         }
 
         .container {
@@ -59,7 +53,7 @@
             margin-bottom: 15px;
             overflow: hidden;
             border-radius: 50%;
-            pointer-events: none; /* Чтобы не мешал тапам */
+            pointer-events: none;
         }
         .logo {
             width: 100px;
@@ -72,23 +66,21 @@
 
         /* Тексты */
         h1 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
             margin: 0 0 5px 0;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
-            line-height: 1.2;
         }
         p.subtitle {
             font-size: 13px;
             color: var(--text-sec);
-            margin: 0 0 35px 0;
+            margin: 0 0 40px 0;
             font-weight: 400;
             letter-spacing: 0.5px;
-            line-height: 1.4;
         }
 
-        /* ГЛАВНАЯ КНОПКА */
+        /* ГЛАВНАЯ КНОПКА (Без вдавливания, только смена цвета) */
         .btn-main {
             display: inline-block;
             padding: 16px 32px;
@@ -102,7 +94,7 @@
             letter-spacing: 2px;
             text-transform: uppercase;
             border: 1px solid var(--btn-border);
-            transition: all 0.1s ease; /* Быстрый переход для тактильности */
+            transition: all 0.2s ease;
             box-sizing: border-box;
             position: relative;
             overflow: hidden;
@@ -111,19 +103,18 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* Эффект вдавливания и наведения */
         .btn-main:hover {
-            background-color: #1f1f1f;
+            background-color: #1a1a1a;
             color: #ffffff;
             border-color: #555555;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.05);
         }
+        /* Убрал transform scale для active, чтобы не было вдавливания */
         .btn-main:active {
-            transform: scale(0.96) translateY(1px); /* Вдавливание */
             background-color: #000000;
             border-color: #222222;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); /* Тень внутри */
+            transform: translateY(0); 
         }
 
         /* БЛОК СВЯЗИ */
@@ -147,13 +138,13 @@
         }
         .contact-subtitle {
             font-size: 12px;
-            color: #444444;
+            color: #555555;
             margin: 0;
             font-weight: 300;
             letter-spacing: 0.5px;
         }
 
-        /* ИКОНКИ-КНОПКИ */
+        /* ИКОНКИ-КНОПКИ (Без вдавливания) */
         .icon-btn {
             display: flex;
             align-items: center;
@@ -163,8 +154,8 @@
             background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
             border-radius: 16px;
             text-decoration: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
             position: relative;
             overflow: hidden;
             z-index: 1;
@@ -180,15 +171,15 @@
         }
 
         .icon-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.6);
         }
         
-        /* Эффект вдавливания для иконок */
+        /* Убрал уменьшение размера при нажатии */
         .icon-btn:active {
-            transform: scale(0.92); /* Сильнее вдавливаем */
-            box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
+            transform: scale(1.0); 
             filter: brightness(0.9);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
         }
 
         .icon-btn svg {
@@ -203,11 +194,11 @@
         .footer {
             margin-top: 30px;
             font-size: 11px;
-            color: #333333;
+            color: #444444;
             pointer-events: none;
         }
 
-        /* --- ЭФФЕКТ FLASH (Мягкий) --- */
+        /* --- ЭФФЕКТ FLASH --- */
         .flash-effect::after {
             content: '';
             position: absolute;
@@ -215,9 +206,9 @@
             left: -100%;
             width: 50%;
             height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0) 100%);
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 100%);
             transform: skewX(-25deg);
-            animation: flash 6s infinite; 
+            animation: flash 5s infinite; 
             z-index: 3;
             pointer-events: none;
         }
@@ -237,11 +228,11 @@
             <img src="logo.png" alt="Логотип" class="logo">
         </div>
         
-        <!-- Заголовок -->
-        <h1>ГАДАЕВ РУСЛАН</h1>
-        <p class="subtitle">Инженер ПГС | Экспертиза и приемка квартир в Москве и МО</p>
+        <!-- Заголовок (Вернул как было) -->
+        <h1>РУСЛАН ГАДАЕВ</h1>
+        <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
 
-        <!-- Кнопка с вибрацией -->
+        <!-- Кнопка -->
         <a href="contact.vcf" class="btn-main flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТ</a>
 
         <!-- БЛОК СВЯЗИ -->
@@ -274,7 +265,6 @@
     </div>
 
     <script>
-        // Функция тактильной отдачи
         function vibrate(duration) {
             if (navigator.vibrate) {
                 navigator.vibrate(duration);
