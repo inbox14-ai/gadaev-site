@@ -24,6 +24,7 @@
             --nav-bg: rgba(20, 20, 20, 0.85);
             --nav-active: #ffffff;
             --nav-inactive: #555555;
+            --accent: #ffffff;
         }
 
         body {
@@ -41,8 +42,6 @@
             -webkit-tap-highlight-color: transparent;
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
-            /* Важно для производительности анимации */
-            perspective: 1000px; 
         }
 
         /* КНОПКА ЗАКРЫТЬ */
@@ -98,34 +97,80 @@
             z-index: 1;
             text-align: center;
             padding-top: 20px;
-            /* Контейнер будет двигаться через JS */
-            transform-style: preserve-3d;
-            will-change: transform;
         }
         
-        /* Элементы для параллакса */
-        .parallax-item {
-            transition: transform 0.1s ease-out;
-            will-change: transform;
-        }
-        .parallax-strong { /* Логотип двигается сильнее */ }
-        .parallax-medium { /* Текст средне */ }
-        .parallax-weak { /* Кнопки слабо */ }
-
-        .logo-container {
+        /* --- ПУЗЫРЬКОВЫЙ УРОВЕНЬ (LOGO) --- */
+        .level-wrapper {
             position: relative;
-            display: inline-block;
-            margin-bottom: 15px;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px auto;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #2a2a2a, #000000);
+            box-shadow: 
+                inset 0 0 20px rgba(0,0,0,0.8),
+                0 0 0 2px #333,
+                0 10px 20px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             overflow: hidden;
-            border-radius: 50%;
-            pointer-events: none;
         }
-        .logo {
-            width: 100px;
-            height: auto;
-            display: block;
+
+        /* Шкала уровня (разметка) */
+        .level-scale {
+            position: absolute;
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
+            background-image: 
+                conic-gradient(from 180deg, 
+                    transparent 0deg, 
+                    #444 1deg, 
+                    transparent 2deg, 
+                    transparent 10deg,
+                    #444 11deg, 
+                    transparent 12deg,
+                    transparent 20deg,
+                    #fff 21deg, /* Центр */
+                    transparent 22deg,
+                    transparent 30deg,
+                    #444 31deg, 
+                    transparent 32deg
+                );
+            opacity: 0.5;
+            mask-image: radial-gradient(transparent 65%, black 66%);
+            -webkit-mask-image: radial-gradient(transparent 65%, black 66%);
         }
+
+        /* Логотип Буква Р */
+        .logo-letter {
+            font-size: 60px;
+            font-weight: 900;
+            color: #fff;
+            z-index: 2;
+            letter-spacing: -2px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            font-family: 'Arial', sans-serif; /* Строгий шрифт */
+        }
+
+        /* Пузырек (Белая точка) */
+        .bubble {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: radial-gradient(circle at 30% 30%, #fff, #ccc);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            z-index: 3;
+            transition: transform 0.1s ease-out; /* Плавность движения жидкости */
+            top: 50%;
+            left: 50%;
+            margin-top: -7px;
+            margin-left: -7px;
+        }
+
+        /* Остальные стили */
         h1 { font-size: 22px; font-weight: 700; margin: 0 0 5px 0; letter-spacing: 1.5px; text-transform: uppercase; }
         p.subtitle { font-size: 13px; color: var(--text-sec); margin: 0 0 40px 0; font-weight: 400; letter-spacing: 0.5px; }
 
@@ -221,57 +266,38 @@
         
         .placeholder-text { color: #333; font-size: 12px; margin-top: 20px; }
 
-        /* КНОПКА РАЗРЕШЕНИЯ ГИРОСКОПА */
+        /* Кнопка запроса для iOS */
         #gyro-permission {
             position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
+            bottom: 100px; left: 50%; transform: translateX(-50%);
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            padding: 15px 25px;
-            border-radius: 30px;
+            padding: 15px 25px; border-radius: 30px;
             border: 1px solid rgba(255,255,255,0.2);
-            z-index: 3000;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            width: 80%;
-            max-width: 300px;
+            z-index: 3000; display: none;
+            flex-direction: column; align-items: center; text-align: center;
+            width: 80%; max-width: 300px;
             animation: fadeIn 0.5s ease;
         }
         #gyro-permission.show { display: flex; }
-        #gyro-permission p {
-            margin: 0 0 10px 0;
-            font-size: 13px;
-            color: #fff;
-            line-height: 1.4;
-        }
+        #gyro-permission p { margin: 0 0 10px 0; font-size: 13px; color: #fff; line-height: 1.4; }
         #gyro-permission button {
-            background: #fff;
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            width: 100%;
+            background: #fff; color: #000; border: none;
+            padding: 10px 20px; border-radius: 20px;
+            font-weight: 600; font-size: 13px; cursor: pointer; width: 100%;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
     </style>
 </head>
 <body>
 
-    <!-- КНОПКА ЗАКРЫТЬ -->
     <div class="close-btn" onclick="exitSite()">
         <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
     </div>
 
-    <!-- КНОПКА РАЗРЕШЕНИЯ -->
+    <!-- Запрос разрешения (только iOS) -->
     <div id="gyro-permission">
-        <p>📐 <b>Инженерный режим:</b><br>Включите датчики наклона для 3D-эффекта</p>
+        <p>📐 <b>Живой уровень:</b><br>Разрешите доступ к датчикам, чтобы пузырек двигался</p>
         <button onclick="requestGyroAccess()">Разрешить</button>
     </div>
 
@@ -289,19 +315,21 @@
             </div>
         </div>
         <div class="page active" id="page-2">
-            <div class="container" id="main-container">
-                <!-- Логотип (сильный параллакс) -->
-                <div class="logo-container parallax-item parallax-strong flash-effect">
-                    <img src="logo.png" alt="Логотип" class="logo">
+            <div class="container">
+                
+                <!-- ПУЗЫРЬКОВЫЙ УРОВЕНЬ С ЛОГОТИПОМ -->
+                <div class="level-wrapper">
+                    <div class="level-scale"></div>
+                    <div class="logo-letter">Р</div>
+                    <div class="bubble" id="bubble"></div>
                 </div>
-                <!-- Заголовок (средний параллакс) -->
-                <h1 class="parallax-item parallax-medium">РУСЛАН ГАДАЕВ</h1>
-                <p class="subtitle parallax-item parallax-medium">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
+
+                <h1>РУСЛАН ГАДАЕВ</h1>
+                <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
                 
-                <!-- Кнопка (слабый параллакс) -->
-                <a href="contact.vcf" class="btn-main parallax-item parallax-weak flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТ</a>
+                <a href="contact.vcf" class="btn-main flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТ</a>
                 
-                <div class="contact-section parallax-item parallax-weak">
+                <div class="contact-section">
                     <div class="contact-title">Связаться сейчас:</div>
                     <div class="icons-row">
                         <a href="https://t.me/ruslan_gadaev" class="icon-btn flash-effect" target="_blank" onclick="vibrate(30)">
@@ -316,7 +344,7 @@
                     </div>
                     <p class="contact-subtitle">Выберите удобный способ связи</p>
                 </div>
-                <div class="footer parallax-item parallax-weak">С 2015 года | Gadaev.pro</div>
+                <div class="footer">С 2015 года | Gadaev.pro</div>
             </div>
         </div>
     </div>
@@ -340,6 +368,7 @@
         let currentPage = 2; 
         const slider = document.getElementById('slider');
         const tabs = document.querySelectorAll('.tab-item');
+        const bubble = document.getElementById('bubble');
         
         window.onload = () => {
             updateSliderPosition();
@@ -372,21 +401,19 @@
             else tabs[currentPage].classList.add('active');
         }
 
-        // --- ГИРОСКОП И ПАРАЛЛАКС ---
+        // --- ГИРОСКОП ДЛЯ УРОВНЯ ---
         function initGyro() {
-            // Проверяем, запрашивали ли уже разрешение
             if (localStorage.getItem('gyroAllowed') === 'true') {
                 startGyro();
             } else {
-                // Показываем кнопку только на iOS (там обязательно разрешение)
-                // На Android часто работает сразу, но для надежности можно показать и там
                 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-                if (isIOS || typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                const needsPermission = typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function';
+                
+                if (isIOS && needsPermission) {
                     setTimeout(() => {
                         document.getElementById('gyro-permission').classList.add('show');
-                    }, 1000);
+                    }, 1500);
                 } else {
-                    // Если не iOS и не требует разрешения, пробуем запустить сразу
                     startGyro();
                 }
             }
@@ -405,11 +432,6 @@
                         }
                     })
                     .catch(console.error);
-            } else {
-                // Для устройств, где не нужен запрос (старые iOS или некоторые Android)
-                localStorage.setItem('gyroAllowed', 'true');
-                document.getElementById('gyro-permission').classList.remove('show');
-                startGyro();
             }
         }
 
@@ -418,32 +440,32 @@
         }
 
         function handleOrientation(event) {
-            // Ограничиваем углы, чтобы не улетало слишком далеко
-            const tiltX = event.beta;  // Наклон вперед/назад (-180 до 180)
-            const tiltY = event.gamma; // Наклон влево/вправо (-90 до 90)
+            // gamma: наклон влево/вправо (-90 до 90)
+            // beta: наклон вперед/назад (-180 до 180)
+            let tiltY = event.gamma; 
+            let tiltX = event.beta;
 
-            // Ограничиваем диапазон движения для плавности (максимум 20 пикселей)
-            const maxX = 20;
-            const maxY = 20;
+            // Ограничиваем значения, чтобы пузырек не улетал за край слишком сильно
+            // Максимальный сдвиг пузырька (в пикселях от центра)
+            const maxMove = 40; 
 
-            // Нормализуем значения (делим на 45 градусов, чтобы при сильном наклоне сдвиг был макс)
-            const moveX = Math.min(Math.max(tiltY, -45), 45) / 45 * maxX;
-            const moveY = Math.min(Math.max(tiltX, -45), 45) / 45 * maxY;
+            // Нормализуем: делим на 45 градусов. Если наклон больше 45, пузырек упрется в край.
+            let moveX = (tiltY || 0) / 45 * maxMove;
+            let moveY = (tiltX || 0) / 45 * maxMove;
 
-            // Двигаем элементы
-            const container = document.getElementById('main-container');
-            if (container) {
-                // Контейнер двигается немного в противоположную сторону для эффекта глубины
-                container.style.transform = `translate(${-moveX * 0.5}px, ${-moveY * 0.5}px)`;
-                
-                // Элементы внутри двигаются с разной силой
-                const strong = document.querySelectorAll('.parallax-strong');
-                const medium = document.querySelectorAll('.parallax-medium');
-                const weak = document.querySelectorAll('.parallax-weak');
+            // Ограничиваем диапазон движения (clamp)
+            moveX = Math.min(Math.max(moveX, -maxMove), maxMove);
+            moveY = Math.min(Math.max(moveY, -maxMove), maxMove);
 
-                strong.forEach(el => el.style.transform = `translate(${moveX * 1.5}px, ${moveY * 1.5}px)`);
-                medium.forEach(el => el.style.transform = `translate(${moveX * 0.8}px, ${moveY * 0.8}px)`);
-                weak.forEach(el => el.style.transform = `translate(${moveX * 0.3}px, ${moveY * 0.3}px)`);
+            // Двигаем пузырек. 
+            // Важно: при наклоне телефона ВПРАВО (gamma > 0), пузырек должен ехать ВЛЕВО (-X).
+            // Но в CSS translate положительный X идет вправо. 
+            // Физика уровня: пузырек легче жидкости, поэтому он всплывает вверх (в сторону наклона).
+            // Если наклоняем телефон вправо, верхняя точка справа, пузырек едет ВПРАВО.
+            // Так что знаки оставляем как есть.
+            
+            if (bubble) {
+                bubble.style.transform = `translate(${moveX}px, ${-moveY}px)`;
             }
         }
 
