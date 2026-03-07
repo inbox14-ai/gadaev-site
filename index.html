@@ -23,8 +23,8 @@
             padding: 0;
             height: 100vh;
             width: 100vw;
-            overflow: hidden; /* Полная блокировка скролла тела */
-            touch-action: none; /* Отключаем все жесты браузера */
+            overflow: hidden;
+            touch-action: none;
             -webkit-user-select: none;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
@@ -33,30 +33,29 @@
         /* Контейнер для слайдов */
         .slider-container {
             display: flex;
-            width: 300vw; /* 3 страницы по 100vw */
+            width: 300vw;
             height: 100vh;
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Плавная анимация */
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             will-change: transform;
+            /* Убрал flash-effect отсюда */
         }
 
         .page {
             width: 100vw;
             height: 100vh;
-            overflow-y: auto; /* Скролл только внутри страницы если контент не влезет */
+            overflow-y: auto;
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             box-sizing: border-box;
-            padding-bottom: 80px; /* Место под меню */
-            /* Скрываем скроллбар для красоты */
-            scrollbar-width: none; 
+            padding-bottom: 80px;
+            scrollbar-width: none;
             -ms-overflow-style: none;
+            position: relative; /* Важно для позиционирования блика внутри элементов */
         }
-        .page::-webkit-scrollbar { 
-            display: none; 
-        }
+        .page::-webkit-scrollbar { display: none; }
 
         .container {
             width: 90%;
@@ -113,6 +112,8 @@
             border: 1px solid #333333;
             transition: all 0.2s ease;
             cursor: pointer;
+            position: relative; /* Для блика */
+            overflow: hidden;   /* Чтобы блик не вылезал */
         }
         .btn-main:hover { background-color: #1a1a1a; color: #ffffff; border-color: #555555; transform: translateY(-2px); }
         .btn-main:active { background-color: #000000; transform: translateY(0); }
@@ -130,12 +131,14 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             transition: transform 0.2s ease;
             cursor: pointer;
+            position: relative; /* Для блика */
+            overflow: hidden;   /* Чтобы блик не вылезал */
         }
         .icon-btn.phone { background: linear-gradient(135deg, #34C759 0%, #30B34E 100%); }
         .icon-btn.mail { background: linear-gradient(135deg, #FF9500 0%, #E68600 100%); }
         .icon-btn:hover { transform: scale(1.05); }
         .icon-btn:active { transform: scale(1.0); filter: brightness(0.9); }
-        .icon-btn svg { width: 30px; height: 30px; fill: #ffffff; }
+        .icon-btn svg { width: 30px; height: 30px; fill: #ffffff; position: relative; z-index: 2; }
 
         .footer { margin-top: 30px; font-size: 11px; color: #444444; }
 
@@ -187,27 +190,31 @@
             box-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
 
-        /* Flash effect */
+        /* --- ИСПРАВЛЕННЫЙ BLICK (Только для элементов) --- */
         .flash-effect::after {
-            content: ''; position: absolute; top: 0; left: -100%;
-            width: 50%; height: 100%;
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: -100%;
+            width: 50%; 
+            height: 100%;
             background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
             transform: skewX(-25deg);
             animation: flash 5s infinite;
             pointer-events: none;
+            z-index: 10;
         }
         @keyframes flash { 0% { left: -100%; } 15% { left: 200%; } 100% { left: 200%; } }
         
-        /* Заглушки для пустых страниц */
         .placeholder-text { color: #333; font-size: 12px; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <!-- Слайдер контейнер -->
+    <!-- Слайдер контейнер (БЕЗ класса flash-effect) -->
     <div class="slider-container" id="slider">
         
-        <!-- ВКЛАДКА 1: ГЛАВНАЯ (Индекс 0) -->
+        <!-- ВКЛАДКА 1: ГЛАВНАЯ -->
         <div class="page" id="page-0">
             <div class="container">
                 <h1>Главная</h1>
@@ -215,7 +222,7 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 2: РАСЧЕТ (Индекс 1) -->
+        <!-- ВКЛАДКА 2: РАСЧЕТ -->
         <div class="page" id="page-1">
             <div class="container">
                 <h1>Расчет стоимости</h1>
@@ -223,18 +230,23 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 3: КОНТАКТЫ (Индекс 2) -->
+        <!-- ВКЛАДКА 3: КОНТАКТЫ -->
         <div class="page" id="page-2">
             <div class="container">
+                <!-- Блик только на логотипе -->
                 <div class="logo-container flash-effect">
                     <img src="logo.png" alt="Логотип" class="logo">
                 </div>
                 <h1>РУСЛАН ГАДАЕВ</h1>
                 <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
+                
+                <!-- Блик только на главной кнопке -->
                 <a href="contact.vcf" class="btn-main flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТ</a>
+                
                 <div class="contact-section">
                     <div class="contact-title">Связаться сейчас:</div>
                     <div class="icons-row">
+                        <!-- Блик на иконках -->
                         <a href="https://t.me/ruslan_gadaev" class="icon-btn flash-effect" target="_blank" onclick="vibrate(30)">
                             <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.116.033.378.018.58z"/></svg>
                         </a>
@@ -247,7 +259,7 @@
                     </div>
                     <p class="contact-subtitle">Выберите удобный способ связи</p>
                 </div>
-                <div class="footer">с 2015 года | Gadaev.pro</div>
+                <div class="footer">С 2015 года | Gadaev.pro</div>
             </div>
         </div>
     </div>
@@ -269,11 +281,10 @@
     </div>
 
     <script>
-        let currentPage = 2; // Начинаем с Контактов (индекс 2)
+        let currentPage = 2; 
         const slider = document.getElementById('slider');
         const tabs = document.querySelectorAll('.tab-item');
         
-        // Инициализация: сразу показываем контакты
         window.onload = () => {
             updateSliderPosition();
         };
@@ -291,7 +302,6 @@
         }
 
         function updateSliderPosition() {
-            // Сдвигаем контейнер на нужную ширину экрана
             slider.style.transform = `translateX(-${currentPage * 100}vw)`;
         }
 
@@ -299,12 +309,10 @@
             tabs.forEach(t => t.classList.remove('active'));
             if(activeTab) activeTab.classList.add('active');
             else {
-                // Если переключение свайпом, подсвечиваем нужную вкладку
                 tabs[currentPage].classList.add('active');
             }
         }
 
-        // --- ЛОГИКА СВАЙПОВ ---
         let startX = 0;
         let isDragging = false;
 
@@ -315,8 +323,6 @@
 
         document.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
-            // Здесь можно добавить логику "перетягивания" для реалистичности, 
-            // но для простоты пока просто фиксируем начало
         }, { passive: true });
 
         document.addEventListener('touchend', (e) => {
@@ -325,13 +331,10 @@
             const endX = e.changedTouches[0].clientX;
             const diff = startX - endX;
 
-            // Порог срабатывания свайпа (50 пикселей)
             if (Math.abs(diff) > 50) {
                 if (diff > 0) {
-                    // Свайп влево (следующая страница)
                     if (currentPage < 2) goToPage(currentPage + 1, null);
                 } else {
-                    // Свайп вправо (предыдущая страница)
                     if (currentPage > 0) goToPage(currentPage - 1, null);
                 }
             }
