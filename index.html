@@ -224,7 +224,7 @@
                     Сохраните мой контакт для быстрой связи.
                 </p>
                 <br>
-                <a href="/contact" class="btn-main" style="background:#fff; color:#000; border:none; font-weight:600;">Перейти к контактам</a>
+                <a href="?c=1" class="btn-main" style="background:#fff; color:#000; border:none; font-weight:600;">Перейти к контактам</a>
             </div>
         </div>
 
@@ -277,96 +277,4 @@
             <div class="tab-icon"></div>
             <span>Расчет</span>
         </div>
-        <div class="tab-item" onclick="goToPage(2, this)">
-            <div class="tab-icon"></div>
-            <span>Контакты</span>
-        </div>
-    </div>
-
-    <script>
-        let currentPage = 0; 
-        const slider = document.getElementById('slider');
-        const tabs = document.querySelectorAll('.tab-item');
-        const pages = document.querySelectorAll('.page');
-
-        function vibrate(duration) {
-            if (navigator.vibrate) navigator.vibrate(duration);
-        }
-
-        function goToPage(index, tabElement) {
-            if (index === currentPage) return;
-            currentPage = index;
-            
-            slider.style.transform = `translateX(-${currentPage * 100}vw)`;
-            
-            tabs.forEach(t => t.classList.remove('active'));
-            if(tabElement) {
-                tabElement.classList.add('active');
-            } else {
-                tabs[currentPage].classList.add('active');
-            }
-
-            pages.forEach(p => p.classList.remove('active'));
-            pages[currentPage].classList.add('active');
-            
-            // Обновляем адрес в строке без перезагрузки (опционально, для красоты)
-            let newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname.split('?')[0];
-            if (index === 1) newUrl += '/calculation';
-            if (index === 2) newUrl += '/contact';
-            if (index === 0) newUrl += ''; 
-            // Мы не делаем pushState, чтобы кнопка "Назад" работала корректно с нашей логикой роутинга
-            
-            vibrate(30);
-        }
-
-        // --- ЛОГИКА РОУТИНГА ПО URL ---
-        window.onload = () => {
-            // Получаем путь (например, /contact или /calculation)
-            let path = window.location.pathname;
-            
-            // Убираем возможные слеши в конце
-            path = path.replace(/\/$/, "");
-            
-            // Определяем, какую вкладку открыть
-            let targetIndex = 0; // По умолчанию Главная
-            
-            if (path.endsWith('/contact')) {
-                targetIndex = 2;
-            } else if (path.endsWith('/calculation')) {
-                targetIndex = 1;
-            }
-            
-            // Если нужно переключить вкладку
-            if (targetIndex !== 0) {
-                setTimeout(() => {
-                    goToPage(targetIndex, tabs[targetIndex]);
-                }, 50);
-            }
-        };
-
-        // Свайпы
-        let startX = 0;
-        let isDragging = false;
-
-        document.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            isDragging = true;
-        }, { passive: true });
-
-        document.addEventListener('touchend', (e) => {
-            if (!isDragging) return;
-            isDragging = false;
-            const endX = e.changedTouches[0].clientX;
-            const diff = startX - endX;
-
-            if (Math.abs(diff) > 50) {
-                if (diff > 0) {
-                    if (currentPage < 2) goToPage(currentPage + 1, null);
-                } else {
-                    if (currentPage > 0) goToPage(currentPage - 1, null);
-                }
-            }
-        });
-    </script>
-</body>
-</html>
+        <div class="tab-item" onclick="go
