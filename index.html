@@ -41,12 +41,14 @@
             -webkit-tap-highlight-color: transparent;
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
+            /* Важно для производительности анимации */
+            perspective: 1000px; 
         }
 
-        /* КНОПКА ЗАКРЫТЬ (КРЕСТИК) */
+        /* КНОПКА ЗАКРЫТЬ */
         .close-btn {
             position: fixed;
-            top: 20px;
+            top: calc(20px + env(safe-area-inset-top));
             right: 20px;
             width: 40px;
             height: 40px;
@@ -60,19 +62,9 @@
             z-index: 2000;
             transition: all 0.2s ease;
             border: 1px solid rgba(255,255,255,0.1);
-            /* Учитываем безопасную зону сверху для iPhone */
-            top: calc(20px + env(safe-area-inset-top)); 
         }
-        .close-btn:active {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(0.9);
-        }
-        .close-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: #ffffff;
-            opacity: 0.7;
-        }
+        .close-btn:active { background: rgba(255, 255, 255, 0.2); transform: scale(0.9); }
+        .close-btn svg { width: 20px; height: 20px; fill: #ffffff; opacity: 0.7; }
 
         .slider-container {
             display: flex;
@@ -106,8 +98,20 @@
             z-index: 1;
             text-align: center;
             padding-top: 20px;
+            /* Контейнер будет двигаться через JS */
+            transform-style: preserve-3d;
+            will-change: transform;
         }
         
+        /* Элементы для параллакса */
+        .parallax-item {
+            transition: transform 0.1s ease-out;
+            will-change: transform;
+        }
+        .parallax-strong { /* Логотип двигается сильнее */ }
+        .parallax-medium { /* Текст средне */ }
+        .parallax-weak { /* Кнопки слабо */ }
+
         .logo-container {
             position: relative;
             display: inline-block;
@@ -216,6 +220,46 @@
         @keyframes flash { 0% { left: -100%; } 15% { left: 200%; } 100% { left: 200%; } }
         
         .placeholder-text { color: #333; font-size: 12px; margin-top: 20px; }
+
+        /* КНОПКА РАЗРЕШЕНИЯ ГИРОСКОПА */
+        #gyro-permission {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+            z-index: 3000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 80%;
+            max-width: 300px;
+            animation: fadeIn 0.5s ease;
+        }
+        #gyro-permission.show { display: flex; }
+        #gyro-permission p {
+            margin: 0 0 10px 0;
+            font-size: 13px;
+            color: #fff;
+            line-height: 1.4;
+        }
+        #gyro-permission button {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            width: 100%;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
     </style>
 </head>
 <body>
@@ -223,6 +267,12 @@
     <!-- КНОПКА ЗАКРЫТЬ -->
     <div class="close-btn" onclick="exitSite()">
         <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    </div>
+
+    <!-- КНОПКА РАЗРЕШЕНИЯ -->
+    <div id="gyro-permission">
+        <p>📐 <b>Инженерный режим:</b><br>Включите датчики наклона для 3D-эффекта</p>
+        <button onclick="requestGyroAccess()">Разрешить</button>
     </div>
 
     <div class="slider-container" id="slider">
@@ -239,14 +289,19 @@
             </div>
         </div>
         <div class="page active" id="page-2">
-            <div class="container">
-                <div class="logo-container flash-effect">
+            <div class="container" id="main-container">
+                <!-- Логотип (сильный параллакс) -->
+                <div class="logo-container parallax-item parallax-strong flash-effect">
                     <img src="logo.png" alt="Логотип" class="logo">
                 </div>
-                <h1>РУСЛАН ГАДАЕВ</h1>
-                <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
-                <a href="contact.vcf" class="btn-main flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТ</a>
-                <div class="contact-section">
+                <!-- Заголовок (средний параллакс) -->
+                <h1 class="parallax-item parallax-medium">РУСЛАН ГАДАЕВ</h1>
+                <p class="subtitle parallax-item parallax-medium">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
+                
+                <!-- Кнопка (слабый параллакс) -->
+                <a href="contact.vcf" class="btn-main parallax-item parallax-weak flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТ</a>
+                
+                <div class="contact-section parallax-item parallax-weak">
                     <div class="contact-title">Связаться сейчас:</div>
                     <div class="icons-row">
                         <a href="https://t.me/ruslan_gadaev" class="icon-btn flash-effect" target="_blank" onclick="vibrate(30)">
@@ -261,7 +316,7 @@
                     </div>
                     <p class="contact-subtitle">Выберите удобный способ связи</p>
                 </div>
-                <div class="footer">С 2015 года | Gadaev.pro</div>
+                <div class="footer parallax-item parallax-weak">С 2015 года | Gadaev.pro</div>
             </div>
         </div>
     </div>
@@ -288,28 +343,17 @@
         
         window.onload = () => {
             updateSliderPosition();
+            initGyro();
         };
 
         function vibrate(duration) { if (navigator.vibrate) navigator.vibrate(duration); }
 
-        // Функция выхода
         function exitSite() {
             vibrate(30);
-            // Пытаемся вернуться назад в истории браузера
-            if (window.history.length > 1) {
-                window.history.back();
-            } else {
-                // Если истории нет (открыли напрямую), пробуем закрыть окно (работает редко)
-                // Или просто показываем пустую страницу, имитируя выход
+            if (window.history.length > 1) window.history.back();
+            else {
                 document.body.innerHTML = ''; 
                 document.body.style.background = '#000';
-                
-                // Для PWA (если добавлено на экран) это часто просто сворачивает приложение
-                // Так как браузер не дает явно закрыть окно по соображениям безопасности
-                if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
-                   // В режиме приложения мы просто очищаем экран, пользователь сам свайпом уйдет
-                   // Это лучший возможный вариант поведения
-                }
             }
         }
 
@@ -322,13 +366,88 @@
         }
 
         function updateSliderPosition() { slider.style.transform = `translateX(-${currentPage * 100}vw)`; }
-
         function updateTabs(activeTab) {
             tabs.forEach(t => t.classList.remove('active'));
             if(activeTab) activeTab.classList.add('active');
             else tabs[currentPage].classList.add('active');
         }
 
+        // --- ГИРОСКОП И ПАРАЛЛАКС ---
+        function initGyro() {
+            // Проверяем, запрашивали ли уже разрешение
+            if (localStorage.getItem('gyroAllowed') === 'true') {
+                startGyro();
+            } else {
+                // Показываем кнопку только на iOS (там обязательно разрешение)
+                // На Android часто работает сразу, но для надежности можно показать и там
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isIOS || typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    setTimeout(() => {
+                        document.getElementById('gyro-permission').classList.add('show');
+                    }, 1000);
+                } else {
+                    // Если не iOS и не требует разрешения, пробуем запустить сразу
+                    startGyro();
+                }
+            }
+        }
+
+        function requestGyroAccess() {
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(response => {
+                        if (response === 'granted') {
+                            localStorage.setItem('gyroAllowed', 'true');
+                            document.getElementById('gyro-permission').classList.remove('show');
+                            startGyro();
+                        } else {
+                            document.getElementById('gyro-permission').style.display = 'none';
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                // Для устройств, где не нужен запрос (старые iOS или некоторые Android)
+                localStorage.setItem('gyroAllowed', 'true');
+                document.getElementById('gyro-permission').classList.remove('show');
+                startGyro();
+            }
+        }
+
+        function startGyro() {
+            window.addEventListener('deviceorientation', handleOrientation);
+        }
+
+        function handleOrientation(event) {
+            // Ограничиваем углы, чтобы не улетало слишком далеко
+            const tiltX = event.beta;  // Наклон вперед/назад (-180 до 180)
+            const tiltY = event.gamma; // Наклон влево/вправо (-90 до 90)
+
+            // Ограничиваем диапазон движения для плавности (максимум 20 пикселей)
+            const maxX = 20;
+            const maxY = 20;
+
+            // Нормализуем значения (делим на 45 градусов, чтобы при сильном наклоне сдвиг был макс)
+            const moveX = Math.min(Math.max(tiltY, -45), 45) / 45 * maxX;
+            const moveY = Math.min(Math.max(tiltX, -45), 45) / 45 * maxY;
+
+            // Двигаем элементы
+            const container = document.getElementById('main-container');
+            if (container) {
+                // Контейнер двигается немного в противоположную сторону для эффекта глубины
+                container.style.transform = `translate(${-moveX * 0.5}px, ${-moveY * 0.5}px)`;
+                
+                // Элементы внутри двигаются с разной силой
+                const strong = document.querySelectorAll('.parallax-strong');
+                const medium = document.querySelectorAll('.parallax-medium');
+                const weak = document.querySelectorAll('.parallax-weak');
+
+                strong.forEach(el => el.style.transform = `translate(${moveX * 1.5}px, ${moveY * 1.5}px)`);
+                medium.forEach(el => el.style.transform = `translate(${moveX * 0.8}px, ${moveY * 0.8}px)`);
+                weak.forEach(el => el.style.transform = `translate(${moveX * 0.3}px, ${moveY * 0.3}px)`);
+            }
+        }
+
+        // Свайпы
         let startX = 0, isDragging = false;
         document.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; isDragging = true; }, { passive: true });
         document.addEventListener('touchmove', (e) => { if (!isDragging) return; }, { passive: true });
