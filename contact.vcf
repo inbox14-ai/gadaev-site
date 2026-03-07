@@ -7,7 +7,7 @@ item1.EMAIL;type=INTERNET;type=pref:ruslan@gadaev.pro
 item1.X-ABLabel:e-mail
 item2.TEL;type=pref:+7 (977) 707-57-55
 item2.X-ABLabel:телефон
-X-SOCIALPROFILE;type=telegram;x-user="https://t.me/ruslan_gadaev":x-apple:https%3A//t.me/ruslan_gadaev
+X-SOCIALPROFILE;type=telegram;x-user="https://t.me/ruslan_gadaev"
 item3.URL;type=pref:https://gadaev.pro
 item3.X-ABLabel:_$!<HomePage>!$_
 PHOTO;ENCODING=b;TYPE=JPEG:/9j/4AAQSkZJRgABAQAASABIAAD/4QBMRXhpZgAATU0AKgAA
@@ -132,4 +132,5 @@ PHOTO;ENCODING=b;TYPE=JPEG:/9j/4AAQSkZJRgABAQAASABIAAD/4QBMRXhpZgAATU0AKgAA
  KACiiigD/9L8E6KKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoo
  ooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/9k=
 END:VCARD
+
 
