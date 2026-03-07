@@ -2,17 +2,17 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- Блокировка зума и фиксация -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Руслан Гадаев | Инженер ПГС</title>
     <style>
         :root {
-            --bg-color: #000000; /* Чистый черный фон */
+            --bg-color: #000000;
             --text-main: #ffffff;
             --text-sec: #666666;
-            --btn-bg: #111111;
-            --btn-border: #333333;
+            --nav-bg: rgba(20, 20, 20, 0.85);
+            --nav-active: #ffffff;
+            --nav-inactive: #555555;
         }
 
         body {
@@ -23,27 +23,44 @@
             padding: 0;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
             min-height: 100vh;
-            text-align: center;
             overflow-x: hidden;
-            
-            /* Блокировка лишних движений */
             overscroll-behavior-y: contain;
             touch-action: manipulation;
             -webkit-user-select: none;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            /* Отступ снизу, чтобы контент не перекрывался меню */
+            padding-bottom: 80px; 
+        }
+
+        /* Контейнер для страниц */
+        .page {
+            display: none; /* Скрываем все страницы по умолчанию */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .page.active {
+            display: flex; /* Показываем активную */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .container {
-            width: 90%;
+            width: 100%;
             max-width: 400px;
-            padding: 20px;
             position: relative;
             z-index: 1;
-            box-sizing: border-box;
         }
         
         /* Логотип */
@@ -60,8 +77,6 @@
             height: auto;
             display: block;
             border-radius: 50%;
-            position: relative;
-            z-index: 2;
         }
 
         /* Тексты */
@@ -80,12 +95,12 @@
             letter-spacing: 0.5px;
         }
 
-        /* ГЛАВНАЯ КНОПКА (Без вдавливания, только смена цвета) */
+        /* Кнопки */
         .btn-main {
             display: inline-block;
             padding: 16px 32px;
             margin-bottom: 30px;
-            background-color: var(--btn-bg);
+            background-color: #111111;
             color: #cccccc;
             text-decoration: none;
             border-radius: 50px;
@@ -93,31 +108,21 @@
             font-size: 14px;
             letter-spacing: 2px;
             text-transform: uppercase;
-            border: 1px solid var(--btn-border);
+            border: 1px solid #333333;
             transition: all 0.2s ease;
-            box-sizing: border-box;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
         }
-        
         .btn-main:hover {
             background-color: #1a1a1a;
             color: #ffffff;
             border-color: #555555;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.05);
         }
-        /* Убрал transform scale для active, чтобы не было вдавливания */
         .btn-main:active {
             background-color: #000000;
-            border-color: #222222;
-            transform: translateY(0); 
+            transform: translateY(0);
         }
 
-        /* БЛОК СВЯЗИ */
         .contact-section {
             margin-top: 10px;
             margin-bottom: 40px;
@@ -126,7 +131,6 @@
             font-size: 13px;
             font-weight: 300;
             margin: 0 0 15px 0;
-            letter-spacing: 0.5px;
             color: var(--text-main);
             text-transform: none;
         }
@@ -141,10 +145,8 @@
             color: #555555;
             margin: 0;
             font-weight: 300;
-            letter-spacing: 0.5px;
         }
 
-        /* ИКОНКИ-КНОПКИ (Без вдавливания) */
         .icon-btn {
             display: flex;
             align-items: center;
@@ -155,64 +157,97 @@
             border-radius: 16px;
             text-decoration: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s ease;
             position: relative;
             overflow: hidden;
-            z-index: 1;
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
         }
-        
-        .icon-btn.phone {
-            background: linear-gradient(135deg, #34C759 0%, #30B34E 100%);
-        }
-        .icon-btn.mail {
-            background: linear-gradient(135deg, #FF9500 0%, #E68600 100%);
-        }
-
-        .icon-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.6);
-        }
-        
-        /* Убрал уменьшение размера при нажатии */
-        .icon-btn:active {
-            transform: scale(1.0); 
-            filter: brightness(0.9);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-        }
-
-        .icon-btn svg {
-            width: 30px;
-            height: 30px;
-            fill: #ffffff;
-            position: relative;
-            z-index: 2;
-            pointer-events: none;
-        }
+        .icon-btn.phone { background: linear-gradient(135deg, #34C759 0%, #30B34E 100%); }
+        .icon-btn.mail { background: linear-gradient(135deg, #FF9500 0%, #E68600 100%); }
+        .icon-btn:hover { transform: scale(1.05); }
+        .icon-btn:active { transform: scale(1.0); filter: brightness(0.9); }
+        .icon-btn svg { width: 30px; height: 30px; fill: #ffffff; }
 
         .footer {
             margin-top: 30px;
             font-size: 11px;
             color: #444444;
-            pointer-events: none;
         }
 
-        /* --- ЭФФЕКТ FLASH --- */
+        /* --- НИЖНЯЯ НАВИГАЦИЯ (Tab Bar) --- */
+        .tab-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 400px;
+            background-color: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 24px; /* Сильное закругление как у дорогих интерфейсов */
+            padding: 10px 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+            z-index: 1000;
+        }
+
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 0;
+            cursor: pointer;
+            color: var(--nav-inactive);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .tab-item span {
+            font-size: 11px;
+            font-weight: 500;
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Иконки вкладок (простые кружки/линии для стиля) */
+        .tab-icon {
+            width: 6px;
+            height: 6px;
+            background-color: currentColor;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        /* Активное состояние вкладки */
+        .tab-item.active {
+            color: var(--nav-active);
+        }
+        .tab-item.active .tab-icon {
+            width: 20px;
+            height: 6px;
+            border-radius: 3px; /* Превращается в капсулу */
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        /* Flash effect */
         .flash-effect::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 100%);
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
             transform: skewX(-25deg);
-            animation: flash 5s infinite; 
-            z-index: 3;
+            animation: flash 5s infinite;
             pointer-events: none;
         }
-
         @keyframes flash {
             0% { left: -100%; }
             15% { left: 200%; }
@@ -222,53 +257,87 @@
 </head>
 <body>
 
-    <div class="container">
-        <!-- Логотип -->
-        <div class="logo-container flash-effect">
-            <img src="logo.png" alt="Логотип" class="logo">
+    <!-- ВКЛАДКА 1: ГЛАВНАЯ (Пустая) -->
+    <div id="home" class="page">
+        <div class="container">
+            <!-- Пока пусто, как просил -->
+            <p style="color:#333; font-size:12px;">Раздел в разработке</p>
         </div>
-        
-        <!-- Заголовок (Вернул как было) -->
-        <h1>РУСЛАН ГАДАЕВ</h1>
-        <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
+    </div>
 
-        <!-- Кнопка -->
-        <a href="contact.vcf" class="btn-main flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТ</a>
+    <!-- ВКЛАДКА 2: РАСЧЕТ СТОИМОСТИ (Пустая) -->
+    <div id="calc" class="page">
+        <div class="container">
+            <!-- Пока пусто, как просил -->
+            <p style="color:#333; font-size:12px;">Калькулятор скоро появится</p>
+        </div>
+    </div>
 
-        <!-- БЛОК СВЯЗИ -->
-        <div class="contact-section">
-            <div class="contact-title">Связаться сейчас:</div>
+    <!-- ВКЛАДКА 3: КОНТАКТЫ (Твой основной дизайн) -->
+    <div id="contacts" class="page active">
+        <div class="container">
+            <div class="logo-container flash-effect">
+                <img src="logo.png" alt="Логотип" class="logo">
+            </div>
             
-            <div class="icons-row">
-                <!-- Telegram -->
-                <a href="https://t.me/ruslan_gadaev" class="icon-btn flash-effect" target="_blank" onclick="vibrate(30)">
-                    <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.116.033.378.018.58z"/></svg>
-                </a>
+            <h1>РУСЛАН ГАДАЕВ</h1>
+            <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
 
-                <!-- Телефон -->
-                <a href="tel:+79777075755" class="icon-btn phone flash-effect" onclick="vibrate(30)">
-                    <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
-                </a>
+            <a href="contact.vcf" class="btn-main flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТ</a>
 
-                <!-- Почта -->
-                <a href="mailto:ruslan@gadaev.pro" class="icon-btn mail flash-effect" onclick="vibrate(30)">
-                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                </a>
+            <div class="contact-section">
+                <div class="contact-title">Связаться сейчас:</div>
+                
+                <div class="icons-row">
+                    <a href="https://t.me/ruslan_gadaev" class="icon-btn flash-effect" target="_blank" onclick="vibrate(30)">
+                        <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.116.033.378.018.58z"/></svg>
+                    </a>
+                    <a href="tel:+79777075755" class="icon-btn phone flash-effect" onclick="vibrate(30)">
+                        <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+                    </a>
+                    <a href="mailto:ruslan@gadaev.pro" class="icon-btn mail flash-effect" onclick="vibrate(30)">
+                        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    </a>
+                </div>
+                <p class="contact-subtitle">Выберите удобный способ связи</p>
             </div>
 
-            <p class="contact-subtitle">Выберите удобный способ связи</p>
+            <div class="footer">С 2015 года | Gadaev.pro</div>
         </div>
+    </div>
 
-        <div class="footer">
-            С 2015 года | Gadaev.pro
+    <!-- НИЖНЕЕ МЕНЮ -->
+    <div class="tab-bar">
+        <div class="tab-item" onclick="switchTab('home', this)">
+            <div class="tab-icon"></div>
+            <span>Главная</span>
+        </div>
+        <div class="tab-item" onclick="switchTab('calc', this)">
+            <div class="tab-icon"></div>
+            <span>Расчет</span>
+        </div>
+        <div class="tab-item active" onclick="switchTab('contacts', this)">
+            <div class="tab-icon"></div>
+            <span>Контакты</span>
         </div>
     </div>
 
     <script>
         function vibrate(duration) {
-            if (navigator.vibrate) {
-                navigator.vibrate(duration);
-            }
+            if (navigator.vibrate) navigator.vibrate(duration);
+        }
+
+        function switchTab(tabId, element) {
+            // Убираем активный класс у всех вкладок и страниц
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.tab-item').forEach(tab => tab.classList.remove('active'));
+
+            // Добавляем активный класс выбранной вкладке и странице
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+            
+            // Вибрация при переключении
+            vibrate(20);
         }
     </script>
 </body>
