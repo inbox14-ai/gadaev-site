@@ -2,12 +2,28 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Важно: запрет масштабирования и фиксация ширины -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Руслан Гадаев | Инженер ПГС</title>
     <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --dot-color: #1a1a1a;
+            --text-main: #ffffff;
+            --text-sec: #888888;
+            --btn-bg: #161616;
+            --btn-border: #333333;
+        }
+
         body {
-            background-color: #000000;
-            color: #ffffff;
+            background-color: var(--bg-color);
+            /* Эффект точки (Dot Pattern) через SVG */
+            background-image: radial-gradient(var(--dot-color) 1.5px, transparent 1.5px);
+            background-size: 20px 20px;
+            
+            color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
@@ -17,23 +33,33 @@
             justify-content: center;
             min-height: 100vh;
             text-align: center;
-            overflow-x: hidden;
+            overflow-x: hidden; /* Блок горизонтального скролла */
+            
+            /* Блокировка лишних свайпов и отскоков */
+            overscroll-behavior-y: contain; 
+            touch-action: manipulation; 
+            -webkit-user-select: none; /* Запрет выделения текста */
+            user-select: none;
+            -webkit-tap-highlight-color: transparent; /* Убирает синий квадрат при тапе */
         }
+
         .container {
             width: 90%;
             max-width: 400px;
             padding: 20px;
             position: relative;
             z-index: 1;
+            box-sizing: border-box;
         }
         
-        /* Логотип с эффектом */
+        /* Логотип */
         .logo-container {
             position: relative;
             display: inline-block;
             margin-bottom: 15px;
             overflow: hidden;
             border-radius: 50%;
+            pointer-events: none; /* Чтобы не мешал тапам */
         }
         .logo {
             width: 100px;
@@ -46,46 +72,58 @@
 
         /* Тексты */
         h1 {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
             margin: 0 0 5px 0;
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
             text-transform: uppercase;
+            line-height: 1.2;
         }
         p.subtitle {
             font-size: 13px;
-            color: #666666;
-            margin: 0 0 40px 0;
+            color: var(--text-sec);
+            margin: 0 0 35px 0;
             font-weight: 400;
             letter-spacing: 0.5px;
+            line-height: 1.4;
         }
 
-        /* ГЛАВНАЯ КНОПКА (Сдержанный фон) */
+        /* ГЛАВНАЯ КНОПКА */
         .btn-main {
             display: inline-block;
             padding: 16px 32px;
-            margin-bottom: 30px; /* Чуть меньше отступ до следующего блока */
-            background-color: #111111; /* Темно-серый, не черный */
-            color: #cccccc; /* Светло-серый текст */
+            margin-bottom: 30px;
+            background-color: var(--btn-bg);
+            color: #cccccc;
             text-decoration: none;
             border-radius: 50px;
             font-weight: 300;
             font-size: 14px;
             letter-spacing: 2px;
             text-transform: uppercase;
-            border: 1px solid #333333;
-            transition: all 0.3s ease;
+            border: 1px solid var(--btn-border);
+            transition: all 0.1s ease; /* Быстрый переход для тактильности */
             box-sizing: border-box;
             position: relative;
             overflow: hidden;
             z-index: 1;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
+        
+        /* Эффект вдавливания и наведения */
         .btn-main:hover {
-            background-color: #1a1a1a;
+            background-color: #1f1f1f;
             color: #ffffff;
             border-color: #555555;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.05);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+        .btn-main:active {
+            transform: scale(0.96) translateY(1px); /* Вдавливание */
+            background-color: #000000;
+            border-color: #222222;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); /* Тень внутри */
         }
 
         /* БЛОК СВЯЗИ */
@@ -94,12 +132,12 @@
             margin-bottom: 40px;
         }
         .contact-title {
-            font-size: 13px; /* Размер как у "ИНЖЕНЕР ПГС" */
+            font-size: 13px;
             font-weight: 300;
-            margin: 0 0 15px 0; /* Маленький отступ до кнопок */
+            margin: 0 0 15px 0;
             letter-spacing: 0.5px;
-            color: #ffffff;
-            text-transform: none; /* Обычные буквы */
+            color: var(--text-main);
+            text-transform: none;
         }
         .icons-row {
             display: flex;
@@ -109,12 +147,13 @@
         }
         .contact-subtitle {
             font-size: 12px;
-            color: #555555;
+            color: #444444;
             margin: 0;
             font-weight: 300;
             letter-spacing: 0.5px;
         }
 
+        /* ИКОНКИ-КНОПКИ */
         .icon-btn {
             display: flex;
             align-items: center;
@@ -124,11 +163,13 @@
             background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
             border-radius: 16px;
             text-decoration: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
             position: relative;
             overflow: hidden;
             z-index: 1;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .icon-btn.phone {
@@ -139,8 +180,15 @@
         }
 
         .icon-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+        }
+        
+        /* Эффект вдавливания для иконок */
+        .icon-btn:active {
+            transform: scale(0.92); /* Сильнее вдавливаем */
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
+            filter: brightness(0.9);
         }
 
         .icon-btn svg {
@@ -149,15 +197,17 @@
             fill: #ffffff;
             position: relative;
             z-index: 2;
+            pointer-events: none;
         }
 
         .footer {
             margin-top: 30px;
             font-size: 11px;
-            color: #444444;
+            color: #333333;
+            pointer-events: none;
         }
 
-        /* --- ЭФФЕКТ FLASH --- */
+        /* --- ЭФФЕКТ FLASH (Мягкий) --- */
         .flash-effect::after {
             content: '';
             position: absolute;
@@ -165,9 +215,9 @@
             left: -100%;
             width: 50%;
             height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 100%); /* Блик чуть мягче */
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0) 100%);
             transform: skewX(-25deg);
-            animation: flash 5s infinite; 
+            animation: flash 6s infinite; 
             z-index: 3;
             pointer-events: none;
         }
@@ -177,7 +227,6 @@
             15% { left: 200%; }
             100% { left: 200%; }
         }
-
     </style>
 </head>
 <body>
@@ -185,15 +234,15 @@
     <div class="container">
         <!-- Логотип -->
         <div class="logo-container flash-effect">
-            <img src="logo.png" alt="Логотип Руслан Гадаев" class="logo">
+            <img src="logo.png" alt="Логотип" class="logo">
         </div>
         
         <!-- Заголовок -->
-        <h1>РУСЛАН ГАДАЕВ</h1>
-        <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
+        <h1>ГАДАЕВ РУСЛАН</h1>
+        <p class="subtitle">Инженер ПГС | Экспертиза и приемка квартир в Москве и МО</p>
 
-        <!-- Кнопка -->
-        <a href="contact.vcf" class="btn-main flash-effect">СОХРАНИТЬ КОНТАКТ</a>
+        <!-- Кнопка с вибрацией -->
+        <a href="contact.vcf" class="btn-main flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТ</a>
 
         <!-- БЛОК СВЯЗИ -->
         <div class="contact-section">
@@ -201,17 +250,17 @@
             
             <div class="icons-row">
                 <!-- Telegram -->
-                <a href="https://t.me/ruslan_gadaev" class="icon-btn flash-effect" target="_blank">
+                <a href="https://t.me/ruslan_gadaev" class="icon-btn flash-effect" target="_blank" onclick="vibrate(30)">
                     <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.116.033.378.018.58z"/></svg>
                 </a>
 
                 <!-- Телефон -->
-                <a href="tel:+79777075755" class="icon-btn phone flash-effect">
+                <a href="tel:+79777075755" class="icon-btn phone flash-effect" onclick="vibrate(30)">
                     <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
                 </a>
 
                 <!-- Почта -->
-                <a href="mailto:ruslan@gadaev.pro" class="icon-btn mail flash-effect">
+                <a href="mailto:ruslan@gadaev.pro" class="icon-btn mail flash-effect" onclick="vibrate(30)">
                     <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
                 </a>
             </div>
@@ -220,9 +269,17 @@
         </div>
 
         <div class="footer">
-            с 2015 года | Gadaev.pro
+            С 2015 года | Gadaev.pro
         </div>
     </div>
 
+    <script>
+        // Функция тактильной отдачи
+        function vibrate(duration) {
+            if (navigator.vibrate) {
+                navigator.vibrate(duration);
+            }
+        }
+    </script>
 </body>
 </html>
