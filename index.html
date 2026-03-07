@@ -36,8 +36,6 @@
             height: 100vh;
             transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             will-change: transform;
-            /* По умолчанию сдвинут на 0 (Главная) */
-            transform: translateX(0); 
         }
 
         .page {
@@ -45,7 +43,7 @@
             height: 100vh;
             overflow-y: auto;
             overflow-x: hidden;
-            display: none; /* Скрыты по умолчанию */
+            display: flex; /* Flex нужен для центровки, но скрыт через display:none в неактивном состоянии */
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -54,10 +52,14 @@
             scrollbar-width: none;
             -ms-overflow-style: none;
             position: relative;
+            
+            /* Скрываем все страницы по умолчанию */
+            display: none; 
         }
         
+        /* Класс active делает страницу видимой и гибкой */
         .page.active {
-            display: flex; /* Показываем активную */
+            display: flex;
         }
 
         .page::-webkit-scrollbar { display: none; }
@@ -212,21 +214,15 @@
 </head>
 <body>
 
-    <!-- Слайдер контейнер (По умолчанию на позиции 0 - Главная) -->
-    <div class="slider-container" id="slider">
+    <!-- Слайдер контейнер -->
+    <!-- Начальная позиция сдвинута на 200vw (на 3-ю вкладку) через style -->
+    <div class="slider-container" id="slider" style="transform: translateX(-200vw);">
         
         <!-- ВКЛАДКА 1: ГЛАВНАЯ (Индекс 0) -->
-        <div class="page active" id="page-0">
+        <div class="page" id="page-0">
             <div class="container">
-                <h1>ГАДАЕВ РУСЛАН</h1>
-                <p class="subtitle">Инженер ПГС | Экспертиза и приемка</p>
-                <p style="color:#666; font-size:14px; line-height:1.6;">
-                    Профессиональная приемка квартир в Москве и МО.<br>
-                    Использую тепловизор, лазерный уровень и опыт 10+ лет.<br>
-                    Сохраните мой контакт для быстрой связи.
-                </p>
-                <br>
-                <a href="#" onclick="goToPage(2, document.querySelectorAll('.tab-item')[2]); return false;" class="btn-main" style="background:#fff; color:#000; border:none; font-weight:600;">Перейти к контактам</a>
+                <h1>Главная</h1>
+                <p class="placeholder-text">Раздел в разработке</p>
             </div>
         </div>
 
@@ -239,7 +235,8 @@
         </div>
 
         <!-- ВКЛАДКА 3: КОНТАКТЫ (Индекс 2) -->
-        <div class="page" id="page-2">
+        <!-- Добавлен класс 'active' сразу в HTML -->
+        <div class="page active" id="page-2">
             <div class="container">
                 <div class="logo-container flash-effect">
                     <img src="logo.png" alt="Логотип" class="logo">
@@ -271,7 +268,8 @@
 
     <!-- НИЖНЕЕ МЕНЮ -->
     <div class="tab-bar">
-        <div class="tab-item active" onclick="goToPage(0, this)">
+        <!-- У первой вкладки НЕТ класса active -->
+        <div class="tab-item" onclick="goToPage(0, this)">
             <div class="tab-icon"></div>
             <span>Главная</span>
         </div>
@@ -279,17 +277,17 @@
             <div class="tab-icon"></div>
             <span>Расчет</span>
         </div>
-        <div class="tab-item" onclick="goToPage(2, this)">
+        <!-- У третьей вкладки ЕСТЬ класс active -->
+        <div class="tab-item active" onclick="goToPage(2, this)">
             <div class="tab-icon"></div>
             <span>Контакты</span>
         </div>
     </div>
 
     <script>
-        let currentPage = 0; // По умолчанию главная (0)
+        let currentPage = 2; // Переменная тоже стартует с 2
         const slider = document.getElementById('slider');
         const tabs = document.querySelectorAll('.tab-item');
-        const pages = document.querySelectorAll('.page');
 
         function vibrate(duration) {
             if (navigator.vibrate) navigator.vibrate(duration);
@@ -298,44 +296,34 @@
         function goToPage(index, tabElement) {
             if (index === currentPage) return;
             currentPage = index;
-            
-            // Обновляем слайдер
-            slider.style.transform = `translateX(-${currentPage * 100}vw)`;
-            
-            // Обновляем вкладки меню
-            tabs.forEach(t => t.classList.remove('active'));
-            if(tabElement) {
-                tabElement.classList.add('active');
-            } else {
-                tabs[currentPage].classList.add('active');
-            }
-
-            // Обновляем классы страниц (для доступности)
-            pages.forEach(p => p.classList.remove('active'));
-            pages[currentPage].classList.add('active');
-            
+            updateSliderPosition();
+            updateTabs(tabElement);
             vibrate(30);
         }
 
-        // --- ПРОВЕРКА АДРЕСА ПРИ ЗАГРУЗКЕ ---
-        window.onload = () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            // Если в адресе есть ?source=vcard, переключаем на Контакты (индекс 2)
-            if (urlParams.get('source') === 'vcard') {
-                // Небольшая задержка, чтобы браузер успел отрисовать базу
-                setTimeout(() => {
-                    goToPage(2, tabs[2]);
-                }, 100);
-            }
-        };
+        function updateSliderPosition() {
+            slider.style.transform = `translateX(-${currentPage * 100}vw)`;
+        }
 
-        // Свайпы
+        function updateTabs(activeTab) {
+            tabs.forEach(t => t.classList.remove('active'));
+            if(activeTab) activeTab.classList.add('active');
+            else {
+                tabs[currentPage].classList.add('active');
+            }
+        }
+
+        // Обработчики свайпов
         let startX = 0;
         let isDragging = false;
 
         document.addEventListener('touchstart', (e) => {
             startX = e.touches[0].clientX;
             isDragging = true;
+        }, { passive: true });
+
+        document.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
         }, { passive: true });
 
         document.addEventListener('touchend', (e) => {
