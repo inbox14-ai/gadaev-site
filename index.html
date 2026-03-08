@@ -39,8 +39,8 @@
 
         .container {
             width: 90%;
-            max-width: 450px; /* Чуть шире контейнер для крупных элементов */
-            padding: 20px;
+            max-width: 450px;
+            padding: 10px 20px 20px 20px; /* Уменьшил верхний отступ padding-top до 10px */
             position: relative;
             z-index: 1;
             box-sizing: border-box;
@@ -50,13 +50,13 @@
         .logo-container {
             position: relative;
             display: inline-block;
-            margin-bottom: 20px;
+            margin-bottom: 15px; /* Чуть меньше отступ снизу для компактности */
             overflow: hidden;
             border-radius: 50%;
             pointer-events: none;
         }
         .logo {
-            width: 120px; /* Увеличено со 100px */
+            width: 140px; /* УВЕЛИЧИЛ со 120px до 140px */
             height: auto;
             display: block;
             border-radius: 50%;
@@ -66,16 +66,16 @@
 
         /* Тексты */
         h1 {
-            font-size: 26px; /* Увеличено с 22px */
+            font-size: 26px;
             font-weight: 700;
             margin: 0 0 8px 0;
             letter-spacing: 1.5px;
             text-transform: uppercase;
         }
         p.subtitle {
-            font-size: 15px; /* Увеличено с 13px */
+            font-size: 15px;
             color: var(--text-sec);
-            margin: 0 0 45px 0;
+            margin: 0 0 35px 0; /* Чуть меньше отступ до кнопки */
             font-weight: 400;
             letter-spacing: 0.5px;
         }
@@ -83,14 +83,14 @@
         /* ГЛАВНАЯ КНОПКА */
         .btn-main {
             display: inline-block;
-            padding: 18px 36px; /* Увеличены отступы */
+            padding: 18px 36px;
             margin-bottom: 35px;
             background-color: var(--btn-bg);
             color: #cccccc;
             text-decoration: none;
             border-radius: 50px;
             font-weight: 300;
-            font-size: 15px; /* Увеличено с 14px */
+            font-size: 15px;
             letter-spacing: 2px;
             text-transform: uppercase;
             border: 1px solid var(--btn-border);
@@ -118,11 +118,11 @@
 
         /* БЛОК СВЯЗИ */
         .contact-section {
-            margin-top: 15px;
+            margin-top: 10px;
             margin-bottom: 45px;
         }
         .contact-title {
-            font-size: 15px; /* Увеличено с 13px */
+            font-size: 15px;
             font-weight: 300;
             margin: 0 0 20px 0;
             letter-spacing: 0.5px;
@@ -132,11 +132,11 @@
         .icons-row {
             display: flex;
             justify-content: center;
-            gap: 25px; /* Увеличен отступ между иконками */
+            gap: 25px;
             margin-bottom: 15px;
         }
         .contact-subtitle {
-            font-size: 13px; /* Увеличено с 12px */
+            font-size: 13px;
             color: #555555;
             margin: 0;
             font-weight: 300;
@@ -148,10 +148,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 68px; /* Увеличено с 60px */
-            height: 68px; /* Увеличено с 60px */
+            width: 68px;
+            height: 68px;
             background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
-            border-radius: 18px; /* Чуть больше скругление */
+            border-radius: 18px;
             text-decoration: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -181,8 +181,8 @@
         }
 
         .icon-btn svg {
-            width: 34px; /* Увеличено с 30px */
-            height: 34px; /* Увеличено с 30px */
+            width: 34px;
+            height: 34px;
             fill: #ffffff;
             position: relative;
             z-index: 2;
@@ -191,7 +191,7 @@
 
         .footer {
             margin-top: 35px;
-            font-size: 12px; /* Увеличено с 11px */
+            font-size: 12px;
             color: #444444;
             pointer-events: none;
         }
