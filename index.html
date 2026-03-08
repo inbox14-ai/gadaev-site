@@ -33,6 +33,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
+            
             touch-action: none;
             -webkit-user-select: none;
             user-select: none;
@@ -61,7 +62,7 @@
         .content-wrapper {
             width: 90%;
             max-width: 480px;
-            padding: 0 20px 90px 20px;
+            padding: 80px 20px 40px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -132,20 +133,21 @@
         .icon-btn:active { transform: scale(1.0); filter: brightness(0.9); box-shadow: 0 2px 5px rgba(0,0,0,0.4); }
         .icon-btn svg { width: 38px; height: 38px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
 
-        .footer-text { margin-top: 20px; font-size: 14px; color: #444444; pointer-events: none; }
+        .footer-text { margin-top: auto; padding-bottom: 20px; font-size: 14px; color: #444444; pointer-events: none; }
 
+        /* --- ВЕРХНЯЯ НАВИГАЦИЯ (БЕЗ ПОЛОСОК) --- */
         .tab-bar {
             position: fixed;
-            bottom: 25px;
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
             max-width: 380px;
-            height: 65px;
+            height: 55px;
             background: rgba(30, 30, 30, 0.65);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            border-radius: 35px;
+            border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
             display: flex;
@@ -154,24 +156,76 @@
             z-index: 1000;
             padding: 5px;
             box-sizing: border-box;
+            padding-top: calc(5px + env(safe-area-inset-top));
+            margin-top: env(safe-area-inset-top);
         }
 
-        .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: #666; transition: all 0.3s ease; position: relative; height: 100%; border-radius: 25px; }
-        .tab-icon { width: 4px; height: 4px; background-color: currentColor; border-radius: 50%; margin-bottom: 4px; transition: all 0.3s ease; opacity: 0.5; }
-        .tab-text { font-size: 11px; font-weight: 500; letter-spacing: 0.5px; transition: all 0.3s ease; }
-        .tab-item.active { color: #ffffff; background: rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .tab-item.active .tab-icon { width: 16px; height: 4px; border-radius: 2px; opacity: 1; background-color: #ffffff; box-shadow: 0 0 8px rgba(255,255,255,0.6); }
-        .tab-item.active .tab-text { font-weight: 600; color: #ffffff; transform: translateY(-1px); }
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s ease;
+            position: relative;
+            height: 100%;
+            border-radius: 15px;
+        }
 
-        .flash-effect::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: flash 5s infinite; z-index: 3; pointer-events: none; }
+        .tab-text {
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        /* Убрал класс .tab-indicator, так как он больше не нужен */
+
+        /* Активное состояние: только фон и текст */
+        .tab-item.active {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.12); /* Чуть заметнее фон */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .tab-item.active .tab-text {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .flash-effect::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            animation: flash 5s infinite; 
+            z-index: 3;
+            pointer-events: none;
+        }
         @keyframes flash { 0% { left: -100%; } 15% { left: 200%; } 100% { left: 200%; } }
     </style>
 </head>
 <body>
 
+    <!-- ВЕРХНЯЯ НАВИГАЦИЯ -->
+    <div class="tab-bar">
+        <div class="tab-item" onclick="goToPage(0, this)">
+            <span class="tab-text">Главная</span>
+        </div>
+        <div class="tab-item" onclick="goToPage(1, this)">
+            <span class="tab-text">Расчет</span>
+        </div>
+        <div class="tab-item active" onclick="goToPage(2, this)">
+            <span class="tab-text">Контакты</span>
+        </div>
+    </div>
+
     <div class="slider-container" id="slider">
         
-        <!-- ВКЛАДКА 1: ГЛАВНАЯ (ПУСТАЯ) -->
+        <!-- ВКЛАДКА 1: ГЛАВНАЯ -->
         <div class="page" id="page-0">
             <div class="content-wrapper">
                 <h1>Главная</h1>
@@ -179,7 +233,7 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 2: РАСЧЕТ (ПУСТАЯ) -->
+        <!-- ВКЛАДКА 2: РАСЧЕТ -->
         <div class="page" id="page-1">
             <div class="content-wrapper">
                 <h1>Расчет стоимости</h1>
@@ -187,22 +241,18 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 3: КОНТАКТЫ (ПОЛНЫЙ КОНТЕНТ) -->
+        <!-- ВКЛАДКА 3: КОНТАКТЫ -->
         <div class="page" id="page-2">
             <div class="content-wrapper">
-                <!-- Логотип -->
                 <div class="logo-container flash-effect">
                     <img src="logo.png" alt="Логотип" class="logo">
                 </div>
                 
-                <!-- Имя -->
                 <h1>РУСЛАН ГАДАЕВ</h1>
                 <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
 
-                <!-- Кнопка -->
                 <a href="contact.vcf" class="btn-main flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТЫ</a>
 
-                <!-- Блок связи -->
                 <div class="contact-section">
                     <div class="contact-title">Связаться сейчас:</div>
                     <div class="icons-row">
@@ -218,29 +268,14 @@
                     </div>
                     <p class="contact-subtitle">Выберите удобный способ связи</p>
                 </div>
+                
                 <div class="footer-text">с 2015 года | Gadaev.pro</div>
             </div>
         </div>
     </div>
 
-    <!-- НАВИГАЦИЯ -->
-    <div class="tab-bar">
-        <div class="tab-item" onclick="goToPage(0, this)">
-            <div class="tab-icon"></div>
-            <span class="tab-text">Главная</span>
-        </div>
-        <div class="tab-item" onclick="goToPage(1, this)">
-            <div class="tab-icon"></div>
-            <span class="tab-text">Расчет</span>
-        </div>
-        <div class="tab-item active" onclick="goToPage(2, this)">
-            <div class="tab-icon"></div>
-            <span class="tab-text">Контакты</span>
-        </div>
-    </div>
-
     <script>
-        let currentPage = 2; // Стартуем с Контактов (индекс 2)
+        let currentPage = 2;
         const slider = document.getElementById('slider');
         const tabs = document.querySelectorAll('.tab-item');
         
