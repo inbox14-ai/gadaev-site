@@ -38,7 +38,7 @@
         .container {
             width: 90%;
             max-width: 480px;
-            padding: 0 20px 20px 20px; /* Убрал отступ сверху полностью (0) */
+            padding: 0 20px 20px 20px; /* Отступ сверху 0 */
             position: relative;
             z-index: 1;
             box-sizing: border-box;
@@ -48,7 +48,7 @@
         .logo-container {
             position: relative;
             display: inline-block;
-            margin: 0 0 10px 0; /* Отступ только снизу, сверху 0 */
+            margin: 0; /* УБРАЛ ВСЕ ОТСТУПЫ (и сверху, и снизу) */
             overflow: hidden;
             border-radius: 50%;
             pointer-events: none;
@@ -60,14 +60,14 @@
             border-radius: 50%;
             position: relative;
             z-index: 2;
-            /* Убрал отрицательный отступ, стоит ровно */
+            vertical-align: bottom; /* Чтобы не было лишнего места снизу */
         }
 
         /* Тексты */
         h1 {
             font-size: 30px;
             font-weight: 700;
-            margin: 0 0 8px 0;
+            margin: 5px 0 8px 0; /* Минимальный отступ сверху от логотипа */
             letter-spacing: 1.5px;
             text-transform: uppercase;
             line-height: 1.1;
@@ -75,7 +75,7 @@
         p.subtitle {
             font-size: 18px;
             color: var(--text-sec);
-            margin: 0 0 35px 0; /* Увеличил отступ до кнопки */
+            margin: 0 0 30px 0;
             font-weight: 400;
             letter-spacing: 0.5px;
             line-height: 1.2;
@@ -84,15 +84,15 @@
         /* ГЛАВНАЯ КНОПКА */
         .btn-main {
             display: inline-block;
-            padding: 24px 40px; /* ОДИНАКОВЫЕ и БОЛЬШИЕ отступы сверху/снизу и сбоку */
-            margin-bottom: 40px; /* Большой отступ снизу до иконок */
-            margin-top: 10px;    /* Небольшой отступ сверху от профессии */
+            padding: 18px 36px; /* УМЕНЬШИЛ высоту (было 24px) */
+            margin-bottom: 35px;
+            margin-top: 5px;
             background-color: var(--btn-bg);
-            color: #ffffff;      /* Текст стал белым для контраста */
+            color: #ffffff;
             text-decoration: none;
             border-radius: 50px;
-            font-weight: 500;    /* Чуть жирнее */
-            font-size: 19px;     /* УВЕЛИЧИЛ шрифт */
+            font-weight: 300; /* ТОНКИЙ шрифт */
+            font-size: 18px; /* Крупный, но тонкий */
             letter-spacing: 2px;
             text-transform: uppercase;
             border: 1px solid var(--btn-border);
@@ -232,7 +232,7 @@
         <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
 
         <!-- Кнопка -->
-        <a href="contact.vcf" class="btn-main flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТ</a>
+        <a href="contact.vcf" class="btn-main flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТЫ</a>
 
         <!-- БЛОК СВЯЗИ -->
         <div class="contact-section">
