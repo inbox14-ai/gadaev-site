@@ -10,10 +10,9 @@
             --bg-color: #000000;
             --text-main: #ffffff;
             --text-sec: #666666;
-            /* Новый цвет кнопки - глубокий графит */
             --btn-bg-start: #242424; 
             --btn-bg-end: #121212;
-            --btn-border: #333333;
+            --btn-border: #3a3a3a;
         }
 
         html, body {
@@ -34,28 +33,43 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            
             touch-action: none;
             -webkit-user-select: none;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
-        .container {
+        .slider-container {
+            display: flex;
+            width: 300vw;
+            height: 100%;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
+        }
+
+        .page {
+            width: 100vw;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .content-wrapper {
             width: 90%;
             max-width: 480px;
-            padding: 0 20px 20px 20px;
-            position: relative;
-            z-index: 1;
-            box-sizing: border-box;
+            padding: 0 20px 90px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100%;
+            box-sizing: border-box;
         }
         
-        /* Логотип */
         .logo-container {
             position: relative;
             display: inline-block;
@@ -74,42 +88,24 @@
             vertical-align: bottom;
         }
 
-        /* Тексты */
-        h1 {
-            font-size: 30px;
-            font-weight: 700;
-            margin: 5px 0 8px 0;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            line-height: 1.1;
-        }
-        p.subtitle {
-            font-size: 18px;
-            color: var(--text-sec);
-            margin: 0 0 30px 0;
-            font-weight: 400;
-            letter-spacing: 0.5px;
-            line-height: 1.2;
-        }
+        h1 { font-size: 30px; font-weight: 700; margin: 5px 0 8px 0; letter-spacing: 1.5px; text-transform: uppercase; line-height: 1.1; }
+        p.subtitle { font-size: 18px; color: var(--text-sec); margin: 0 0 30px 0; font-weight: 400; letter-spacing: 0.5px; line-height: 1.2; }
+        .placeholder-text { color: #444; font-size: 16px; margin-top: 20px; }
 
-        /* ГЛАВНАЯ КНОПКА (БАРХАТНЫЙ ГРАФИТ) */
         .btn-main {
             display: inline-block;
             padding: 22px 32px;
             margin-bottom: 35px;
             margin-top: 5px;
-            /* Градиент для эффекта объема и бархата */
             background: linear-gradient(180deg, var(--btn-bg-start) 0%, var(--btn-bg-end) 100%);
-            color: #e0e0e0; /* Чуть мягче белого для гармонии */
+            color: #e0e0e0;
             text-decoration: none;
             border-radius: 50px;
             font-weight: 300;
             font-size: 19px;
             letter-spacing: 1.2px;
             text-transform: uppercase;
-            /* Мягкая граница */
-            border: 1px solid #3a3a3a;
-            /* Тень для отделения от фона */
+            border: 1px solid var(--btn-border);
             box-shadow: 0 4px 15px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
             transition: all 0.3s ease;
             box-sizing: border-box;
@@ -118,180 +114,169 @@
             z-index: 1;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
-            
             white-space: nowrap;
             line-height: 1.2;
         }
-        
-        .btn-main:hover {
-            /* При наведении чуть светлее */
-            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
-            border-color: #4a4a4a;
-            color: #ffffff;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-        }
-        .btn-main:active {
-            /* При нажатии эффект погружения */
-            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
-            border-color: #222222;
-            transform: translateY(1px);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3), inset 0 2px 5px rgba(0,0,0,0.5);
-            color: #cccccc;
-        }
+        .btn-main:hover { background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%); border-color: #4a4a4a; color: #ffffff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1); }
+        .btn-main:active { background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%); border-color: #222222; transform: translateY(1px); box-shadow: 0 2px 10px rgba(0,0,0,0.3), inset 0 2px 5px rgba(0,0,0,0.5); color: #cccccc; }
 
-        /* БЛОК СВЯЗИ */
-        .contact-section {
-            margin-top: 0;
-            margin-bottom: 40px;
-        }
-        .contact-title {
-            font-size: 18px;
-            font-weight: 300;
-            margin: 0 0 20px 0;
-            letter-spacing: 0.5px;
-            color: var(--text-main);
-            text-transform: none;
-        }
-        .icons-row {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin-bottom: 12px;
-        }
-        .contact-subtitle {
-            font-size: 15px;
-            color: #555555;
-            margin: 0;
-            font-weight: 300;
-            letter-spacing: 0.5px;
-        }
+        .contact-section { margin-top: 0; margin-bottom: 40px; }
+        .contact-title { font-size: 18px; font-weight: 300; margin: 0 0 20px 0; letter-spacing: 0.5px; color: var(--text-main); text-transform: none; }
+        .icons-row { display: flex; justify-content: center; gap: 25px; margin-bottom: 12px; }
+        .contact-subtitle { font-size: 15px; color: #555555; margin: 0; font-weight: 300; letter-spacing: 0.5px; }
 
-        /* ИКОНКИ-КНОПКИ */
-        .icon-btn {
+        .icon-btn { display: flex; align-items: center; justify-content: center; width: 75px; height: 75px; background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%); border-radius: 20px; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: transform 0.2s ease, box-shadow 0.2s ease; position: relative; overflow: hidden; z-index: 1; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+        .icon-btn.phone { background: linear-gradient(135deg, #34C759 0%, #30B34E 100%); }
+        .icon-btn.mail { background: linear-gradient(135deg, #FF9500 0%, #E68600 100%); }
+        .icon-btn:hover { transform: scale(1.05); box-shadow: 0 6px 15px rgba(0,0,0,0.6); }
+        .icon-btn:active { transform: scale(1.0); filter: brightness(0.9); box-shadow: 0 2px 5px rgba(0,0,0,0.4); }
+        .icon-btn svg { width: 38px; height: 38px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
+
+        .footer-text { margin-top: 20px; font-size: 14px; color: #444444; pointer-events: none; }
+
+        .tab-bar {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 380px;
+            height: 65px;
+            background: rgba(30, 30, 30, 0.65);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
             display: flex;
+            justify-content: space-around;
             align-items: center;
-            justify-content: center;
-            width: 75px;
-            height: 75px;
-            background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
-            border-radius: 20px;
-            text-decoration: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        .icon-btn.phone {
-            background: linear-gradient(135deg, #34C759 0%, #30B34E 100%);
-        }
-        .icon-btn.mail {
-            background: linear-gradient(135deg, #FF9500 0%, #E68600 100%);
+            z-index: 1000;
+            padding: 5px;
+            box-sizing: border-box;
         }
 
-        .icon-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.6);
-        }
-        
-        .icon-btn:active {
-            transform: scale(1.0); 
-            filter: brightness(0.9);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-        }
+        .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: #666; transition: all 0.3s ease; position: relative; height: 100%; border-radius: 25px; }
+        .tab-icon { width: 4px; height: 4px; background-color: currentColor; border-radius: 50%; margin-bottom: 4px; transition: all 0.3s ease; opacity: 0.5; }
+        .tab-text { font-size: 11px; font-weight: 500; letter-spacing: 0.5px; transition: all 0.3s ease; }
+        .tab-item.active { color: #ffffff; background: rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .tab-item.active .tab-icon { width: 16px; height: 4px; border-radius: 2px; opacity: 1; background-color: #ffffff; box-shadow: 0 0 8px rgba(255,255,255,0.6); }
+        .tab-item.active .tab-text { font-weight: 600; color: #ffffff; transform: translateY(-1px); }
 
-        .icon-btn svg {
-            width: 38px;
-            height: 38px;
-            fill: #ffffff;
-            position: relative;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        .footer {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #444444;
-            pointer-events: none;
-        }
-
-        /* --- ЭФФЕКТ FLASH (Сделал его едва заметным, чтобы не спорил с бархатом) --- */
-        .flash-effect::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
-            transform: skewX(-25deg);
-            animation: flash 5s infinite; 
-            z-index: 3;
-            pointer-events: none;
-        }
-
-        @keyframes flash {
-            0% { left: -100%; }
-            15% { left: 200%; }
-            100% { left: 200%; }
-        }
+        .flash-effect::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: flash 5s infinite; z-index: 3; pointer-events: none; }
+        @keyframes flash { 0% { left: -100%; } 15% { left: 200%; } 100% { left: 200%; } }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- Логотип -->
-        <div class="logo-container flash-effect">
-            <img src="logo.png" alt="Логотип" class="logo">
-        </div>
+    <div class="slider-container" id="slider">
         
-        <!-- Заголовок -->
-        <h1>РУСЛАН ГАДАЕВ</h1>
-        <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
-
-        <!-- Кнопка -->
-        <a href="contact.vcf" class="btn-main flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТЫ</a>
-
-        <!-- БЛОК СВЯЗИ -->
-        <div class="contact-section">
-            <div class="contact-title">Связаться сейчас:</div>
-            
-            <div class="icons-row">
-                <!-- Telegram -->
-                <a href="https://t.me/ruslan_gadaev" class="icon-btn flash-effect" target="_blank" onclick="vibrate(30)">
-                    <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.116.033.378.018.58z"/></svg>
-                </a>
-
-                <!-- Телефон -->
-                <a href="tel:+79777075755" class="icon-btn phone flash-effect" onclick="vibrate(30)">
-                    <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
-                </a>
-
-                <!-- Почта -->
-                <a href="mailto:ruslan@gadaev.pro" class="icon-btn mail flash-effect" onclick="vibrate(30)">
-                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                </a>
+        <!-- ВКЛАДКА 1: ГЛАВНАЯ (ПУСТАЯ) -->
+        <div class="page" id="page-0">
+            <div class="content-wrapper">
+                <h1>Главная</h1>
+                <p class="placeholder-text">Раздел в разработке</p>
             </div>
-
-            <p class="contact-subtitle">Выберите удобный способ связи</p>
         </div>
 
-        <div class="footer">
-            с 2015 года | Gadaev.pro
+        <!-- ВКЛАДКА 2: РАСЧЕТ (ПУСТАЯ) -->
+        <div class="page" id="page-1">
+            <div class="content-wrapper">
+                <h1>Расчет стоимости</h1>
+                <p class="placeholder-text">Раздел в разработке</p>
+            </div>
+        </div>
+
+        <!-- ВКЛАДКА 3: КОНТАКТЫ (ПОЛНЫЙ КОНТЕНТ) -->
+        <div class="page" id="page-2">
+            <div class="content-wrapper">
+                <!-- Логотип -->
+                <div class="logo-container flash-effect">
+                    <img src="logo.png" alt="Логотип" class="logo">
+                </div>
+                
+                <!-- Имя -->
+                <h1>РУСЛАН ГАДАЕВ</h1>
+                <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
+
+                <!-- Кнопка -->
+                <a href="contact.vcf" class="btn-main flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТЫ</a>
+
+                <!-- Блок связи -->
+                <div class="contact-section">
+                    <div class="contact-title">Связаться сейчас:</div>
+                    <div class="icons-row">
+                        <a href="https://t.me/ruslan_gadaev" class="icon-btn flash-effect" target="_blank" onclick="vibrate(30)">
+                            <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.116.033.378.018.58z"/></svg>
+                        </a>
+                        <a href="tel:+79777075755" class="icon-btn phone flash-effect" onclick="vibrate(30)">
+                            <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+                        </a>
+                        <a href="mailto:ruslan@gadaev.pro" class="icon-btn mail flash-effect" onclick="vibrate(30)">
+                            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                        </a>
+                    </div>
+                    <p class="contact-subtitle">Выберите удобный способ связи</p>
+                </div>
+                <div class="footer-text">с 2015 года | Gadaev.pro</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- НАВИГАЦИЯ -->
+    <div class="tab-bar">
+        <div class="tab-item" onclick="goToPage(0, this)">
+            <div class="tab-icon"></div>
+            <span class="tab-text">Главная</span>
+        </div>
+        <div class="tab-item" onclick="goToPage(1, this)">
+            <div class="tab-icon"></div>
+            <span class="tab-text">Расчет</span>
+        </div>
+        <div class="tab-item active" onclick="goToPage(2, this)">
+            <div class="tab-icon"></div>
+            <span class="tab-text">Контакты</span>
         </div>
     </div>
 
     <script>
-        function vibrate(duration) {
-            if (navigator.vibrate) {
-                navigator.vibrate(duration);
-            }
+        let currentPage = 2; // Стартуем с Контактов (индекс 2)
+        const slider = document.getElementById('slider');
+        const tabs = document.querySelectorAll('.tab-item');
+        
+        window.onload = () => { updateSliderPosition(); };
+
+        function vibrate(duration) { if (navigator.vibrate) navigator.vibrate(duration); }
+
+        function goToPage(index, tabElement) {
+            if (index === currentPage) return;
+            currentPage = index;
+            updateSliderPosition();
+            updateTabs(tabElement);
+            vibrate(20);
         }
+
+        function updateSliderPosition() {
+            slider.style.transform = `translateX(-${currentPage * 100}vw)`;
+        }
+
+        function updateTabs(activeTab) {
+            tabs.forEach(t => t.classList.remove('active'));
+            if(activeTab) activeTab.classList.add('active');
+            else tabs[currentPage].classList.add('active');
+        }
+
+        let startX = 0, isDragging = false;
+        document.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; isDragging = true; }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            const diff = startX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0 && currentPage < 2) goToPage(currentPage + 1, null);
+                else if (diff < 0 && currentPage > 0) goToPage(currentPage - 1, null);
+            }
+        });
     </script>
 </body>
 </html>
