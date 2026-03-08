@@ -14,6 +14,14 @@
             --btn-border: #333333;
         }
 
+        /* БЛОКИРОВКА ПРОКРУТКИ ДЛЯ ВСЕЙ СТРАНИЦЫ */
+        html, body {
+            overflow: hidden; /* Запрещает любой скролл */
+            height: 100%; /* Фиксирует высоту */
+            position: fixed; /* Фиксирует позицию */
+            width: 100%;
+        }
+
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
@@ -24,12 +32,9 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
             text-align: center;
-            overflow-x: hidden;
             
-            overscroll-behavior-y: contain;
-            touch-action: manipulation;
+            touch-action: none; /* Отключает все жесты браузера */
             -webkit-user-select: none;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
@@ -42,6 +47,12 @@
             position: relative;
             z-index: 1;
             box-sizing: border-box;
+            /* Центрирование контента внутри фиксированного экрана */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%; 
         }
         
         /* Логотип */
@@ -84,16 +95,16 @@
         /* ГЛАВНАЯ КНОПКА */
         .btn-main {
             display: inline-block;
-            padding: 16px 28px; /* УМЕНЬШИЛ боковые отступы (было 36px) -> кнопка уже */
+            padding: 16px 28px;
             margin-bottom: 35px;
             margin-top: 5px;
             background-color: var(--btn-bg);
             color: #ffffff;
             text-decoration: none;
             border-radius: 50px;
-            font-weight: 300; /* Тонкий */
-            font-size: 17px; /* Чуть меньше, чтобы влезло в одну строку */
-            letter-spacing: 1.5px; /* Чуть плотнее буквы */
+            font-weight: 300;
+            font-size: 17px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
             border: 1px solid var(--btn-border);
             transition: all 0.2s ease;
@@ -103,9 +114,7 @@
             z-index: 1;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
-            
-            /* ГАРАНТИЯ ОДНОЙ СТРОКИ */
-            white-space: nowrap; 
+            white-space: nowrap;
         }
         
         .btn-main:hover {
