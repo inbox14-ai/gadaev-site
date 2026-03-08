@@ -10,7 +10,9 @@
             --bg-color: #000000;
             --text-main: #ffffff;
             --text-sec: #666666;
-            --btn-bg: #111111;
+            /* Новый цвет кнопки - глубокий графит */
+            --btn-bg-start: #242424; 
+            --btn-bg-end: #121212;
             --btn-border: #333333;
         }
 
@@ -90,23 +92,26 @@
             line-height: 1.2;
         }
 
-        /* ГЛАВНАЯ КНОПКА */
+        /* ГЛАВНАЯ КНОПКА (БАРХАТНЫЙ ГРАФИТ) */
         .btn-main {
             display: inline-block;
-            /* УВЕЛИЧЕНА ВЫСОТА: 22px сверху и снизу (было 16px) */
-            padding: 22px 32px; 
-            margin-bottom: 35px; /* Отступ снизу до иконок */
+            padding: 22px 32px;
+            margin-bottom: 35px;
             margin-top: 5px;
-            background-color: var(--btn-bg);
-            color: #ffffff;
+            /* Градиент для эффекта объема и бархата */
+            background: linear-gradient(180deg, var(--btn-bg-start) 0%, var(--btn-bg-end) 100%);
+            color: #e0e0e0; /* Чуть мягче белого для гармонии */
             text-decoration: none;
             border-radius: 50px;
-            font-weight: 300; /* Тонкий */
-            font-size: 19px; /* УВЕЛИЧЕН РАЗМЕР ШРИФТА */
-            letter-spacing: 1.2px; /* Чуть плотнее, чтобы влезло в строку */
+            font-weight: 300;
+            font-size: 19px;
+            letter-spacing: 1.2px;
             text-transform: uppercase;
-            border: 1px solid var(--btn-border);
-            transition: all 0.2s ease;
+            /* Мягкая граница */
+            border: 1px solid #3a3a3a;
+            /* Тень для отделения от фона */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
             box-sizing: border-box;
             position: relative;
             overflow: hidden;
@@ -114,21 +119,25 @@
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
             
-            /* ГАРАНТИЯ ОДНОЙ СТРОКИ */
             white-space: nowrap;
             line-height: 1.2;
         }
         
         .btn-main:hover {
-            background-color: #1a1a1a;
-            border-color: #555555;
+            /* При наведении чуть светлее */
+            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+            border-color: #4a4a4a;
+            color: #ffffff;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
         }
         .btn-main:active {
-            background-color: #000000;
+            /* При нажатии эффект погружения */
+            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
             border-color: #222222;
-            transform: translateY(0); 
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3), inset 0 2px 5px rgba(0,0,0,0.5);
+            color: #cccccc;
         }
 
         /* БЛОК СВЯЗИ */
@@ -211,7 +220,7 @@
             pointer-events: none;
         }
 
-        /* --- ЭФФЕКТ FLASH --- */
+        /* --- ЭФФЕКТ FLASH (Сделал его едва заметным, чтобы не спорил с бархатом) --- */
         .flash-effect::after {
             content: '';
             position: absolute;
@@ -219,7 +228,7 @@
             left: -100%;
             width: 50%;
             height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 100%);
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
             transform: skewX(-25deg);
             animation: flash 5s infinite; 
             z-index: 3;
