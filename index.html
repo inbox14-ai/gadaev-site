@@ -62,12 +62,11 @@
         .content-wrapper {
             width: 90%;
             max-width: 480px;
-            /* Минимальный отступ сверху, только чтобы контент не наезжал на меню */
-            padding: 70px 20px 40px 20px; 
+            padding: 70px 20px 40px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* Выравнивание сверху вниз */
+            justify-content: flex-start;
             height: 100%;
             box-sizing: border-box;
         }
@@ -75,7 +74,7 @@
         .logo-container {
             position: relative;
             display: inline-block;
-            margin: 0; /* Убраны отступы */
+            margin: 0;
             overflow: hidden;
             border-radius: 50%;
             pointer-events: none;
@@ -134,21 +133,21 @@
         .icon-btn:active { transform: scale(1.0); filter: brightness(0.9); box-shadow: 0 2px 5px rgba(0,0,0,0.4); }
         .icon-btn svg { width: 38px; height: 38px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
 
-        .footer-text { margin-top: auto; padding-bottom: 20px; font-size: 14px; color: #444444; pointer-events: none; }
+        /* Класс footer-text удален или оставлен пустым, так как текст убран из HTML */
 
-        /* --- ВЕРХНЯЯ НАВИГАЦИЯ (МАКСИМУМ ВВЕРХ) --- */
+        /* --- ВЕРХНЯЯ НАВИГАЦИЯ --- */
         .tab-bar {
             position: fixed;
-            top: 0; /* Самый верх */
+            top: 0;
             left: 0;
-            width: 100%; /* На всю ширину */
+            width: 100%;
             max-width: 100%;
-            height: 60px; /* Фиксированная высота */
-            background: rgba(30, 30, 30, 0.85); /* Чуть плотнее фон для читаемости */
+            height: 60px;
+            background: rgba(30, 30, 30, 0.85);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            border-radius: 0; /* Убраны скругления сверху */
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* Линия снизу вместо рамки */
+            border-radius: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
             display: flex;
             justify-content: space-around;
@@ -156,7 +155,6 @@
             z-index: 1000;
             padding: 0;
             box-sizing: border-box;
-            /* Учет безопасной зоны (челка) */
             padding-top: env(safe-area-inset-top);
             height: calc(60px + env(safe-area-inset-top));
         }
@@ -172,24 +170,23 @@
             transition: all 0.3s ease;
             position: relative;
             height: 100%;
-            border-radius: 0; /* Прямые углы */
+            border-radius: 0;
         }
 
         .tab-text {
-            font-size: 15px; /* КРУПНЫЙ ТЕКСТ (было 12px) */
+            font-size: 15px;
             font-weight: 500;
             letter-spacing: 0.5px;
             transition: all 0.3s ease;
             text-transform: uppercase;
         }
 
-        /* Активное состояние */
         .tab-item.active {
             color: #ffffff;
             background: rgba(255, 255, 255, 0.1);
         }
         .tab-item.active .tab-text {
-            font-weight: 700; /* Жирный шрифт */
+            font-weight: 700;
             color: #ffffff;
         }
 
@@ -242,7 +239,6 @@
         <!-- ВКЛАДКА 3: КОНТАКТЫ -->
         <div class="page" id="page-2">
             <div class="content-wrapper">
-                <!-- Логотип сразу под меню -->
                 <div class="logo-container flash-effect">
                     <img src="logo.png" alt="Логотип" class="logo">
                 </div>
@@ -268,7 +264,7 @@
                     <p class="contact-subtitle">Выберите удобный способ связи</p>
                 </div>
                 
-                <div class="footer-text">с 2015 года | Gadaev.pro</div>
+                <!-- Строка удалена -->
             </div>
         </div>
     </div>
