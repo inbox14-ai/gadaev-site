@@ -8,7 +8,7 @@
     <title>Руслан Гадаев | Инженер ПГС</title>
     <style>
         :root {
-            --bg-color: #000000; /* Чистый черный фон */
+            --bg-color: #000000;
             --text-main: #ffffff;
             --text-sec: #666666;
             --btn-bg: #111111;
@@ -29,7 +29,6 @@
             text-align: center;
             overflow-x: hidden;
             
-            /* Блокировка лишних движений */
             overscroll-behavior-y: contain;
             touch-action: manipulation;
             -webkit-user-select: none;
@@ -39,8 +38,8 @@
 
         .container {
             width: 90%;
-            max-width: 450px;
-            padding: 10px 20px 20px 20px; 
+            max-width: 480px; /* Чуть шире для крупных элементов */
+            padding: 5px 20px 15px 20px; /* Минимальные отступы сверху и снизу */
             position: relative;
             z-index: 1;
             box-sizing: border-box;
@@ -50,47 +49,51 @@
         .logo-container {
             position: relative;
             display: inline-block;
-            margin-bottom: 15px;
+            margin: 0 0 5px 0; /* Убрал отступ сверху, снизу всего 5px */
             overflow: hidden;
             border-radius: 50%;
             pointer-events: none;
         }
         .logo {
-            width: 160px; /* УВЕЛИЧИЛ до 160px */
+            width: 180px; /* УВЕЛИЧИЛ до 180px */
             height: auto;
             display: block;
             border-radius: 50%;
             position: relative;
             z-index: 2;
+            /* Небольшой сдвиг вверх, если нужно еще плотнее */
+            margin-top: -10px; 
         }
 
         /* Тексты */
         h1 {
-            font-size: 28px; /* УВЕЛИЧИЛ с 26px */
+            font-size: 30px; /* УВЕЛИЧИЛ */
             font-weight: 700;
-            margin: 0 0 10px 0;
+            margin: 0 0 5px 0; /* Минимальный отступ */
             letter-spacing: 1.5px;
             text-transform: uppercase;
+            line-height: 1.1;
         }
         p.subtitle {
-            font-size: 17px; /* УВЕЛИЧИЛ с 15px */
+            font-size: 18px; /* УВЕЛИЧИЛ */
             color: var(--text-sec);
-            margin: 0 0 35px 0;
+            margin: 0 0 25px 0; /* Уменьшил отступ до кнопки */
             font-weight: 400;
             letter-spacing: 0.5px;
+            line-height: 1.2;
         }
 
-        /* ГЛАВНАЯ КНОПКА (Размеры оставил как были) */
+        /* ГЛАВНАЯ КНОПКА */
         .btn-main {
             display: inline-block;
-            padding: 18px 36px;
-            margin-bottom: 35px;
+            padding: 20px 40px; /* Увеличил высоту кнопки */
+            margin-bottom: 30px;
             background-color: var(--btn-bg);
             color: #cccccc;
             text-decoration: none;
             border-radius: 50px;
             font-weight: 300;
-            font-size: 16px; /* Чуть увеличил шрифт для баланса (был 15px) */
+            font-size: 17px; /* УВЕЛИЧИЛ */
             letter-spacing: 2px;
             text-transform: uppercase;
             border: 1px solid var(--btn-border);
@@ -118,13 +121,13 @@
 
         /* БЛОК СВЯЗИ */
         .contact-section {
-            margin-top: 10px;
-            margin-bottom: 45px;
+            margin-top: 5px;
+            margin-bottom: 35px;
         }
         .contact-title {
-            font-size: 17px; /* УВЕЛИЧИЛ с 15px */
+            font-size: 18px; /* УВЕЛИЧИЛ */
             font-weight: 300;
-            margin: 0 0 20px 0;
+            margin: 0 0 15px 0;
             letter-spacing: 0.5px;
             color: var(--text-main);
             text-transform: none;
@@ -133,25 +136,25 @@
             display: flex;
             justify-content: center;
             gap: 25px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         .contact-subtitle {
-            font-size: 14px; /* УВЕЛИЧИЛ с 13px */
+            font-size: 15px; /* УВЕЛИЧИЛ */
             color: #555555;
             margin: 0;
             font-weight: 300;
             letter-spacing: 0.5px;
         }
 
-        /* ИКОНКИ-КНОПКИ (Размеры оставил как были: 68px) */
+        /* ИКОНКИ-КНОПКИ */
         .icon-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 68px;
-            height: 68px;
+            width: 75px; /* УВЕЛИЧИЛ с 68px */
+            height: 75px; /* УВЕЛИЧИЛ с 68px */
             background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
-            border-radius: 18px;
+            border-radius: 20px;
             text-decoration: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -181,8 +184,8 @@
         }
 
         .icon-btn svg {
-            width: 34px;
-            height: 34px;
+            width: 38px; /* УВЕЛИЧИЛ иконки внутри */
+            height: 38px;
             fill: #ffffff;
             position: relative;
             z-index: 2;
@@ -190,8 +193,8 @@
         }
 
         .footer {
-            margin-top: 35px;
-            font-size: 13px; /* УВЕЛИЧИЛ с 12px */
+            margin-top: 20px;
+            font-size: 14px; /* УВЕЛИЧИЛ */
             color: #444444;
             pointer-events: none;
         }
