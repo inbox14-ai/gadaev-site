@@ -62,11 +62,12 @@
         .content-wrapper {
             width: 90%;
             max-width: 480px;
-            padding: 80px 20px 40px 20px;
+            /* Минимальный отступ сверху, только чтобы контент не наезжал на меню */
+            padding: 70px 20px 40px 20px; 
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start; /* Выравнивание сверху вниз */
             height: 100%;
             box-sizing: border-box;
         }
@@ -74,7 +75,7 @@
         .logo-container {
             position: relative;
             display: inline-block;
-            margin: 0;
+            margin: 0; /* Убраны отступы */
             overflow: hidden;
             border-radius: 50%;
             pointer-events: none;
@@ -89,7 +90,7 @@
             vertical-align: bottom;
         }
 
-        h1 { font-size: 30px; font-weight: 700; margin: 5px 0 8px 0; letter-spacing: 1.5px; text-transform: uppercase; line-height: 1.1; }
+        h1 { font-size: 30px; font-weight: 700; margin: 15px 0 8px 0; letter-spacing: 1.5px; text-transform: uppercase; line-height: 1.1; }
         p.subtitle { font-size: 18px; color: var(--text-sec); margin: 0 0 30px 0; font-weight: 400; letter-spacing: 0.5px; line-height: 1.2; }
         .placeholder-text { color: #444; font-size: 16px; margin-top: 20px; }
 
@@ -135,29 +136,29 @@
 
         .footer-text { margin-top: auto; padding-bottom: 20px; font-size: 14px; color: #444444; pointer-events: none; }
 
-        /* --- ВЕРХНЯЯ НАВИГАЦИЯ (БЕЗ ПОЛОСОК) --- */
+        /* --- ВЕРХНЯЯ НАВИГАЦИЯ (МАКСИМУМ ВВЕРХ) --- */
         .tab-bar {
             position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 380px;
-            height: 55px;
-            background: rgba(30, 30, 30, 0.65);
+            top: 0; /* Самый верх */
+            left: 0;
+            width: 100%; /* На всю ширину */
+            max-width: 100%;
+            height: 60px; /* Фиксированная высота */
+            background: rgba(30, 30, 30, 0.85); /* Чуть плотнее фон для читаемости */
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            border-radius: 0; /* Убраны скругления сверху */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* Линия снизу вместо рамки */
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
             display: flex;
             justify-content: space-around;
             align-items: center;
             z-index: 1000;
-            padding: 5px;
+            padding: 0;
             box-sizing: border-box;
-            padding-top: calc(5px + env(safe-area-inset-top));
-            margin-top: env(safe-area-inset-top);
+            /* Учет безопасной зоны (челка) */
+            padding-top: env(safe-area-inset-top);
+            height: calc(60px + env(safe-area-inset-top));
         }
 
         .tab-item {
@@ -171,27 +172,24 @@
             transition: all 0.3s ease;
             position: relative;
             height: 100%;
-            border-radius: 15px;
+            border-radius: 0; /* Прямые углы */
         }
 
         .tab-text {
-            font-size: 12px;
+            font-size: 15px; /* КРУПНЫЙ ТЕКСТ (было 12px) */
             font-weight: 500;
             letter-spacing: 0.5px;
             transition: all 0.3s ease;
             text-transform: uppercase;
         }
 
-        /* Убрал класс .tab-indicator, так как он больше не нужен */
-
-        /* Активное состояние: только фон и текст */
+        /* Активное состояние */
         .tab-item.active {
             color: #ffffff;
-            background: rgba(255, 255, 255, 0.12); /* Чуть заметнее фон */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.1);
         }
         .tab-item.active .tab-text {
-            font-weight: 600;
+            font-weight: 700; /* Жирный шрифт */
             color: #ffffff;
         }
 
@@ -244,6 +242,7 @@
         <!-- ВКЛАДКА 3: КОНТАКТЫ -->
         <div class="page" id="page-2">
             <div class="content-wrapper">
+                <!-- Логотип сразу под меню -->
                 <div class="logo-container flash-effect">
                     <img src="logo.png" alt="Логотип" class="logo">
                 </div>
