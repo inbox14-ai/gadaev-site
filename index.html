@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- Блокировка зума и фиксация -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Руслан Гадаев | Инженер ПГС</title>
@@ -38,8 +37,8 @@
 
         .container {
             width: 90%;
-            max-width: 480px; /* Чуть шире для крупных элементов */
-            padding: 5px 20px 15px 20px; /* Минимальные отступы сверху и снизу */
+            max-width: 480px;
+            padding: 0 20px 20px 20px; /* Убрал отступ сверху полностью (0) */
             position: relative;
             z-index: 1;
             box-sizing: border-box;
@@ -49,35 +48,34 @@
         .logo-container {
             position: relative;
             display: inline-block;
-            margin: 0 0 5px 0; /* Убрал отступ сверху, снизу всего 5px */
+            margin: 0 0 10px 0; /* Отступ только снизу, сверху 0 */
             overflow: hidden;
             border-radius: 50%;
             pointer-events: none;
         }
         .logo {
-            width: 180px; /* УВЕЛИЧИЛ до 180px */
+            width: 180px;
             height: auto;
             display: block;
             border-radius: 50%;
             position: relative;
             z-index: 2;
-            /* Небольшой сдвиг вверх, если нужно еще плотнее */
-            margin-top: -10px; 
+            /* Убрал отрицательный отступ, стоит ровно */
         }
 
         /* Тексты */
         h1 {
-            font-size: 30px; /* УВЕЛИЧИЛ */
+            font-size: 30px;
             font-weight: 700;
-            margin: 0 0 5px 0; /* Минимальный отступ */
+            margin: 0 0 8px 0;
             letter-spacing: 1.5px;
             text-transform: uppercase;
             line-height: 1.1;
         }
         p.subtitle {
-            font-size: 18px; /* УВЕЛИЧИЛ */
+            font-size: 18px;
             color: var(--text-sec);
-            margin: 0 0 25px 0; /* Уменьшил отступ до кнопки */
+            margin: 0 0 35px 0; /* Увеличил отступ до кнопки */
             font-weight: 400;
             letter-spacing: 0.5px;
             line-height: 1.2;
@@ -86,14 +84,15 @@
         /* ГЛАВНАЯ КНОПКА */
         .btn-main {
             display: inline-block;
-            padding: 20px 40px; /* Увеличил высоту кнопки */
-            margin-bottom: 30px;
+            padding: 24px 40px; /* ОДИНАКОВЫЕ и БОЛЬШИЕ отступы сверху/снизу и сбоку */
+            margin-bottom: 40px; /* Большой отступ снизу до иконок */
+            margin-top: 10px;    /* Небольшой отступ сверху от профессии */
             background-color: var(--btn-bg);
-            color: #cccccc;
+            color: #ffffff;      /* Текст стал белым для контраста */
             text-decoration: none;
             border-radius: 50px;
-            font-weight: 300;
-            font-size: 17px; /* УВЕЛИЧИЛ */
+            font-weight: 500;    /* Чуть жирнее */
+            font-size: 19px;     /* УВЕЛИЧИЛ шрифт */
             letter-spacing: 2px;
             text-transform: uppercase;
             border: 1px solid var(--btn-border);
@@ -108,10 +107,9 @@
         
         .btn-main:hover {
             background-color: #1a1a1a;
-            color: #ffffff;
             border-color: #555555;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
         }
         .btn-main:active {
             background-color: #000000;
@@ -121,13 +119,13 @@
 
         /* БЛОК СВЯЗИ */
         .contact-section {
-            margin-top: 5px;
-            margin-bottom: 35px;
+            margin-top: 0;
+            margin-bottom: 40px;
         }
         .contact-title {
-            font-size: 18px; /* УВЕЛИЧИЛ */
+            font-size: 18px;
             font-weight: 300;
-            margin: 0 0 15px 0;
+            margin: 0 0 20px 0;
             letter-spacing: 0.5px;
             color: var(--text-main);
             text-transform: none;
@@ -136,10 +134,10 @@
             display: flex;
             justify-content: center;
             gap: 25px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
         .contact-subtitle {
-            font-size: 15px; /* УВЕЛИЧИЛ */
+            font-size: 15px;
             color: #555555;
             margin: 0;
             font-weight: 300;
@@ -151,8 +149,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 75px; /* УВЕЛИЧИЛ с 68px */
-            height: 75px; /* УВЕЛИЧИЛ с 68px */
+            width: 75px;
+            height: 75px;
             background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
             border-radius: 20px;
             text-decoration: none;
@@ -184,7 +182,7 @@
         }
 
         .icon-btn svg {
-            width: 38px; /* УВЕЛИЧИЛ иконки внутри */
+            width: 38px;
             height: 38px;
             fill: #ffffff;
             position: relative;
@@ -194,7 +192,7 @@
 
         .footer {
             margin-top: 20px;
-            font-size: 14px; /* УВЕЛИЧИЛ */
+            font-size: 14px;
             color: #444444;
             pointer-events: none;
         }
