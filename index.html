@@ -38,7 +38,7 @@
         .container {
             width: 90%;
             max-width: 480px;
-            padding: 0 20px 20px 20px; /* Отступ сверху 0 */
+            padding: 0 20px 20px 20px;
             position: relative;
             z-index: 1;
             box-sizing: border-box;
@@ -48,7 +48,7 @@
         .logo-container {
             position: relative;
             display: inline-block;
-            margin: 0; /* УБРАЛ ВСЕ ОТСТУПЫ (и сверху, и снизу) */
+            margin: 0;
             overflow: hidden;
             border-radius: 50%;
             pointer-events: none;
@@ -60,14 +60,14 @@
             border-radius: 50%;
             position: relative;
             z-index: 2;
-            vertical-align: bottom; /* Чтобы не было лишнего места снизу */
+            vertical-align: bottom;
         }
 
         /* Тексты */
         h1 {
             font-size: 30px;
             font-weight: 700;
-            margin: 5px 0 8px 0; /* Минимальный отступ сверху от логотипа */
+            margin: 5px 0 8px 0;
             letter-spacing: 1.5px;
             text-transform: uppercase;
             line-height: 1.1;
@@ -84,16 +84,16 @@
         /* ГЛАВНАЯ КНОПКА */
         .btn-main {
             display: inline-block;
-            padding: 18px 36px; /* УМЕНЬШИЛ высоту (было 24px) */
+            padding: 16px 28px; /* УМЕНЬШИЛ боковые отступы (было 36px) -> кнопка уже */
             margin-bottom: 35px;
             margin-top: 5px;
             background-color: var(--btn-bg);
             color: #ffffff;
             text-decoration: none;
             border-radius: 50px;
-            font-weight: 300; /* ТОНКИЙ шрифт */
-            font-size: 18px; /* Крупный, но тонкий */
-            letter-spacing: 2px;
+            font-weight: 300; /* Тонкий */
+            font-size: 17px; /* Чуть меньше, чтобы влезло в одну строку */
+            letter-spacing: 1.5px; /* Чуть плотнее буквы */
             text-transform: uppercase;
             border: 1px solid var(--btn-border);
             transition: all 0.2s ease;
@@ -103,6 +103,9 @@
             z-index: 1;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
+            
+            /* ГАРАНТИЯ ОДНОЙ СТРОКИ */
+            white-space: nowrap; 
         }
         
         .btn-main:hover {
