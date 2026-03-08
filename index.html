@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Руслан Гадаев | Инженер ПГС</title>
     
-    <!-- Подключаем библиотеку для 3D моделей (Google Model Viewer) -->
+    <!-- Библиотека для 3D -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 
     <style>
@@ -16,7 +16,7 @@
             --text-main: #ffffff;
             --text-sec: #666666;
             --card-bg: #1c1c1e;
-            --price-color: #39FF14; /* Кислотный зеленый */
+            --price-color: #39FF14;
             --btn-bg-start: #242424; 
             --btn-bg-end: #121212;
             --btn-border: #3a3a3a;
@@ -52,10 +52,21 @@
             align-items: center;
             justify-content: center;
             box-sizing: border-box;
-            overflow-y: auto;
             position: relative;
             padding-top: calc(60px + env(safe-area-inset-top));
             padding-bottom: 20px;
+        }
+
+        /* Специальный класс для страницы с 3D (без скролла) */
+        .page-no-scroll {
+            overflow: hidden;
+            touch-action: none; /* Блокирует любые жесты на этой странице */
+        }
+
+        /* Класс для обычных страниц (со скроллом если нужно) */
+        .page-scroll {
+            overflow-y: auto;
+            touch-action: pan-y;
         }
 
         .content-inner {
@@ -64,31 +75,30 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: center; /* Центрируем всё по вертикали */
             padding: 0 20px;
             box-sizing: border-box;
-            padding-bottom: 40px;
+            height: 100%; /* На всю высоту */
         }
 
         /* --- СТИЛИ ДЛЯ 3D МОДЕЛИ --- */
         model-viewer {
             width: 100%;
-            max-width: 400px;
-            height: 350px;
-            background-color: transparent; /* Прозрачный фон */
+            max-width: 500px;
+            height: 60vh; /* Занимает 60% высоты экрана */
+            background-color: transparent;
             --poster-color: transparent;
-            margin-bottom: 10px;
-            border-radius: 20px;
             outline: none;
-            --progress-bar-color: var(--price-color); /* Цвет полоски загрузки */
+            --progress-bar-color: var(--price-color);
+            --progress-mask: transparent;
         }
         
-        .model-caption {
-            font-size: 12px;
-            color: #555;
-            margin-top: -10px;
-            margin-bottom: 25px;
-            font-style: italic;
+        /* Кнопка внизу модели */
+        .model-btn-container {
+            margin-top: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
         }
 
         .logo-container {
@@ -179,7 +189,7 @@
             min-width: 280px;
             max-width: 90%;
             padding: 18px 30px;
-            margin: 0 auto 35px;
+            margin: 0 auto;
             background: linear-gradient(180deg, var(--btn-bg-start), var(--btn-bg-end));
             color: #e0e0e0;
             text-decoration: none;
@@ -274,35 +284,32 @@
 
     <div class="slider-container" id="slider">
         
-        <!-- СТРАНИЦА 1: ГЛАВНАЯ (С 3D МОДЕЛЬЮ) -->
-        <div class="page">
+        <!-- СТРАНИЦА 1: ГЛАВНАЯ (ТОЛЬКО 3D И КНОПКА) -->
+        <!-- Добавлен класс page-no-scroll для блокировки свайпов и скролла -->
+        <div class="page page-no-scroll" id="page-0">
             <div class="content-inner">
-                <h1>3D Визуализация</h1>
-                <p class="subtitle">Покрутите модель пальцами</p>
-
                 <!-- 3D МОДЕЛЬ -->
-                <!-- ЗАМЕНИ ССЫЛКУ НИЖЕ НА СВОЮ МОДЕЛЬ ДОМА -->
                 <model-viewer 
                     src="https://modelviewer.dev/shared-assets/models/Astronaut.glb" 
                     alt="3D модель объекта"
                     auto-rotate 
                     camera-controls 
-                    touch-action="pan-y"
+                    touch-action="pan-y" /* Разрешаем тач только внутри модели */
                     shadow-intensity="1"
                     environment-image="neutral"
                     exposure="1"
                     ar>
                 </model-viewer>
                 
-                <p class="model-caption">Один палец: вращение | Два пальца: зум</p>
-
-                <a href="#" class="btn-main pulse-effect" onclick="switchTab(1); vibrate(50)">Смотреть цены</a>
+                <div class="model-btn-container">
+                    <a href="#" class="btn-main pulse-effect" onclick="switchTab(1); vibrate(50)">Смотреть цены</a>
+                </div>
             </div>
         </div>
 
-        <!-- СТРАНИЦА 2: ЦЕНЫ -->
-        <div class="page">
-            <div class="content-inner">
+        <!-- СТРАНИЦА 2: ЦЕНЫ (Обычный скролл и свайпы) -->
+        <div class="page page-scroll" id="page-1">
+            <div class="content-inner" style="justify-content: flex-start; padding-top: 20px;">
                 <h1>Стоимость услуг</h1>
                 <p class="subtitle">Прозрачные цены без скрытых доплат</p>
 
@@ -334,8 +341,8 @@
             </div>
         </div>
 
-        <!-- СТРАНИЦА 3: КОНТАКТЫ -->
-        <div class="page">
+        <!-- СТРАНИЦА 3: КОНТАКТЫ (Обычный скролл и свайпы) -->
+        <div class="page page-scroll" id="page-2">
             <div class="content-inner">
                 <div class="logo-container pulse-effect">
                     <img src="logo.png" alt="Logo" class="logo">
@@ -374,6 +381,8 @@
             if (index === current) return;
             current = index;
             slider.style.transform = `translateX(-${current * 100}vw)`;
+            
+            // Обновляем активную вкладку
             tabs.forEach((tab, i) => {
                 if (i === current) tab.classList.add('active');
                 else tab.classList.remove('active');
@@ -385,15 +394,31 @@
             if (navigator.vibrate) navigator.vibrate(ms);
         }
 
+        // Обработка свайпов
         let startX = 0;
-        document.addEventListener('touchstart', e => startX = e.touches[0].clientX, {passive: true});
-        document.addEventListener('touchend', e => {
+        let isDragging = false;
+
+        document.addEventListener('touchstart', (e) => {
+            // Если мы на главной странице (индекс 0), игнорируем свайпы для переключения
+            // Чтобы можно было крутить 3D модель
+            if (current === 0) return; 
+            
+            startX = e.touches[0].clientX;
+            isDragging = true;
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+            if (!isDragging || current === 0) {
+                isDragging = false;
+                return;
+            }
+            isDragging = false;
             const diff = startX - e.changedTouches[0].clientX;
             if (Math.abs(diff) > 50) {
                 if (diff > 0 && current < 2) switchTab(current + 1);
                 if (diff < 0 && current > 0) switchTab(current - 1);
             }
-        }, {passive: true});
+        }, { passive: true });
     </script>
 </body>
 </html>
