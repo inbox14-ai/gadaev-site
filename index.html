@@ -288,18 +288,20 @@
         <!-- Добавлен класс page-no-scroll для блокировки свайпов и скролла -->
         <div class="page page-no-scroll" id="page-0">
             <div class="content-inner">
-                <!-- 3D МОДЕЛЬ -->
-                <model-viewer 
-                    src="https://modelviewer.dev/shared-assets/models/Astronaut.glb" 
-                    alt="3D модель объекта"
-                    auto-rotate 
-                    camera-controls 
-                    touch-action="pan-y" /* Разрешаем тач только внутри модели */
-                    shadow-intensity="1"
-                    environment-image="neutral"
-                    exposure="1"
-                    ar>
-                </model-viewer>
+<!-- 3D МОДЕЛЬ (ДОМИК) -->
+<model-viewer 
+    src="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/MaterialsVariantsHouse/glTF-Binary/MaterialsVariantsHouse.glb" 
+    alt="3D модель дома"
+    auto-rotate 
+    camera-controls 
+    touch-action="pan-y"
+    shadow-intensity="1"
+    environment-image="neutral"
+    exposure="1"
+    ar>
+</model-viewer>
+
+
                 
                 <div class="model-btn-container">
                     <a href="#" class="btn-main pulse-effect" onclick="switchTab(1); vibrate(50)">Смотреть цены</a>
@@ -422,4 +424,5 @@
     </script>
 </body>
 </html>
+
 
