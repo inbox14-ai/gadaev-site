@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Руслан Гадаев | Инженер ПГС</title>
     
-    <!-- Библиотека для 3D -->
+    <!-- Библиотека для 3D (Google Model Viewer) -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 
     <style>
@@ -57,13 +57,13 @@
             padding-bottom: 20px;
         }
 
-        /* Специальный класс для страницы с 3D (без скролла) */
+        /* Страница с 3D: БЛОКИРОВКА ВСЕХ ЖЕСТОВ, кроме тех, что внутри модели */
         .page-no-scroll {
             overflow: hidden;
-            touch-action: none; /* Блокирует любые жесты на этой странице */
+            touch-action: none; 
         }
 
-        /* Класс для обычных страниц (со скроллом если нужно) */
+        /* Обычные страницы: разрешен скролл */
         .page-scroll {
             overflow-y: auto;
             touch-action: pan-y;
@@ -75,30 +75,41 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Центрируем всё по вертикали */
+            justify-content: center;
             padding: 0 20px;
             box-sizing: border-box;
-            height: 100%; /* На всю высоту */
+            height: 100%;
+            position: relative;
+            z-index: 2;
         }
 
         /* --- СТИЛИ ДЛЯ 3D МОДЕЛИ --- */
         model-viewer {
             width: 100%;
-            max-width: 500px;
-            height: 60vh; /* Занимает 60% высоты экрана */
+            height: 100%; /* На всю высоту доступной области */
+            max-height: 70vh;
             background-color: transparent;
             --poster-color: transparent;
             outline: none;
             --progress-bar-color: var(--price-color);
             --progress-mask: transparent;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            /* Разрешаем тач-события внутри модели */
+            touch-action: pan-x pan-y pinch-zoom; 
         }
         
-        /* Кнопка внизу модели */
         .model-btn-container {
-            margin-top: 20px;
+            margin-top: auto; /* Прижать кнопку к низу */
+            margin-bottom: 40px;
             width: 100%;
             display: flex;
             justify-content: center;
+            z-index: 2;
+            pointer-events: auto;
         }
 
         .logo-container {
@@ -202,6 +213,7 @@
             white-space: nowrap;
             box-sizing: border-box;
             cursor: pointer;
+            pointer-events: auto;
         }
         .btn-main:active { transform: scale(0.95); opacity: 0.8; }
 
@@ -214,6 +226,7 @@
             text-decoration: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             cursor: pointer;
+            pointer-events: auto;
         }
         .icon-btn.telegram { background: linear-gradient(135deg, #2AABEE, #229ED9); }
         .icon-btn.phone { background: linear-gradient(135deg, #34C759, #30B34E); }
@@ -240,6 +253,7 @@
             align-items: center;
             z-index: 1000;
             margin-top: env(safe-area-inset-top);
+            pointer-events: auto;
         }
 
         .tab-item {
@@ -255,6 +269,7 @@
             cursor: pointer;
             border-radius: 20px;
             transition: all 0.3s;
+            pointer-events: auto;
         }
 
         .tab-item.active {
@@ -284,21 +299,25 @@
 
     <div class="slider-container" id="slider">
         
-        <!-- СТРАНИЦА 1: ГЛАВНАЯ (ТОЛЬКО 3D И КНОПКА) -->
-        <!-- Добавлен класс page-no-scroll для блокировки свайпов и скролла -->
+        <!-- СТРАНИЦА 1: ГЛАВНАЯ (3D МОДЕЛЬ) -->
         <div class="page page-no-scroll" id="page-0">
             <div class="content-inner">
-<!-- 3D МОДЕЛЬ -->
-<model-viewer 
-    src="https://modelviewer.dev/shared-assets/models/Box.glb" 
-    alt="3D тест"
-    auto-rotate 
-    camera-controls 
-    shadow-intensity="1"
-    style="width: 100%; height: 60vh; background-color: transparent;">
-</model-viewer>
-
-
+                <!-- 3D МОДЕЛЬ ДОМА -->
+                <!-- Ссылка на надежный raw-файл домика -->
+                <model-viewer 
+                    src="https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/models/gltf/House/glTF-Binary/House.glb" 
+                    alt="3D модель дома"
+                    auto-rotate 
+                    camera-controls 
+                    shadow-intensity="1"
+                    environment-image="neutral"
+                    exposure="1"
+                    ar
+                    style="width: 100%; height: 100%; max-height: 70vh;">
+                    
+                    <!-- Сообщение, если модель не грузится -->
+                    <div slot="progress-bar"></div>
+                </model-viewer>
                 
                 <div class="model-btn-container">
                     <a href="#" class="btn-main pulse-effect" onclick="switchTab(1); vibrate(50)">Смотреть цены</a>
@@ -306,7 +325,7 @@
             </div>
         </div>
 
-        <!-- СТРАНИЦА 2: ЦЕНЫ (Обычный скролл и свайпы) -->
+        <!-- СТРАНИЦА 2: ЦЕНЫ -->
         <div class="page page-scroll" id="page-1">
             <div class="content-inner" style="justify-content: flex-start; padding-top: 20px;">
                 <h1>Стоимость услуг</h1>
@@ -340,7 +359,7 @@
             </div>
         </div>
 
-        <!-- СТРАНИЦА 3: КОНТАКТЫ (Обычный скролл и свайпы) -->
+        <!-- СТРАНИЦА 3: КОНТАКТЫ -->
         <div class="page page-scroll" id="page-2">
             <div class="content-inner">
                 <div class="logo-container pulse-effect">
@@ -381,7 +400,6 @@
             current = index;
             slider.style.transform = `translateX(-${current * 100}vw)`;
             
-            // Обновляем активную вкладку
             tabs.forEach((tab, i) => {
                 if (i === current) tab.classList.add('active');
                 else tab.classList.remove('active');
@@ -398,8 +416,8 @@
         let isDragging = false;
 
         document.addEventListener('touchstart', (e) => {
-            // Если мы на главной странице (индекс 0), игнорируем свайпы для переключения
-            // Чтобы можно было крутить 3D модель
+            // ЕСЛИ МЫ НА ГЛАВНОЙ (3D), ТО СВАЙПЫ ЗАБЛОКИРОВАНЫ ПОЛНОСТЬЮ
+            // Чтобы можно было крутить модель в любой точке экрана
             if (current === 0) return; 
             
             startX = e.touches[0].clientX;
@@ -421,6 +439,4 @@
     </script>
 </body>
 </html>
-
-
 
