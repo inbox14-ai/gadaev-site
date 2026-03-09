@@ -64,12 +64,13 @@
         }
         
         .model-btn-container { 
-            margin-top: auto; margin-bottom: 40px; 
+            margin-top: auto; 
+            margin-bottom: 60px; /* Опустили кнопку еще ниже для безопасности */
             width: 100%; display: flex; justify-content: center; 
             z-index: 2; pointer-events: auto; 
         }
 
-        /* ЛОГОТИП ФОТО */
+        /* ЛОГОТИП */
         .logo-container {
             width: 180px;
             height: 180px;
@@ -77,18 +78,10 @@
             border-radius: 50%;
             overflow: hidden;
             position: relative;
-            /* Легкая анимация появления */
             animation: fadeIn 1s ease-out;
         }
-        .logo {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
+        .logo { width: 100%; height: auto; display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
         h1 { font-size: 30px; font-weight: 700; margin: 10px 0 5px; text-transform: uppercase; letter-spacing: 1.5px; }
         p.subtitle { font-size: 18px; color: var(--text-sec); margin: 0 0 25px; text-transform: uppercase; font-weight: 400; letter-spacing: 0.5px; }
@@ -102,16 +95,20 @@
         .price-value { font-size: 18px; font-weight: 700; color: var(--price-color); white-space: nowrap; margin-left: 10px; }
         .price-desc { font-size: 13px; color: #888; line-height: 1.4; margin: 0; }
         
+        /* УНИВЕРСАЛЬНАЯ КНОПКА (Компактная) */
         .btn-main { 
             display: inline-flex; align-items: center; justify-content: center; 
-            min-width: 280px; max-width: 90%; 
-            padding: 18px 30px; margin: 0 auto; 
+            min-width: 260px; /* Фиксированная ширина, не во весь экран */
+            max-width: 90%; 
+            padding: 16px 24px; /* Чуть меньше отступы */
+            margin: 0 auto; 
             background: linear-gradient(180deg, var(--btn-bg-start), var(--btn-bg-end)); 
             color: #e0e0e0; text-decoration: none; 
-            border-radius: 50px; font-weight: 600; font-size: 16px; 
+            border-radius: 50px; font-weight: 600; font-size: 15px; /* Шрифт чуть меньше */
             text-transform: uppercase; border: 1px solid var(--btn-border); 
             box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
             white-space: nowrap; cursor: pointer; pointer-events: auto; 
+            letter-spacing: 1px;
         }
         .btn-main:active { transform: scale(0.95); opacity: 0.8; }
 
@@ -140,13 +137,58 @@
 
         .pulse-effect { animation: pulse-animation 2s infinite ease-in-out; }
         @keyframes pulse-animation { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* ЭКРАН ЗАГРУЗКИ */
+        #loading-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease-out;
+        }
+        .loading-text {
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: #fff;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+        .loading-bar-container {
+            width: 200px;
+            height: 2px;
+            background: #333;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+        .loading-bar {
+            height: 100%;
+            background: #fff;
+            width: 0%;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px #fff;
+        }
     </style>
 </head>
 <body>
 
+    <!-- ЭКРАН ЗАГРУЗКИ -->
+    <div id="loading-screen">
+        <div class="loading-text">WELCOME TO HOME</div>
+        <div class="loading-bar-container">
+            <div class="loading-bar" id="loading-bar"></div>
+        </div>
+    </div>
+
     <div class="tab-bar">
         <div class="tab-item active" onclick="switchTab(0)">Главная</div>
-        <div class="tab-item" onclick="switchTab(1)">Цены</div>
+        <div class="tab-item" onclick="switchTab(1)">Расчет</div>
         <div class="tab-item" onclick="switchTab(2)">Контакты</div>
     </div>
 
@@ -156,20 +198,22 @@
             <div class="content-inner">
                 <div id="canvas-container"></div>
                 <div class="model-btn-container">
-                    <a href="#" class="btn-main pulse-effect" onclick="switchTab(1); vibrate(50)">Смотреть цены</a>
+                    <a href="#" class="btn-main pulse-effect" onclick="switchTab(1); vibrate(50)">Расчет стоимости</a>
                 </div>
             </div>
         </div>
 
-        <!-- СТРАНИЦА 2: ЦЕНЫ -->
+        <!-- СТРАНИЦА 2: РАСЧЕТ (ЗАГЛУШКА) -->
         <div class="page page-scroll" id="page-1">
-            <div class="content-inner" style="justify-content: flex-start; padding-top: 20px;">
-                <h1>Стоимость услуг</h1>
-                <p class="subtitle">Прозрачные цены без скрытых доплат</p>
-                <div class="prices-list">
-                    <div class="price-card" onclick="vibrate(30)"><div class="price-header"><h3 class="price-title">Приемка квартиры</h3><span class="price-value">от 3 000 ₽</span></div><p class="price-desc">Полный осмотр, проверка геометрии, электрики и сантехники.</p></div>
-                    <div class="price-card" onclick="vibrate(30)"><div class="price-header"><h3 class="price-title">Тепловизор</h3><span class="price-value">от 5 000 ₽</span></div><p class="price-desc">Поиск утечек тепла и дефектов изоляции. Отчет с фото.</p></div>
-                    <div class="price-card" onclick="vibrate(30)"><div class="price-header"><h3 class="price-title">Экспертиза дома</h3><span class="price-value">Индивидуально</span></div><p class="price-desc">Комплексная проверка фундамента, стен и кровли.</p></div>
+            <div class="content-inner">
+                <h1>Калькулятор</h1>
+                <p class="subtitle">Онлайн оценка работ</p>
+                
+                <div style="margin-top: 40px;">
+                    <div class="btn-main" style="opacity: 0.5; cursor: default; transform: none;" onclick="vibrate(30)">
+                        Калькулятор расчета стоимости
+                    </div>
+                    <p class="placeholder" style="margin-top: 30px; font-size: 14px; color: #666;">Раздел в разработке</p>
                 </div>
             </div>
         </div>
@@ -209,6 +253,29 @@
     </div>
 
     <script>
+        // --- АНИМАЦИЯ ЗАГРУЗКИ ---
+        window.addEventListener('load', () => {
+            const bar = document.getElementById('loading-bar');
+            const screen = document.getElementById('loading-screen');
+            let width = 0;
+            
+            // Имитация загрузки
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    // Скрываем экран загрузки
+                    screen.style.opacity = '0';
+                    setTimeout(() => {
+                        screen.style.display = 'none';
+                        init3D(); // Запускаем 3D только после загрузки
+                    }, 800);
+                } else {
+                    width++;
+                    bar.style.width = width + '%';
+                }
+            }, 20); // Скорость загрузки
+        });
+
         function init3D() {
             const container = document.getElementById('canvas-container');
             if (!container) return;
@@ -217,7 +284,8 @@
             scene.background = new THREE.Color(0x000000);
 
             const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-            camera.position.set(6, 4, 6);
+            // Отодвинули камеру дальше, чтобы модель была меньше и влезала в экран
+            camera.position.set(8, 5, 8); 
 
             const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
@@ -233,12 +301,14 @@
 
             function createNeonLine(points, color) {
                 const geometry = new THREE.BufferGeometry().setFromPoints(points);
-                const material = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.9 });
+                // Сделали линии толще (linewidth работает не везде, но для Bloom важно)
+                const material = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 1.0, linewidth: 2 });
                 const line = new THREE.Line(geometry, material);
                 cubeGroup.add(line);
                 
+                // Усилили свечение (Glow)
                 const glowGeo = new THREE.BufferGeometry().setFromPoints(points);
-                const glowMat = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.3 });
+                const glowMat = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.5 });
                 const glow = new THREE.Line(glowGeo, glowMat);
                 glow.scale.set(1.1, 1.1, 1.1);
                 cubeGroup.add(glow);
@@ -287,8 +357,8 @@
             controls.autoRotate = true;
             controls.autoRotateSpeed = 1.5;
             controls.enableZoom = true;
-            controls.minDistance = 4;
-            controls.maxDistance = 15;
+            controls.minDistance = 5;
+            controls.maxDistance = 20;
             controls.enablePan = false;
 
             const renderScene = new THREE.RenderPass(scene, camera);
@@ -317,8 +387,6 @@
                 }
             });
         }
-
-        window.addEventListener('load', init3D);
 
         let current = 0;
         const slider = document.getElementById('slider');
