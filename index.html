@@ -7,8 +7,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Руслан Гадаев | Инженер ПГС</title>
     
-    <!-- Библиотека Google Model Viewer -->
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <!-- Подключаем Three.js для рисования 3D кодом -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Подключаем OrbitControls для вращения пальцами -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
     <style>
         :root {
@@ -57,7 +59,6 @@
             padding-bottom: 20px;
         }
 
-        /* Блокировка жестов на странице с 3D */
         .page-no-scroll {
             overflow: hidden;
             touch-action: none; 
@@ -82,23 +83,18 @@
             z-index: 2;
         }
 
-        /* --- 3D МОДЕЛЬ --- */
-        model-viewer {
+        /* КОНТЕЙНЕР ДЛЯ 3D (РИСУЕМ КОДОМ) */
+        #canvas-container {
             width: 100%;
-            height: 100%;
-            max-height: 75vh; /* Чуть больше места для интерьера */
-            background-color: transparent;
-            --poster-color: transparent;
-            outline: none;
-            --progress-bar-color: var(--price-color);
-            --progress-mask: transparent;
+            height: 70vh;
+            max-height: 500px;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 1;
-            /* Разрешаем вращать и зумить на весь экран */
-            touch-action: pan-x pan-y pinch-zoom; 
+            outline: none;
+            touch-action: none; /* Разрешаем вращать только здесь */
         }
         
         .model-btn-container {
@@ -243,20 +239,11 @@
 
     <div class="slider-container" id="slider">
         
-        <!-- СТРАНИЦА 1: ГЛАВНАЯ (3D ИНТЕРЬЕР КВАРТИРЫ) -->
+        <!-- СТРАНИЦА 1: ГЛАВНАЯ (3D ДОМ КОДОМ) -->
         <div class="page page-no-scroll" id="page-0">
             <div class="content-inner">
-                <!-- МОДЕЛЬ ИНТЕРЬЕРА -->
-                <model-viewer 
-                    src="https://modelviewer.dev/shared-assets/models/Interior.glb" 
-                    alt="3D интерьер квартиры"
-                    auto-rotate 
-                    camera-controls 
-                    shadow-intensity="1"
-                    environment-image="neutral"
-                    exposure="1"
-                    ar>
-                </model-viewer>
+                <!-- Сюда JavaScript вставит 3D дом -->
+                <div id="canvas-container"></div>
                 
                 <div class="model-btn-container">
                     <a href="#" class="btn-main pulse-effect" onclick="switchTab(1); vibrate(50)">Смотреть цены</a>
@@ -316,6 +303,108 @@
     </div>
 
     <script>
+        // --- 3D ЛОГИКА (РИСУЕМ ДОМ) ---
+        function init3D() {
+            const container = document.getElementById('canvas-container');
+            if (!container) return;
+
+            // Сцена
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000); // Черный фон
+
+            // Камера
+            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(5, 4, 5);
+
+            // Рендерер
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            // Свет
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(5, 10, 7);
+            dirLight.castShadow = true;
+            scene.add(dirLight);
+
+            // Группа дома
+            const houseGroup = new THREE.Group();
+
+            // 1. Стены (Куб)
+            const wallGeo = new THREE.BoxGeometry(2, 1.5, 2);
+            const wallMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.7 }); // Темно-серый бетон
+            const walls = new THREE.Mesh(wallGeo, wallMat);
+            walls.position.y = 0.75;
+            walls.castShadow = true;
+            houseGroup.add(walls);
+
+            // 2. Крыша (Пирамида)
+            const roofGeo = new THREE.ConeGeometry(1.6, 0.8, 4);
+            const roofMat = new THREE.MeshStandardMaterial({ color: 0x555555, roughness: 0.5 }); // Светлее
+            const roof = new THREE.Mesh(roofGeo, roofMat);
+            roof.position.y = 1.9;
+            roof.rotation.y = Math.PI / 4;
+            roof.castShadow = true;
+            houseGroup.add(roof);
+
+            // 3. Дверь (Черный прямоугольник)
+            const doorGeo = new THREE.PlaneGeometry(0.6, 0.9);
+            const doorMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+            const door = new THREE.Mesh(doorGeo, doorMat);
+            door.position.set(0, 0.45, 1.01);
+            houseGroup.add(door);
+
+            // 4. Окно (Светящийся квадрат)
+            const windowGeo = new THREE.PlaneGeometry(0.5, 0.5);
+            const windowMat = new THREE.MeshBasicMaterial({ color: 0x39FF14 }); // Кислотное окно
+            const win = new THREE.Mesh(windowGeo, windowMat);
+            win.position.set(-0.6, 1.0, 1.01);
+            houseGroup.add(win);
+            
+            // Второе окно с другой стороны
+            const win2 = win.clone();
+            win2.position.set(0.6, 1.0, 1.01);
+            houseGroup.add(win2);
+
+            scene.add(houseGroup);
+
+            // Управление (Вращение)
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 2.0;
+            controls.enableZoom = true;
+            controls.minDistance = 3;
+            controls.maxDistance = 10;
+
+            // Анимация
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Адаптив при изменении размера
+            window.addEventListener('resize', () => {
+                if (container.clientWidth > 0 && container.clientHeight > 0) {
+                    camera.aspect = container.clientWidth / container.clientHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(container.clientWidth, container.clientHeight);
+                }
+            });
+        }
+
+        // Запускаем 3D только когда страница загружена
+        window.addEventListener('load', init3D);
+
+
+        // --- ЛОГИКА ВКЛАДОК ---
         let current = 0;
         const slider = document.getElementById('slider');
         const tabs = document.querySelectorAll('.tab-item');
@@ -333,9 +422,10 @@
 
         function vibrate(ms) { if (navigator.vibrate) navigator.vibrate(ms); }
 
+        // Блокировка свайпов на главной (чтобы крутить дом)
         let startX = 0;
         document.addEventListener('touchstart', (e) => {
-            if (current === 0) return; // Блок свайпов на главной
+            if (current === 0) return; 
             startX = e.touches[0].clientX;
         }, { passive: true });
 
