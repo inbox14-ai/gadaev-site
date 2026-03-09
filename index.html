@@ -7,13 +7,33 @@
     <title>Руслан Гадаев | Инженер ПГС</title>
     <style>
         :root {
+            /* ТЕМНАЯ ТЕМА (ПО УМОЛЧАНИЮ) */
             --bg-color: #000000;
             --text-main: #ffffff;
             --text-sec: #666666;
-            /* Новый цвет кнопки - глубокий графит */
+            --card-bg: #1c1c1e;
             --btn-bg-start: #242424; 
             --btn-bg-end: #121212;
             --btn-border: #333333;
+            --btn-text: #e0e0e0;
+            --logo-filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+            --toggle-bg: #333;
+            --toggle-circle: #fff;
+        }
+
+        /* СВЕТЛАЯ ТЕМА */
+        body.light-mode {
+            --bg-color: #F2F2F7;
+            --text-main: #000000;
+            --text-sec: #8E8E93;
+            --card-bg: #FFFFFF;
+            --btn-bg-start: #ffffff; 
+            --btn-bg-end: #f0f0f0;
+            --btn-border: #d1d1d6;
+            --btn-text: #000000;
+            --logo-filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
+            --toggle-bg: #e5e5ea;
+            --toggle-circle: #ffffff;
         }
 
         html, body {
@@ -21,6 +41,7 @@
             height: 100%;
             position: fixed;
             width: 100%;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         body {
@@ -53,28 +74,26 @@
             align-items: center;
             justify-content: center;
             height: 100%;
+            transition: all 0.3s ease;
         }
         
-        /* Логотип */
         .logo-container {
-            position: relative;
-            display: inline-block;
-            margin: 0;
-            overflow: hidden;
-            border-radius: 50%;
-            pointer-events: none;
-        }
-        .logo {
-            width: 180px;
+            width: 200px;
             height: auto;
-            display: block;
-            border-radius: 50%;
-            position: relative;
-            z-index: 2;
-            vertical-align: bottom;
+            margin: 0 auto 15px;
+            pointer-events: none;
+            transition: filter 0.3s ease;
         }
 
-        /* Тексты */
+        .logo-svg {
+            width: 100%;
+            height: auto;
+            display: block;
+            fill: var(--text-main);
+            filter: var(--logo-filter);
+            transition: fill 0.3s ease, filter 0.3s ease;
+        }
+
         h1 {
             font-size: 30px;
             font-weight: 700;
@@ -82,6 +101,8 @@
             letter-spacing: 1.5px;
             text-transform: uppercase;
             line-height: 1.1;
+            transition: color 0.3s ease;
+            color: var(--text-main);
         }
         p.subtitle {
             font-size: 18px;
@@ -90,27 +111,26 @@
             font-weight: 400;
             letter-spacing: 0.5px;
             line-height: 1.2;
+            transition: color 0.3s ease;
         }
 
-        /* ГЛАВНАЯ КНОПКА (БАРХАТНЫЙ ГРАФИТ) */
         .btn-main {
-            display: inline-block;
+            display: inline-flex; /* Изменил на flex для идеального центрирования */
+            align-items: center;
+            justify-content: center; /* Центрирует текст по горизонтали */
             padding: 22px 32px;
             margin-bottom: 35px;
             margin-top: 5px;
-            /* Градиент для эффекта объема и бархата */
             background: linear-gradient(180deg, var(--btn-bg-start) 0%, var(--btn-bg-end) 100%);
-            color: #e0e0e0; /* Чуть мягче белого для гармонии */
+            color: var(--btn-text);
             text-decoration: none;
             border-radius: 50px;
-            font-weight: 300;
+            font-weight: 300; /* ВЕРНУЛ ТОНКИЙ ШРИФТ */
             font-size: 19px;
             letter-spacing: 1.2px;
             text-transform: uppercase;
-            /* Мягкая граница */
-            border: 1px solid #3a3a3a;
-            /* Тень для отделения от фона */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+            border: 1px solid var(--btn-border);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
             box-sizing: border-box;
             position: relative;
@@ -118,40 +138,29 @@
             z-index: 1;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
-            
             white-space: nowrap;
             line-height: 1.2;
+            min-width: 260px; /* Фиксируем минимальную ширину, чтобы не сплющивалась */
         }
         
         .btn-main:hover {
-            /* При наведении чуть светлее */
-            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
-            border-color: #4a4a4a;
-            color: #ffffff;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
         }
         .btn-main:active {
-            /* При нажатии эффект погружения */
-            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
-            border-color: #222222;
             transform: translateY(1px);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3), inset 0 2px 5px rgba(0,0,0,0.5);
-            color: #cccccc;
+            opacity: 0.8;
         }
 
-        /* БЛОК СВЯЗИ */
-        .contact-section {
-            margin-top: 0;
-            margin-bottom: 40px;
-        }
+        .contact-section { margin-top: 0; margin-bottom: 40px; transition: color 0.3s ease; }
         .contact-title {
             font-size: 18px;
-            font-weight: 300;
+            font-weight: 400;
             margin: 0 0 20px 0;
             letter-spacing: 0.5px;
             color: var(--text-main);
             text-transform: none;
+            transition: color 0.3s ease;
         }
         .icons-row {
             display: flex;
@@ -161,13 +170,13 @@
         }
         .contact-subtitle {
             font-size: 15px;
-            color: #555555;
+            color: var(--text-sec);
             margin: 0;
-            font-weight: 300;
+            font-weight: 400;
             letter-spacing: 0.5px;
+            transition: color 0.3s ease;
         }
 
-        /* ИКОНКИ-КНОПКИ */
         .icon-btn {
             display: flex;
             align-items: center;
@@ -177,7 +186,7 @@
             background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
             border-radius: 20px;
             text-decoration: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             position: relative;
             overflow: hidden;
@@ -186,94 +195,88 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        .icon-btn.phone {
-            background: linear-gradient(135deg, #34C759 0%, #30B34E 100%);
-        }
-        .icon-btn.mail {
-            background: linear-gradient(135deg, #FF9500 0%, #E68600 100%);
+        .icon-btn.phone { background: linear-gradient(135deg, #34C759 0%, #30B34E 100%); }
+        .icon-btn.mail { background: linear-gradient(135deg, #FF9500 0%, #E68600 100%); }
+
+        .icon-btn:hover { transform: scale(1.05); box-shadow: 0 6px 15px rgba(0,0,0,0.3); }
+        .icon-btn:active { transform: scale(0.95); filter: brightness(0.9); }
+
+        .icon-btn svg { width: 38px; height: 38px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
+
+        .footer { margin-top: 20px; font-size: 14px; color: var(--text-sec); pointer-events: none; transition: color 0.3s ease; }
+
+        /* --- ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ --- */
+        .theme-toggle-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            margin-top: env(safe-area-inset-top);
         }
 
-        .icon-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.6);
-        }
-        
-        .icon-btn:active {
-            transform: scale(1.0); 
-            filter: brightness(0.9);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-        }
-
-        .icon-btn svg {
-            width: 38px;
-            height: 38px;
-            fill: #ffffff;
+        .theme-toggle {
             position: relative;
-            z-index: 2;
-            pointer-events: none;
+            width: 50px;
+            height: 30px;
+            background-color: var(--toggle-bg);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.1);
         }
 
-        .footer {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #444444;
-            pointer-events: none;
-        }
-
-        /* --- ЭФФЕКТ FLASH (Сделал его едва заметным, чтобы не спорил с бархатом) --- */
-        .flash-effect::after {
+        .theme-toggle::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
-            transform: skewX(-25deg);
-            animation: flash 5s infinite; 
-            z-index: 3;
-            pointer-events: none;
+            top: 2px;
+            left: 2px;
+            width: 24px;
+            height: 24px;
+            background-color: var(--toggle-circle);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
         }
 
-        @keyframes flash {
-            0% { left: -100%; }
-            15% { left: 200%; }
-            100% { left: 200%; }
+        body.light-mode .theme-toggle::after {
+            transform: translateX(20px);
         }
+
     </style>
 </head>
 <body>
 
+    <div class="theme-toggle-container">
+        <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
+    </div>
+
     <div class="container">
-        <!-- Логотип -->
-        <div class="logo-container flash-effect">
-            <img src="logo.png" alt="Логотип" class="logo">
+        <div class="logo-container">
+            <svg class="logo-svg" viewBox="0 0 291.11 243.46" xmlns="http://www.w3.org/2000/svg">
+                <path d="m 489.39,550.55 c 0.1,-0.36 14.6,-54.9 32.22,-121.21 17.62,-66.31 32.12,-120.84 32.22,-121.19 0.18,-0.6 4.74,-0.62 97.3,-0.52 l 97.11,0.1 2.79,0.79 c 7.36,2.08 13.02,5.24 17.85,9.98 5.31,5.21 9.05,11.9 10.72,19.2 1,4.34 1.07,11.52 0.15,15.81 -0.9,4.22 -13.51,51.49 -14.61,54.76 -1.08,3.21 -3.84,9.15 -5.65,12.18 -4.23,7.06 -11.63,15.11 -18.09,19.68 -6.17,4.36 -13.4,7.8 -20.49,9.74 -7.96,2.18 -9.48,2.28 -36.11,2.28 l -23.99,0 -28.42,16.4 c -15.63,9.02 -28.44,16.38 -28.47,16.35 -0.03,-0.03 4.75,-18.11 10.61,-40.18 l 10.67,-40.13 46.55,-0.09 c 43.95,-0.09 46.56,-0.12 46.73,-0.71 0.91,-3.13 12.59,-47.4 12.59,-47.73 0,-0.35 -14.68,-0.42 -70.94,-0.35 l -70.94,0.09 -21.5,80.96 c -11.82,44.53 -21.62,81.18 -21.78,81.44 -0.2,0.34 -49.75,29.18 -56.08,32.64 -0.54,0.3 -0.62,0.25 -0.46,-0.29 z" 
+                      transform="translate(-489.30485,-307.57555)" 
+                      fill="currentColor"/>
+            </svg>
         </div>
         
-        <!-- Заголовок -->
         <h1>РУСЛАН ГАДАЕВ</h1>
         <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
 
-        <!-- Кнопка -->
-        <a href="contact.vcf" class="btn-main flash-effect" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТЫ</a>
+        <a href="contact.vcf" class="btn-main" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТЫ</a>
 
-        <!-- БЛОК СВЯЗИ -->
         <div class="contact-section">
             <div class="contact-title">Связаться сейчас:</div>
             
             <div class="icons-row">
-                <!-- Telegram -->
-                <a href="https://t.me/ruslan_gadaev" class="icon-btn flash-effect" target="_blank" onclick="vibrate(30)">
+                <a href="https://t.me/ruslan_gadaev" class="icon-btn" target="_blank" onclick="vibrate(30)">
                     <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.116.033.378.018.58z"/></svg>
                 </a>
 
-                <!-- Телефон -->
-                <a href="tel:+79777075755" class="icon-btn phone flash-effect" onclick="vibrate(30)">
+                <a href="tel:+79777075755" class="icon-btn phone" onclick="vibrate(30)">
                     <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
                 </a>
 
-                <!-- Почта -->
-                <a href="mailto:ruslan@gadaev.pro" class="icon-btn mail flash-effect" onclick="vibrate(30)">
+                <a href="mailto:ruslan@gadaev.pro" class="icon-btn mail" onclick="vibrate(30)">
                     <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
                 </a>
             </div>
@@ -287,6 +290,20 @@
     </div>
 
     <script>
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            vibrate(20);
+        }
+
+        window.addEventListener('load', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            }
+        });
+
         function vibrate(duration) {
             if (navigator.vibrate) {
                 navigator.vibrate(duration);
