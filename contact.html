@@ -20,7 +20,7 @@
             --toggle-circle: #fff;
             
             /* Цвета панели вкладок (Темная) */
-            --tab-bg: rgba(30, 30, 30, 0.7);
+            --tab-bg: rgba(30, 30, 30, 0.85); /* Чуть плотнее для низа */
             --tab-border: rgba(255,255,255,0.08);
             --tab-text: #888888;
             --tab-text-active: #ffffff;
@@ -42,7 +42,7 @@
             --toggle-circle: #ffffff;
 
             /* Цвета панели вкладок (Светлая) */
-            --tab-bg: rgba(255, 255, 255, 0.8);
+            --tab-bg: rgba(255, 255, 255, 0.9);
             --tab-border: rgba(0,0,0,0.05);
             --tab-text: #888888;
             --tab-text-active: #000000;
@@ -77,7 +77,8 @@
         .container {
             width: 90%;
             max-width: 480px;
-            padding: 0 20px 20px 20px;
+            /* Увеличил нижний отступ, чтобы контент не наезжал на нижнюю панель */
+            padding: 0 20px 100px 20px; 
             position: relative;
             z-index: 1;
             box-sizing: border-box;
@@ -183,19 +184,26 @@
         .icon-btn:active { transform: scale(0.95); filter: brightness(0.9); }
         .icon-btn svg { width: 38px; height: 38px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
 
-        .footer { margin-top: 20px; font-size: 14px; color: var(--text-sec); pointer-events: none; transition: color 0.3s ease; }
+        /* ТЕПЕРЬ FOOTER ВНИЗУ */
+        .footer { 
+            margin-top: auto; 
+            font-size: 13px; 
+            color: var(--text-sec); 
+            pointer-events: none; 
+            transition: color 0.3s ease; 
+            padding-bottom: 10px;
+        }
 
-        /* --- КОМПАКТНАЯ ПАНЕЛЬ ВКЛАДОК --- */
+        /* --- НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК --- */
         .tab-bar { 
             position: fixed; 
-            top: 15px; 
+            /* Переместили вниз */
+            bottom: 15px; 
             left: 50%; 
             transform: translateX(-50%); 
-            /* Очень компактные размеры */
             height: 38px; 
             max-width: 300px; 
             width: 90%; 
-            /* Динамические цвета */
             background: var(--tab-bg); 
             backdrop-filter: blur(20px); 
             -webkit-backdrop-filter: blur(20px);
@@ -205,11 +213,12 @@
             justify-content: space-around; 
             align-items: center; 
             z-index: 1000; 
-            margin-top: env(safe-area-inset-top); 
+            /* Убрали margin-top, добавили margin-bottom для безопасной зоны */
+            margin-bottom: env(safe-area-inset-bottom);
             pointer-events: auto; 
             transition: background-color 0.3s ease, border-color 0.3s ease;
             padding: 0 3px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         .tab-link {
@@ -219,7 +228,7 @@
             align-items: center;
             justify-content: center;
             color: var(--tab-text);
-            font-size: 12px; /* Чуть меньше для компактности */
+            font-size: 12px;
             font-weight: 500;
             text-transform: uppercase;
             text-decoration: none;
@@ -231,15 +240,12 @@
             letter-spacing: 0.5px;
         }
 
-        /* Активная вкладка */
         .tab-link.active {
             color: var(--tab-text-active);
             background: var(--tab-bg-active);
             font-weight: 600;
-            transform: scale(1.0);
         }
 
-        /* Ховер эффект (для мыши и тача) */
         @media (hover: hover) {
             .tab-link:hover {
                 background: var(--tab-hover);
@@ -251,20 +257,19 @@
             background: var(--tab-bg-active);
         }
 
-        /* --- ТУМБЛЕР ТЕМЫ (ОПУЩЕН НИЖЕ) --- */
+        /* --- ТУМБЛЕР ТЕМЫ (ВЕРНУЛИ НАВЕРХ) --- */
         .theme-toggle-container {
             position: fixed;
-            /* Опустили ниже, чтобы не наезжал на панель (38px + отступы) */
-            top: 65px; 
-            right: 15px;
-            z-index: 999;
+            top: 20px; /* Вернули наверх */
+            right: 20px;
+            z-index: 1001; /* Поверх всего */
             margin-top: env(safe-area-inset-top);
             transition: top 0.3s ease;
         }
 
         .theme-toggle {
             position: relative;
-            width: 44px; /* Чуть компактнее сам тумблер */
+            width: 44px;
             height: 26px;
             background-color: var(--toggle-bg);
             border-radius: 30px;
@@ -294,16 +299,9 @@
 </head>
 <body>
 
-    <!-- ТУМБЛЕР ТЕМЫ -->
+    <!-- ТУМБЛЕР ТЕМЫ (СВЕРХУ) -->
     <div class="theme-toggle-container">
         <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
-    </div>
-
-    <!-- ПАНЕЛЬ ВКЛАДОК -->
-    <div class="tab-bar">
-        <a href="https://gadaev.pro" class="tab-link" id="link-home">Главная</a>
-        <a href="https://gadaev.pro/calculation" class="tab-link" id="link-calc">Расчет</a>
-        <a href="https://gadaev.pro/contact" class="tab-link" id="link-contact">Контакты</a>
     </div>
 
     <div class="container">
@@ -335,35 +333,30 @@
             </div>
             <p class="contact-subtitle">Выберите удобный способ связи</p>
         </div>
+        
+        <!-- Текст теперь внизу, но над панелью вкладок -->
         <div class="footer">с 2015 года | Gadaev.pro</div>
     </div>
 
+    <!-- ПАНЕЛЬ ВКЛАДОК (ВНИЗУ) -->
+    <div class="tab-bar">
+        <a href="https://gadaev.pro" class="tab-link" id="link-home">Главная</a>
+        <a href="https://gadaev.pro/calculation" class="tab-link" id="link-calc">Расчет</a>
+        <a href="https://gadaev.pro/contact" class="tab-link" id="link-contact">Контакты</a>
+    </div>
+
     <script>
-        // Логика подсветки вкладок
         document.addEventListener('DOMContentLoaded', () => {
             const path = window.location.pathname;
             const links = document.querySelectorAll('.tab-link');
-            
-            // Сбрасываем все
             links.forEach(el => el.classList.remove('active'));
 
-            // Логика: если путь содержит contact ИЛИ если это корень (главная страница сайта, но мы хотим контакты по умолчанию?)
-            // По твоему запросу: "Должна подсвечиваться вкладка контакты".
-            // Обычно на странице contact.html должна гореть Контакты.
-            
-            if (path.includes('/contact') || path === '/' && location.href.includes('contact')) {
+            if (path.includes('/contact') || path.endsWith('contact.html') || path.endsWith('contact')) {
                 document.getElementById('link-contact').classList.add('active');
             } else if (path.includes('/calculation')) {
                 document.getElementById('link-calc').classList.add('active');
             } else {
-                // Для главной страницы
                 document.getElementById('link-home').classList.add('active');
-            }
-            
-            // Хак: если файл называется contact.html, то всегда подсвечиваем контакты
-            if (location.pathname.endsWith('contact.html') || location.pathname.endsWith('contact')) {
-                 links.forEach(el => el.classList.remove('active'));
-                 document.getElementById('link-contact').classList.add('active');
             }
         });
 
