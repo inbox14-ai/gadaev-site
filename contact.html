@@ -77,8 +77,8 @@
         .container {
             width: 90%;
             max-width: 480px;
-            /* Отступ снизу теперь больше, так как внизу панель + текст */
-            padding: 0 20px 120px 20px; 
+            /* Отступ снизу увеличен под новую высоту панели */
+            padding: 0 20px 130px 20px; 
             position: relative;
             z-index: 1;
             box-sizing: border-box;
@@ -184,21 +184,19 @@
         .icon-btn:active { transform: scale(0.95); filter: brightness(0.9); }
         .icon-btn svg { width: 38px; height: 38px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
 
-        /* Убрали footer из контейнера, теперь он отдельный блок */
-
-        /* --- НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК --- */
+        /* --- НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК (БОЛЬШЕ И ВЫШЕ) --- */
         .tab-bar { 
             position: fixed; 
-            bottom: 25px; /* Чуть выше, чтобы оставить место для текста */
+            bottom: 40px; /* Подняли выше */
             left: 50%; 
             transform: translateX(-50%); 
-            height: 38px; 
-            max-width: 300px; 
+            height: 42px; /* Чуть выше сама панель */
+            max-width: 340px; /* Растянули шире, но не на весь экран */
             width: 90%; 
             background: var(--tab-bg); 
             backdrop-filter: blur(20px); 
             -webkit-backdrop-filter: blur(20px);
-            border-radius: 19px; 
+            border-radius: 21px; /* Пропорционально высоте */
             border: 1px solid var(--tab-border); 
             display: flex; 
             justify-content: space-around; 
@@ -207,7 +205,7 @@
             margin-bottom: env(safe-area-inset-bottom);
             pointer-events: auto; 
             transition: background-color 0.3s ease, border-color 0.3s ease;
-            padding: 0 3px;
+            padding: 0 4px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
@@ -218,22 +216,22 @@
             align-items: center;
             justify-content: center;
             color: var(--tab-text);
-            font-size: 12px;
-            font-weight: 500;
+            font-size: 13px; /* Увеличили шрифт */
+            font-weight: 400; /* Оставили тонким */
             text-transform: uppercase;
             text-decoration: none;
-            border-radius: 16px;
+            border-radius: 18px;
             transition: all 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
             pointer-events: auto;
             cursor: pointer;
-            padding: 0 4px;
-            letter-spacing: 0.5px;
+            padding: 0 6px;
+            letter-spacing: 0.6px; /* Чуть больше воздуха между буквами */
         }
 
         .tab-link.active {
             color: var(--tab-text-active);
             background: var(--tab-bg-active);
-            font-weight: 600;
+            font-weight: 500; /* Чуть жирнее только активная */
         }
 
         @media (hover: hover) {
@@ -247,19 +245,23 @@
             background: var(--tab-bg-active);
         }
 
-        /* --- ТЕКСТ В САМОМ НИЗУ --- */
+        /* --- ТЕКСТ ВНИЗУ (БОЛЬШЕ ВОЗДУХА) --- */
         .bottom-footer {
             position: fixed;
-            bottom: 8px; /* Самый низ, почти у края */
+            bottom: 12px; /* Подняли пропорционально панели */
             left: 0;
             width: 100%;
             text-align: center;
-            font-size: 12px;
+            font-size: 12px; /* Размер не меняли */
             color: var(--text-sec);
-            z-index: 999; /* Ниже панели вкладок */
+            z-index: 999;
             pointer-events: none;
             transition: color 0.3s ease;
             padding-bottom: env(safe-area-inset-bottom);
+            /* Добавили воздуха */
+            line-height: 1.6; 
+            letter-spacing: 0.5px;
+            opacity: 0.8;
         }
 
         /* --- ТУМБЛЕР ТЕМЫ (СВЕРХУ) --- */
