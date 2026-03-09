@@ -42,8 +42,9 @@
             align-items: center; justify-content: center; 
             box-sizing: border-box; 
             position: relative; 
+            /* Убрали верхний паддинг, он теперь только у контента */
             padding-top: env(safe-area-inset-top); 
-            padding-bottom: 20px;
+            padding-bottom: 0; 
         }
         .page-no-scroll { overflow: hidden; touch-action: none; }
         .page-scroll { overflow-y: auto; touch-action: pan-y; }
@@ -61,13 +62,13 @@
             width: 100%; height: 100%; 
             position: absolute; top: 0; left: 0; 
             z-index: 1; outline: none; 
-            /* Разрешаем тач для вращения модели */
             touch-action: none; 
         }
         
         .model-btn-container { 
             margin-top: auto; 
-            margin-bottom: 80px; /* ЕЩЕ НИЖЕ для безопасности на всех экранах */
+            /* ОТСТУП СНИЗУ КАК У МЕНЮ СВЕРХУ (10px + безопасная зона) */
+            margin-bottom: calc(10px + env(safe-area-inset-bottom)); 
             width: 100%; display: flex; justify-content: center; 
             z-index: 2; pointer-events: auto; 
         }
@@ -140,7 +141,7 @@
         .pulse-effect { animation: pulse-animation 2s infinite ease-in-out; }
         @keyframes pulse-animation { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* ЭКРАН ЗАГРУЗКИ С ТЕКСТОМ И ЦИФРАМИ */
+        /* ЭКРАН ЗАГРУЗКИ */
         #loading-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -151,7 +152,7 @@
             align-items: center;
             justify-content: center;
             transition: opacity 0.8s ease-out;
-            pointer-events: none; /* Чтобы клики проходили сквозь после исчезновения */
+            pointer-events: none;
         }
         .loading-text {
             font-size: 16px;
@@ -210,9 +211,9 @@
             </div>
         </div>
 
-        <!-- СТРАНИЦА 3: КОНТАКТЫ (С БОЛЬШИМ ОТСТУПОМ СНИЗУ) -->
+        <!-- СТРАНИЦА 3: КОНТАКТЫ -->
         <div class="page page-scroll" id="page-2">
-            <div class="content-inner" style="padding-bottom: 60px;"> <!-- Добавил отступ снизу -->
+            <div class="content-inner">
                 <!-- ЛОГОТИП ФОТО -->
                 <div class="logo-container">
                     <img src="logo.png" alt="Логотип Руслан Гадаев" class="logo">
@@ -245,7 +246,7 @@
     </div>
 
     <script>
-        // --- АНИМАЦИЯ ЗАГРУЗКИ С ЦИФРАМИ ---
+        // --- АНИМАЦИЯ ЗАГРУЗКИ ---
         window.addEventListener('load', () => {
             const percentEl = document.getElementById('loading-percent');
             const screen = document.getElementById('loading-screen');
@@ -257,13 +258,13 @@
                     screen.style.opacity = '0';
                     setTimeout(() => {
                         screen.style.display = 'none';
-                        init3D(); // Запуск 3D
+                        init3D();
                     }, 800);
                 } else {
                     count++;
                     percentEl.innerText = count + '%';
                 }
-            }, 20); // Скорость бега цифр
+            }, 20);
         });
 
         function init3D() {
@@ -338,7 +339,6 @@
             createNeonLine([new THREE.Vector3(1, -1, -1), new THREE.Vector3(-1, 1, 1)], colorPink);
             createNeonLine([new THREE.Vector3(-1.5, 0, -1.5), new THREE.Vector3(1.5, 0, 1.5)], colorOrange);
 
-            // Управление камерой (ВРАЩЕНИЕ И ЗУМ РАБОТАЮТ)
             const controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
             controls.dampingFactor = 0.05;
