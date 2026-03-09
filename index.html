@@ -7,9 +7,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Руслан Гадаев | Инженер ПГС</title>
     
-    <!-- Библиотеки Three.js -->
+    <!-- Three.js и инструменты -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <!-- Эффекты свечения -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
@@ -120,7 +122,6 @@
     </div>
 
     <script>
-        // --- ИНЖЕНЕРНЫЙ КОД: ПОСТРОЕНИЕ ДОМА С НУЛЯ ---
         function init3D() {
             const container = document.getElementById('canvas-container');
             if (!container) return;
@@ -130,7 +131,7 @@
             scene.fog = new THREE.FogExp2(0x000000, 0.02);
 
             const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-            camera.position.set(10, 6, 10);
+            camera.position.set(8, 5, 8);
 
             const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
@@ -138,129 +139,64 @@
             container.appendChild(renderer.domElement);
 
             const neonColor = 0x0088ff; // Синий неон
-            const lineMaterial = new THREE.LineBasicMaterial({ color: neonColor, transparent: true, opacity: 0.6 });
-            const glassMaterial = new THREE.MeshBasicMaterial({ color: neonColor, wireframe: true, transparent: true, opacity: 0.15 });
 
-            const houseGroup = new THREE.Group();
-            scene.add(houseGroup);
+            // ЗАГРУЗКА МОДЕЛИ С ДРУГОГО СЕРВЕРА
+            const loader = new THREE.GLTFLoader();
+            // Используем модель "DamagedHelmet" как временную, но покрашенную в синий
+            // Или попробуем другую модель дома
+            loader.load('https://threejs.org/examples/models/gltf/House/glTF-Binary/House.glb', function (gltf) {
+                const model = gltf.scene;
+                
+                model.traverse((o) => {
+                    if (o.isMesh) {
+                        o.material = new THREE.MeshBasicMaterial({ 
+                            color: neonColor, 
+                            wireframe: true,
+                            transparent: true,
+                            opacity: 0.3
+                        });
+                    }
+                });
 
-            // --- ФУНКЦИИ ДЛЯ СТРОИТЕЛЬСТВА ---
-            
-            // Создает каркас (edges) из любой геометрии
-            function createWireframe(geometry, position = {x:0, y:0, z:0}, rotation = {x:0, y:0, z:0}, scale = {x:1, y:1, z:1}) {
-                const edges = new THREE.EdgesGeometry(geometry);
-                const line = new THREE.LineSegments(edges, lineMaterial);
-                line.position.set(position.x, position.y, position.z);
-                line.rotation.set(rotation.x, rotation.y, rotation.z);
-                line.scale.set(scale.x, scale.y, scale.z);
-                houseGroup.add(line);
+                model.scale.set(1.5, 1.5, 1.5);
+                scene.add(model);
 
-                // Добавляем прозрачную грань для эффекта объема (стекло)
-                const mesh = new THREE.Mesh(geometry, glassMaterial);
-                mesh.position.copy(line.position);
-                mesh.rotation.copy(line.rotation);
-                mesh.scale.copy(line.scale);
-                houseGroup.add(mesh);
-            }
+            }, undefined, function (error) {
+                console.error('Ошибка загрузки модели');
+                // Если ошибка, создадим простую модель куба вместо дома
+                const geo = new THREE.BoxGeometry(4, 4, 4);
+                const edges = new THREE.EdgesGeometry(geo);
+                const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: neonColor }));
+                scene.add(line);
+                
+                const div = document.createElement('div');
+                div.style.color = '#666';
+                div.style.position = 'absolute';
+                div.style.bottom = '20px';
+                div.innerText = 'Модель загружается...';
+                container.appendChild(div);
+            });
 
-            // 1. ПОЛ (СЕТКА)
-            const gridHelper = new THREE.GridHelper(30, 30, neonColor, 0x111111);
+            // ПОЛ
+            const gridHelper = new THREE.GridHelper(20, 20, neonColor, 0x111111);
             scene.add(gridHelper);
-
-            // 2. ОСНОВАНИЕ ДОМА (ПЕРВЫЙ ЭТАЖ)
-            // Основной корпус
-            createWireframe(new THREE.BoxGeometry(6, 3, 8), {x: 0, y: 1.5, z: 0});
-            
-            // Эркер спереди (выступ)
-            createWireframe(new THREE.BoxGeometry(2, 3, 2), {x: 0, y: 1.5, z: 4.5});
-
-            // Гараж справа
-            createWireframe(new THREE.BoxGeometry(3, 2.5, 5), {x: 4.5, y: 1.25, z: -1});
-            // Ворота гаража (детализация)
-            for(let i=0; i<=5; i++) {
-                createWireframe(new THREE.PlaneGeometry(3, 0.1), {x: 4.5, y: 0.5 + (i*0.4), z: 1.51});
-            }
-
-            // 3. ВТОРОЙ ЭТАЖ И МАНСАРДА
-            // Стены второго этажа (центр)
-            createWireframe(new THREE.BoxGeometry(4, 2, 6), {x: 0, y: 4, z: 0});
-            
-            // Стены второго этажа (над эркером)
-            createWireframe(new THREE.BoxGeometry(2, 2, 2), {x: 0, y: 4, z: 4.5});
-
-            // Балкон спереди
-            createWireframe(new THREE.BoxGeometry(2.4, 0.1, 1.5), {x: 0, y: 3, z: 5.2});
-            // Перила балкона
-            createWireframe(new THREE.TorusGeometry(1.2, 0.05, 8, 20, Math.PI), {x: 0, y: 3.5, z: 5.2}, {x: Math.PI/2, y: 0, z: 0});
-
-
-            // 4. КРЫША (СЛОЖНАЯ ФОРМА)
-            // Основная двускатная крыша над центром
-            // Используем призму (Cylinder с 4 гранями) повернутую на бок
-            const roofGeo = new THREE.CylinderGeometry(3.5, 3.5, 8, 4, 1);
-            // Поворачиваем и сплющиваем, чтобы получить скаты
-            createWireframe(roofGeo, {x: 0, y: 6, z: 0}, {x: 0, y: 0, z: Math.PI/4}, {x: 1, y: 0.6, z: 1});
-
-            // Крыша над эркером (меньший скат)
-            const smallRoofGeo = new THREE.CylinderGeometry(2, 2, 2.5, 4, 1);
-            createWireframe(smallRoofGeo, {x: 0, y: 5.5, z: 4.5}, {x: 0, y: 0, z: Math.PI/4}, {x: 1, y: 0.6, z: 1});
-
-            // Крыша над гаражом (односкатная имитация через повернутый куб)
-            createWireframe(new THREE.BoxGeometry(3, 0.1, 5), {x: 4.5, y: 4, z: -1}, {x: -0.2, y: 0, z: 0});
-            
-            // Фронтоны (треугольники по бокам крыши) - детализация
-            const triShape = new THREE.Shape();
-            triShape.moveTo(0, 0); triShape.lineTo(2, 3); triShape.lineTo(4, 0); triShape.lineTo(0, 0);
-            const triGeo = new THREE.ShapeGeometry(triShape);
-            createWireframe(triGeo, {x: -2.05, y: 4.5, z: 0}, {y: Math.PI/2});
-            createWireframe(triGeo, {x: 2.05, y: 4.5, z: 0}, {y: -Math.PI/2});
-
-            // 5. ОКНА И ДВЕРИ (ДЕТАЛИЗАЦИЯ СЕTKИ)
-            // Окна первого этажа
-            const win1Geo = new THREE.PlaneGeometry(1.2, 1.5);
-            createWireframe(win1Geo, {x: 3.01, y: 1.5, z: 0}, {y: Math.PI/2}); // Право
-            createWireframe(win1Geo, {x: -3.01, y: 1.5, z: 0}, {y: -Math.PI/2}); // Лево
-            createWireframe(win1Geo, {x: 0, y: 1.5, z: 8.01}); // Спереди (эркер)
-
-            // Дверь
-            const doorGeo = new THREE.PlaneGeometry(1, 2);
-            createWireframe(doorGeo, {x: 1.5, y: 1, z: 8.01});
-
-            // Окна второго этажа
-            const win2Geo = new THREE.PlaneGeometry(1, 1.2);
-            createWireframe(win2Geo, {x: 2.01, y: 4, z: 0}, {y: Math.PI/2});
-            createWireframe(win2Geo, {x: -2.01, y: 4, z: 0}, {y: -Math.PI/2});
-            
-            // Окно мансарды (слуховое)
-            createWireframe(win2Geo, {x: 0, y: 5.5, z: 3.5}, {x: -0.5, y: 0, z: 0});
-
-            // Вертикальные линии углов (для усиления эффекта чертежа)
-            function addCorner(x, z, h) {
-                const lineGeo = new THREE.BufferGeometry().setFromPoints([
-                    new THREE.Vector3(x, 0, z), new THREE.Vector3(x, h, z)
-                ]);
-                houseGroup.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({color: neonColor, opacity: 1})));
-            }
-            addCorner(3, 4, 3); addCorner(-3, 4, 3);
-            addCorner(3, -4, 3); addCorner(-3, -4, 3);
 
             // УПРАВЛЕНИЕ
             const controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
             controls.dampingFactor = 0.05;
             controls.autoRotate = true;
-            controls.autoRotateSpeed = 0.5;
+            controls.autoRotateSpeed = 1.0;
             controls.enableZoom = true;
             controls.minDistance = 5;
-            controls.maxDistance = 25;
-            controls.enablePan = false;
+            controls.maxDistance = 20;
 
-            // BLOOM (СВЕЧЕНИЕ)
+            // СИЛЬНОЕ СВЕЧЕНИЕ (BLOOM)
             const renderScene = new THREE.RenderPass(scene, camera);
             const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
             bloomPass.threshold = 0;
-            bloomPass.strength = 1.8; // Мощное свечение
-            bloomPass.radius = 0.9;
+            bloomPass.strength = 2.0;
+            bloomPass.radius = 0.8;
 
             const composer = new THREE.EffectComposer(renderer);
             composer.addPass(renderScene);
@@ -285,7 +221,6 @@
 
         window.addEventListener('load', init3D);
 
-        // ЛОГИКА ВКЛАДОК
         let current = 0;
         const slider = document.getElementById('slider');
         const tabs = document.querySelectorAll('.tab-item');
@@ -310,4 +245,3 @@
     </script>
 </body>
 </html>
-
