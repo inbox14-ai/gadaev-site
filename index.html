@@ -42,6 +42,7 @@
             align-items: center; justify-content: center; 
             box-sizing: border-box; 
             position: relative; 
+            /* Убрали паддинг, теперь он только у контента внутри */
             padding-top: env(safe-area-inset-top); 
             padding-bottom: 0; 
         }
@@ -71,18 +72,25 @@
             z-index: 2; pointer-events: auto; 
         }
 
-        /* ЛОГОТИП */
+        /* ЛОГОТИП И АНИМАЦИЯ */
         .logo-container {
             width: 180px;
             height: 180px;
-            margin: 0 auto 15px;
+            /* Отступ сверху для логотипа на странице контактов (симметрия) */
+            margin: 0 auto 15px; 
             border-radius: 50%;
             overflow: hidden;
             position: relative;
-            animation: fadeIn 1s ease-out;
+            /* Применяем анимацию появления */
+            animation: fadeInLogo 1.2s ease-out forwards;
         }
         .logo { width: 100%; height: auto; display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        
+        /* Анимация плавного появления (как при загрузке) */
+        @keyframes fadeInLogo {
+            from { opacity: 0; transform: scale(0.9); filter: brightness(0.5); }
+            to { opacity: 1; transform: scale(1); filter: brightness(1); }
+        }
 
         h1 { font-size: 30px; font-weight: 700; margin: 10px 0 5px; text-transform: uppercase; letter-spacing: 1.5px; }
         p.subtitle { font-size: 18px; color: var(--text-sec); margin: 0 0 25px; text-transform: uppercase; font-weight: 400; letter-spacing: 0.5px; }
@@ -139,7 +147,7 @@
         .pulse-effect { animation: pulse-animation 2s infinite ease-in-out; }
         @keyframes pulse-animation { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* ЭКРАН ЗАГРУЗКИ С ЛОГОТИПОМ И ЦИФРАМИ */
+        /* ЭКРАН ЗАГРУЗКИ */
         #loading-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -152,31 +160,29 @@
             transition: opacity 0.8s ease-out;
             pointer-events: none;
         }
-        /* Логотип при загрузке */
         .loading-logo {
             width: 180px;
             height: 180px;
             border-radius: 50%;
             object-fit: cover;
             margin-bottom: 40px;
-            opacity: 0; /* Сначала невидим */
+            opacity: 0;
             transform: scale(0.8);
-            animation: logoAppear 2s ease-out forwards; /* Анимация появления */
+            animation: logoAppear 2s ease-out forwards;
         }
         @keyframes logoAppear {
             0% { opacity: 0; transform: scale(0.8); filter: brightness(0); }
             100% { opacity: 1; transform: scale(1); filter: brightness(1); }
         }
-        /* Цифры загрузки */
         .loading-percent {
             font-size: 24px;
-            font-weight: 100; /* Очень тонкий шрифт */
+            font-weight: 100;
             color: #fff;
             font-variant-numeric: tabular-nums;
             letter-spacing: 2px;
             opacity: 0.8;
             position: absolute;
-            bottom: 15%; /* Смещаем вниз */
+            bottom: 15%;
         }
     </style>
 </head>
@@ -184,9 +190,7 @@
 
     <!-- ЭКРАН ЗАГРУЗКИ -->
     <div id="loading-screen">
-        <!-- Логотип появляется из темноты -->
         <img src="logo.png" alt="Logo" class="loading-logo">
-        <!-- Цифры внизу -->
         <div class="loading-percent" id="loading-percent">0%</div>
     </div>
 
@@ -225,7 +229,7 @@
         <!-- СТРАНИЦА 3: КОНТАКТЫ -->
         <div class="page page-scroll" id="page-2">
             <div class="content-inner">
-                <!-- ЛОГОТИП ФОТО -->
+                <!-- ЛОГОТИП С АНИМАЦИЕЙ -->
                 <div class="logo-container">
                     <img src="logo.png" alt="Логотип Руслан Гадаев" class="logo">
                 </div>
@@ -266,17 +270,16 @@
             const interval = setInterval(() => {
                 if (count >= 100) {
                     clearInterval(interval);
-                    // Плавное исчезновение экрана загрузки
                     screen.style.opacity = '0';
                     setTimeout(() => {
                         screen.style.display = 'none';
-                        init3D(); // Запуск 3D модели
+                        init3D();
                     }, 800);
                 } else {
                     count++;
                     percentEl.innerText = count + '%';
                 }
-            }, 20); // Скорость загрузки (20мс на 1%)
+            }, 20);
         });
 
         function init3D() {
