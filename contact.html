@@ -57,7 +57,6 @@
         }
 
         html, body {
-            /* Изначально разрешаем скролл для загрузки */
             overflow-x: hidden;
             overflow-y: auto; 
             height: auto;
@@ -72,7 +71,6 @@
             -webkit-user-select: none;
             user-select: none;
             overscroll-behavior: none;
-            /* Плавная прокрутка для автоскролла */
             scroll-behavior: smooth; 
         }
 
@@ -386,7 +384,6 @@
         <h1>РУСЛАН ГАДАЕВ</h1>
         <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
 
-        <!-- Добавил ID кнопке для скрипта -->
         <a href="contact.vcf" id="main-btn" class="btn-main" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТЫ</a>
 
         <div class="contact-section">
@@ -424,41 +421,41 @@
             const btn = document.getElementById('main-btn');
             
             if (btn) {
-                // Ждем немного, чтобы браузер точно отрисовал элементы
                 setTimeout(() => {
-                    // Получаем позицию кнопки относительно верха документа
-                    const btnPosition = btn.getBoundingClientRect().top + window.pageYOffset;
+                    // Получаем полную высоту страницы
+                    const fullHeight = document.body.scrollHeight;
                     // Получаем высоту экрана
                     const screenHeight = window.innerHeight;
                     
-                    // Вычисляем точку прокрутки: позиция кнопки минус половина экрана
-                    // Это поставит кнопку ровно по центру
-                    const scrollTarget = btnPosition - (screenHeight / 2);
+                    // СКРОЛЛИМ ПРАКТИЧЕСКИ ДО САМОГО НИЗА
+                    // Вычитаем небольшой отступ (100px), чтобы не упираться в самый край
+                    const scrollTarget = fullHeight - screenHeight + 100;
 
-                    // Плавно скроллим к этой точке
+                    // Мгновенно или плавно скроллим вниз
                     window.scrollTo({
                         top: scrollTarget,
                         behavior: 'smooth'
                     });
 
-                    // Через 1 секунду (после завершения анимации скролла) блокируем страницу
+                    // Ждем завершения анимации скролла (около 1 сек) и блокируем
                     setTimeout(() => {
                         document.body.classList.add('scroll-locked');
-                        // Сбрасываем плавный скролл, чтобы не было проблем при переключении вкладок (если будут)
                         document.documentElement.style.scrollBehavior = 'auto';
-                    }, 1000);
+                        
+                        // ОПЦИОНАЛЬНО: Если нужно, чтобы после блокировки кнопка была по центру,
+                        // можно добавить еще один скролл вверх, но тогда панель может вылезти снова.
+                        // Оставляем как есть: сайт загружается снизу.
+                        
+                    }, 1200);
 
-                }, 300);
+                }, 100); // Небольшая задержка перед стартом
             } else {
-                // Если кнопка не найдена, просто блокируем сразу
                 document.body.classList.add('scroll-locked');
             }
         }
 
-        // Запускаем после полной загрузки страницы
         window.addEventListener('load', initAutoScrollAndLock);
 
-        // Логика вкладок
         document.addEventListener('DOMContentLoaded', () => {
             const path = window.location.pathname;
             const links = document.querySelectorAll('.tab-link');
