@@ -2,17 +2,14 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- viewport-fit=cover разрешает контенту занимать весь экран, включая зоны под челкой и полоской -->
+    <!-- viewport-fit=cover + максимальный запрет на масштабирование -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no">
     
-    <!-- Настройки для iOS (Safari) -->
+    <!-- Цвет панели браузера черный (сливается с сайтом) -->
+    <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Гадаев ПГС">
-    
-    <!-- Настройки для Android (Chrome) -->
-    <meta name="theme-color" content="#000000">
-    <meta name="mobile-web-app-capable" content="yes">
     
     <title>Руслан Гадаев | Инженер ПГС</title>
     
@@ -50,6 +47,7 @@
             --logo-filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
             --toggle-bg: #e5e5ea;
             --toggle-circle: #ffffff;
+            --theme-color-browser: #F2F2F7; /* Цвет панели для светлой темы */
 
             --tab-bg: rgba(255, 255, 255, 0.9);
             --tab-border: rgba(0,0,0,0.05);
@@ -67,7 +65,6 @@
             overflow: hidden;
             height: 100%;
             width: 100%;
-            /* Фикс для iOS, чтобы не было зума при двойном тапе */
             position: fixed; 
             background-color: var(--bg-color);
             color: var(--text-main);
@@ -82,12 +79,10 @@
             touch-action: none;
             -webkit-user-select: none;
             user-select: none;
-            /* Убираем стандартные отступы браузера */
             overscroll-behavior: none;
         }
 
         body {
-            /* Для корректного отображения на весь экран */
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
             padding-left: env(safe-area-inset-left);
@@ -407,13 +402,21 @@
     </div>
 
     <script>
-        // Скрипт для принудительного скрытия адресной строки при прокрутке (для старых браузеров)
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                window.scrollTo(0, 1);
-            }, 100);
-        });
+        // === СКРИПТ ДЛЯ СКРЫТИЯ ПАНЕЛИ БРАУЗЕРА ===
+        function hideBrowserBar() {
+            // Скроллим вниз на 1 пиксель
+            window.scrollTo(0, 1);
+            // И сразу возвращаем обратно (браузер думает, что мы прокрутили страницу и прячет бар)
+            setTimeout(() => window.scrollTo(0, 0), 10);
+        }
 
+        // Запускаем при загрузке
+        window.addEventListener('load', hideBrowserBar);
+        // Запускаем при первом касании (самый надежный способ)
+        document.addEventListener('touchstart', hideBrowserBar, {passive: true});
+        document.addEventListener('click', hideBrowserBar);
+
+        // Логика вкладок
         document.addEventListener('DOMContentLoaded', () => {
             const path = window.location.pathname;
             const links = document.querySelectorAll('.tab-link');
@@ -432,6 +435,13 @@
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            
+            // Меняем цвет панели браузера при смене темы
+            const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+            if(themeColorMeta) {
+                themeColorMeta.setAttribute('content', isLight ? '#F2F2F7' : '#000000');
+            }
+            
             vibrate(20);
         }
 
@@ -439,6 +449,8 @@
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
                 document.body.classList.add('light-mode');
+                const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+                if(themeColorMeta) themeColorMeta.setAttribute('content', '#F2F2F7');
             }
         });
 
