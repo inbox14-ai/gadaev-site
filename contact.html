@@ -57,6 +57,7 @@
         }
 
         html, body {
+            /* РАЗРЕШАЕМ ПРОКРУТКУ */
             overflow-x: hidden;
             overflow-y: auto; 
             height: auto;
@@ -74,14 +75,7 @@
             scroll-behavior: smooth; 
         }
 
-        /* Класс для блокировки скролла после загрузки */
-        body.scroll-locked {
-            overflow: hidden;
-            height: 100vh;
-            position: fixed;
-            width: 100%;
-            touch-action: none;
-        }
+        /* УБРАНЫ ВСЕ СТИЛИ БЛОКИРОВКИ (scroll-locked) */
 
         .top-scroll-area {
             width: 100%;
@@ -365,7 +359,7 @@
 </head>
 <body>
 
-    <!-- ВЕРХНЯЯ ОБЛАСТЬ ДЛЯ ПЕРВОНАЧАЛЬНОЙ ПРОКРУТКИ -->
+    <!-- ВЕРХНЯЯ ОБЛАСТЬ ДЛЯ ПРОКРУТКИ -->
     <div class="top-scroll-area"></div>
 
     <div class="theme-toggle-container">
@@ -416,45 +410,29 @@
     </div>
 
     <script>
-        // Функция автоматической прокрутки и блокировки
-        function initAutoScrollAndLock() {
+        // СКРИПТ АВТОМАТИЧЕСКОГО СКРОЛЛА (ОСТАВЛЕН)
+        function initAutoScroll() {
             const btn = document.getElementById('main-btn');
             
             if (btn) {
                 setTimeout(() => {
-                    // Получаем полную высоту страницы
                     const fullHeight = document.body.scrollHeight;
-                    // Получаем высоту экрана
                     const screenHeight = window.innerHeight;
                     
-                    // СКРОЛЛИМ ПРАКТИЧЕСКИ ДО САМОГО НИЗА
-                    // Вычитаем небольшой отступ (100px), чтобы не упираться в самый край
+                    // Скроллим почти до самого низа
                     const scrollTarget = fullHeight - screenHeight + 100;
 
-                    // Мгновенно или плавно скроллим вниз
                     window.scrollTo({
                         top: scrollTarget,
                         behavior: 'smooth'
                     });
-
-                    // Ждем завершения анимации скролла (около 1 сек) и блокируем
-                    setTimeout(() => {
-                        document.body.classList.add('scroll-locked');
-                        document.documentElement.style.scrollBehavior = 'auto';
-                        
-                        // ОПЦИОНАЛЬНО: Если нужно, чтобы после блокировки кнопка была по центру,
-                        // можно добавить еще один скролл вверх, но тогда панель может вылезти снова.
-                        // Оставляем как есть: сайт загружается снизу.
-                        
-                    }, 1200);
-
-                }, 100); // Небольшая задержка перед стартом
-            } else {
-                document.body.classList.add('scroll-locked');
+                    
+                    // БЛОКИРОВКА УБРАНА! Страница остается прокручиваемой.
+                }, 100);
             }
         }
 
-        window.addEventListener('load', initAutoScrollAndLock);
+        window.addEventListener('load', initAutoScroll);
 
         document.addEventListener('DOMContentLoaded', () => {
             const path = window.location.pathname;
