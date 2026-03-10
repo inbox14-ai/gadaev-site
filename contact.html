@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Руслан Гадаев | Инженер ПГС</title>
-    
     <style>
         :root {
+            /* ТЕМНАЯ ТЕМА */
             --bg-color: #000000;
             --text-main: #ffffff;
             --text-sec: #666666;
@@ -32,6 +30,7 @@
             --icon-mail: rgba(255, 149, 0, 0.7);
         }
 
+        /* СВЕТЛАЯ ТЕМА */
         body.light-mode {
             --bg-color: #F2F2F7;
             --text-main: #000000;
@@ -42,7 +41,6 @@
             --logo-filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
             --toggle-bg: #e5e5ea;
             --toggle-circle: #ffffff;
-            --theme-color-browser: #F2F2F7;
 
             --tab-bg: rgba(255, 255, 255, 0.9);
             --tab-border: rgba(0,0,0,0.05);
@@ -57,39 +55,29 @@
         }
 
         html, body {
-            /* РАЗРЕШАЕМ ПРОКРУТКУ */
             overflow-x: hidden;
-            overflow-y: auto; 
+            overflow-y: auto;
             height: auto;
-            width: 100%;
             position: relative;
+            width: 100%;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body {
             background-color: var(--bg-color);
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            touch-action: pan-y;
-            -webkit-user-select: none;
-            user-select: none;
-            overscroll-behavior: none;
-            scroll-behavior: smooth; 
-        }
-
-        /* УБРАНЫ ВСЕ СТИЛИ БЛОКИРОВКИ (scroll-locked) */
-
-        .top-scroll-area {
-            width: 100%;
-            height: 150px; 
-            flex-shrink: 0;
-        }
-
-        body {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            text-align: center;
+            touch-action: pan-y;
+            -webkit-user-select: none;
+            user-select: none;
             min-height: 100vh;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .container {
@@ -103,14 +91,15 @@
             flex-direction: column;
             align-items: center;
             justify-content: center; 
-            min-height: 80vh;
+            height: 100%;
             transition: all 0.3s ease;
-            margin-top: 20px;
-            margin-bottom: 100px;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
         }
         
         .logo-container {
-            width: 160px;
+            /* ИЗМЕНЕНО: Уменьшен размер логотипа */
+            width: 120px; 
             height: auto;
             margin: 0 auto 15px;
             pointer-events: none;
@@ -204,7 +193,7 @@
         }
 
         .centering-spacer {
-            height: 107px; 
+            height: 107px;
             width: 1px;
             opacity: 0;
             pointer-events: none;
@@ -359,9 +348,6 @@
 </head>
 <body>
 
-    <!-- ВЕРХНЯЯ ОБЛАСТЬ ДЛЯ ПРОКРУТКИ -->
-    <div class="top-scroll-area"></div>
-
     <div class="theme-toggle-container">
         <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
     </div>
@@ -378,7 +364,7 @@
         <h1>РУСЛАН ГАДАЕВ</h1>
         <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
 
-        <a href="contact.vcf" id="main-btn" class="btn-main" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТЫ</a>
+        <a href="contact.vcf" class="btn-main" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТЫ</a>
 
         <div class="contact-section">
             <div class="contact-title">Связаться сейчас:</div>
@@ -410,30 +396,6 @@
     </div>
 
     <script>
-        // СКРИПТ АВТОМАТИЧЕСКОГО СКРОЛЛА (ОСТАВЛЕН)
-        function initAutoScroll() {
-            const btn = document.getElementById('main-btn');
-            
-            if (btn) {
-                setTimeout(() => {
-                    const fullHeight = document.body.scrollHeight;
-                    const screenHeight = window.innerHeight;
-                    
-                    // Скроллим почти до самого низа
-                    const scrollTarget = fullHeight - screenHeight + 100;
-
-                    window.scrollTo({
-                        top: scrollTarget,
-                        behavior: 'smooth'
-                    });
-                    
-                    // БЛОКИРОВКА УБРАНА! Страница остается прокручиваемой.
-                }, 100);
-            }
-        }
-
-        window.addEventListener('load', initAutoScroll);
-
         document.addEventListener('DOMContentLoaded', () => {
             const path = window.location.pathname;
             const links = document.querySelectorAll('.tab-link');
@@ -452,12 +414,6 @@
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            
-            const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-            if(themeColorMeta) {
-                themeColorMeta.setAttribute('content', isLight ? '#F2F2F7' : '#000000');
-            }
-            
             vibrate(20);
         }
 
@@ -465,8 +421,6 @@
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
                 document.body.classList.add('light-mode');
-                const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-                if(themeColorMeta) themeColorMeta.setAttribute('content', '#F2F2F7');
             }
         });
 
