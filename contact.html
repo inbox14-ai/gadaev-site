@@ -77,7 +77,6 @@
         .container {
             width: 90%;
             max-width: 480px;
-            /* Отступ снизу увеличен под новую высоту панели */
             padding: 0 20px 130px 20px; 
             position: relative;
             z-index: 1;
@@ -127,6 +126,7 @@
             transition: color 0.3s ease;
         }
 
+        /* --- КНОПКА СОХРАНИТЬ КОНТАКТЫ (МЕНЬШЕ СКРУГЛЕНИЕ) --- */
         .btn-main {
             display: inline-flex;
             align-items: center;
@@ -137,7 +137,8 @@
             background: linear-gradient(180deg, var(--btn-bg-start) 0%, var(--btn-bg-end) 100%);
             color: var(--btn-text);
             text-decoration: none;
-            border-radius: 50px;
+            /* Было 50px, стало 16px - аккуратные углы */
+            border-radius: 16px; 
             font-weight: 300;
             font-size: 19px;
             letter-spacing: 1.2px;
@@ -173,7 +174,9 @@
             display: flex; align-items: center; justify-content: center;
             width: 75px; height: 75px;
             background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
-            border-radius: 20px; text-decoration: none;
+            /* Иконки оставил с хорошим скруглением (20px), так как они квадратные по форме */
+            border-radius: 20px; 
+            text-decoration: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             position: relative; overflow: hidden; z-index: 1; cursor: pointer;
@@ -184,19 +187,20 @@
         .icon-btn:active { transform: scale(0.95); filter: brightness(0.9); }
         .icon-btn svg { width: 38px; height: 38px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
 
-        /* --- НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК (БОЛЬШЕ И ВЫШЕ) --- */
+        /* --- НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК (МЕНЬШЕ СКРУГЛЕНИЕ) --- */
         .tab-bar { 
             position: fixed; 
-            bottom: 40px; /* Подняли выше */
+            bottom: 40px; 
             left: 50%; 
             transform: translateX(-50%); 
-            height: 42px; /* Чуть выше сама панель */
-            max-width: 340px; /* Растянули шире, но не на весь экран */
+            height: 42px; 
+            max-width: 340px; 
             width: 90%; 
             background: var(--tab-bg); 
             backdrop-filter: blur(20px); 
             -webkit-backdrop-filter: blur(20px);
-            border-radius: 21px; /* Пропорционально высоте */
+            /* Было 21px, стало 12px - строгие углы */
+            border-radius: 12px; 
             border: 1px solid var(--tab-border); 
             display: flex; 
             justify-content: space-around; 
@@ -216,22 +220,23 @@
             align-items: center;
             justify-content: center;
             color: var(--tab-text);
-            font-size: 13px; /* Увеличили шрифт */
-            font-weight: 400; /* Оставили тонким */
+            font-size: 13px; 
+            font-weight: 400; 
             text-transform: uppercase;
             text-decoration: none;
-            border-radius: 18px;
+            /* Было 18px, стало 10px - под стиль панели */
+            border-radius: 10px; 
             transition: all 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
             pointer-events: auto;
             cursor: pointer;
             padding: 0 6px;
-            letter-spacing: 0.6px; /* Чуть больше воздуха между буквами */
+            letter-spacing: 0.6px; 
         }
 
         .tab-link.active {
             color: var(--tab-text-active);
             background: var(--tab-bg-active);
-            font-weight: 500; /* Чуть жирнее только активная */
+            font-weight: 500; 
         }
 
         @media (hover: hover) {
@@ -245,20 +250,19 @@
             background: var(--tab-bg-active);
         }
 
-        /* --- ТЕКСТ ВНИЗУ (БОЛЬШЕ ВОЗДУХА) --- */
+        /* --- ТЕКСТ ВНИЗУ --- */
         .bottom-footer {
             position: fixed;
-            bottom: 12px; /* Подняли пропорционально панели */
+            bottom: 12px; 
             left: 0;
             width: 100%;
             text-align: center;
-            font-size: 12px; /* Размер не меняли */
+            font-size: 12px; 
             color: var(--text-sec);
             z-index: 999;
             pointer-events: none;
             transition: color 0.3s ease;
             padding-bottom: env(safe-area-inset-bottom);
-            /* Добавили воздуха */
             line-height: 1.6; 
             letter-spacing: 0.5px;
             opacity: 0.8;
@@ -279,7 +283,7 @@
             width: 44px;
             height: 26px;
             background-color: var(--toggle-bg);
-            border-radius: 30px;
+            border-radius: 30px; /* Тумблер оставил круглым, так удобнее пальцем */
             cursor: pointer;
             transition: background-color 0.3s ease;
             border: 1px solid rgba(0,0,0,0.05);
