@@ -55,10 +55,9 @@
         }
 
         html, body {
-            overflow-x: hidden;
-            overflow-y: auto;
-            height: auto;
-            position: relative;
+            overflow: hidden;
+            height: 100%;
+            position: fixed;
             width: 100%;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
@@ -74,10 +73,9 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            touch-action: pan-y;
+            touch-action: none;
             -webkit-user-select: none;
             user-select: none;
-            min-height: 100vh;
         }
 
         .container {
@@ -98,8 +96,8 @@
         }
         
         .logo-container {
-            /* ИЗМЕНЕНО: Уменьшен размер логотипа */
-            width: 120px; 
+            /* ИЗМЕНЕНО: Размер уменьшен до 130px */
+            width: 130px;
             height: auto;
             margin: 0 auto 15px;
             pointer-events: none;
@@ -192,8 +190,11 @@
             font-weight: 400; letter-spacing: 0.5px; transition: color 0.3s ease;
         }
 
+        /* --- МАГИЯ ЦЕНТРОВКИ ПО НИЗУ КНОПКИ --- */
+        /* Этот невидимый блок компенсирует высоту иконок и отступов, 
+           поднимая центр контейнера ровно на нижнюю грань кнопки */
         .centering-spacer {
-            height: 107px;
+            height: 107px; /* Высота иконок (70) + отступы (20+12+5) */
             width: 1px;
             opacity: 0;
             pointer-events: none;
@@ -382,6 +383,7 @@
             <p class="contact-subtitle">Выберите удобный способ связи</p>
         </div>
 
+        <!-- Невидимый распорный элемент для идеальной центровки низа кнопки -->
         <div class="centering-spacer"></div>
     </div>
 
