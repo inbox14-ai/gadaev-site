@@ -2,12 +2,11 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no">
+    <!-- Разрешаем масштабирование и скролл -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Гадаев ПГС">
-    
     <title>Руслан Гадаев | Инженер ПГС</title>
     
     <style>
@@ -59,45 +58,39 @@
         }
 
         html, body {
-            /* Основной контейнер заблокирован */
-            overflow: hidden;
-            height: 100%;
+            /* РАЗБЛОКИРОВКА ПРОКРУТКИ */
+            overflow-x: hidden; /* Запрещаем только горизонтальный скролл */
+            overflow-y: auto;   /* Разрешаем вертикальный скролл */
+            height: auto;       /* Высота по содержимому */
             width: 100%;
-            position: fixed; 
+            position: relative; /* Убрали fixed */
             background-color: var(--bg-color);
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            touch-action: none; /* Блокируем жесты браузера */
+            /* Убрали flex с body, чтобы работала прокрутка */
+            touch-action: pan-y; /* Разрешаем скролл вверх-вниз */
             -webkit-user-select: none;
             user-select: none;
             overscroll-behavior: none;
         }
 
-        /* === СЕКРЕТНЫЙ СЛОЙ ДЛЯ СКРЫТИЯ ПАНЕЛИ === */
-        #scroll-hack {
-            position: fixed;
-            top: 0;
-            left: 0;
+        /* --- ВЕРХНЯЯ ОБЛАСТЬ ДЛЯ СКРЫТИЯ ПАНЕЛИ --- */
+        .top-scroll-area {
             width: 100%;
-            height: 120%; /* Делаем его выше экрана, чтобы можно было скроллить */
-            z-index: -1; /* Прячем под сайт */
-            overflow-y: scroll; /* Разрешаем скролл только здесь */
-            pointer-events: none; /* Чтобы клики проходили сквозь него */
-            opacity: 0;
+            height: 150px; /* Высота области, на которую нужно прокрутить */
+            background: transparent; 
+            flex-shrink: 0;
         }
 
         body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
         }
 
         .container {
@@ -111,8 +104,11 @@
             flex-direction: column;
             align-items: center;
             justify-content: center; 
-            height: 100%;
+            /* Убрали height: 100%, чтобы контейнер не растягивался на весь экран искусственно */
+            min-height: 80vh; /* Занимает большую часть экрана, но позволяет скроллить */
             transition: all 0.3s ease;
+            margin-top: 20px; /* Небольшой отступ сверху */
+            margin-bottom: 100px; /* Отступ снизу для футера и панели */
         }
         
         .logo-container {
@@ -365,8 +361,8 @@
 </head>
 <body>
 
-    <!-- СЕКРЕТНЫЙ СЛОЙ ДЛЯ СКРОЛЛА -->
-    <div id="scroll-hack"></div>
+    <!-- ВЕРХНЯЯ ОБЛАСТЬ ДЛЯ ПРОКРУТКИ (СКРЫВАЕТ ПАНЕЛЬ) -->
+    <div class="top-scroll-area"></div>
 
     <div class="theme-toggle-container">
         <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
@@ -416,30 +412,6 @@
     </div>
 
     <script>
-        // === ИСПРАВЛЕННЫЙ СКРИПТ СКРЫТИЯ ПАНЕЛИ ===
-        function hideBrowserBar() {
-            const hack = document.getElementById('scroll-hack');
-            if (hack) {
-                // Скроллим невидимый слой вниз на 1px
-                hack.scrollTop = 1;
-                // И сразу обратно в 0
-                setTimeout(() => {
-                    hack.scrollTop = 0;
-                }, 10);
-            }
-        }
-
-        // Запускаем при загрузке
-        window.addEventListener('load', () => {
-            setTimeout(hideBrowserBar, 100);
-        });
-        
-        // Запускаем при первом касании (самое важное!)
-        document.addEventListener('touchstart', () => {
-            hideBrowserBar();
-        }, {passive: true});
-
-        // Логика вкладок
         document.addEventListener('DOMContentLoaded', () => {
             const path = window.location.pathname;
             const links = document.querySelectorAll('.tab-link');
