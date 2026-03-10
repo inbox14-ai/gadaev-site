@@ -324,6 +324,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
+            position: relative;
         }
         .page.active {
             display: flex;
@@ -337,14 +338,23 @@
         }
 
         /* --- ИНТЕРАКТИВНОЕ ФОТО С ЛУПОЙ --- */
-        .photo-container {
+        .photo-wrapper {
             position: relative;
-            width: 90%;
-            max-width: 500px;
-            aspect-ratio: 16/10;
-            border-radius: 20px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             overflow: hidden;
             cursor: crosshair;
+        }
+
+        .photo-container {
+            position: relative;
+            width: 95%;
+            height: 90%;
+            border-radius: 20px;
+            overflow: hidden;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
             border: 1px solid rgba(255,255,255,0.1);
         }
@@ -354,19 +364,39 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            transition: transform 0.1s ease-out;
+            pointer-events: none; /* Чтобы картинка не перетаскивалась браузером */
         }
 
-        /* Эффект лупы при наведении */
-        .photo-container:hover img {
-            transform: scale(2);
+        /* Круглая лупа */
+        .lens {
+            position: absolute;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            cursor: none;
+            pointer-events: none;
+            display: none;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.2);
+            z-index: 10;
+            /* Размер лупы */
+            width: 150px;
+            height: 150px;
+            /* Фон будет задан через JS */
+            background-repeat: no-repeat;
+            background-color: var(--bg-color);
         }
 
         /* Адаптация под мобильные */
         @media (max-width: 768px) {
+            .lens {
+                width: 100px;
+                height: 100px;
+                border-width: 2px;
+            }
             .photo-container {
-                width: 95%;
-                aspect-ratio: 4/3;
+                width: 100%;
+                height: 100%;
+                border-radius: 0;
+                border: none;
             }
         }
 
@@ -379,13 +409,15 @@
         <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
     </div>
 
-    <!-- СТРАНИЦА 1: ГЛАВНАЯ (С ФОТО) -->
+    <!-- СТРАНИЦА 1: ГЛАВНАЯ (С ФОТО И ЛУПОЙ) -->
     <div class="page page-empty active" id="page-home">
-        <div class="photo-container">
-            <!-- Замени ссылку ниже на свою фотографию -->
-            <img src="room.jpg" 
-                 alt="Интерьер после ремонта" 
-                 id="main-photo">
+        <div class="photo-wrapper" id="photo-wrapper">
+            <div class="photo-container" id="photo-container">
+                <!-- Замени src="room.jpg" на имя своего файла -->
+                <img src="room.jpg" alt="Интерьер после ремонта" id="main-photo">
+            </div>
+            <!-- Элемент лупы -->
+            <div class="lens" id="lens"></div>
         </div>
     </div>
 
@@ -476,6 +508,82 @@
             }
         }
 
+        // --- ЛОГИКА ЛУПЫ ---
+        const lens = document.getElementById('lens');
+        const photoContainer = document.getElementById('photo-container');
+        const mainPhoto = document.getElementById('main-photo');
+        const photoWrapper = document.getElementById('photo-wrapper');
+        
+        let isHovering = false;
+
+        // Функция движения лупы
+        function moveLens(e) {
+            e.preventDefault();
+            
+            // Получаем координаты курсора или пальца
+            let clientX, clientY;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+
+            // Координаты контейнера фото
+            const rect = photoContainer.getBoundingClientRect();
+            
+            // Позиция курсора внутри контейнера
+            let x = clientX - rect.left;
+            let y = clientY - rect.top;
+
+            // Ограничиваем движение лупы границами фото
+            const lensRadius = lens.offsetWidth / 2;
+            
+            if (x < lensRadius) x = lensRadius;
+            if (x > rect.width - lensRadius) x = rect.width - lensRadius;
+            if (y < lensRadius) y = lensRadius;
+            if (y > rect.height - lensRadius) y = rect.height - lensRadius;
+
+            // Двигаем лупу
+            lens.style.display = 'block';
+            lens.style.left = (x - lensRadius) + 'px';
+            lens.style.top = (y - lensRadius) + 'px';
+
+            // Вычисляем коэффициент увеличения (10 раз)
+            const zoom = 10;
+            
+            // Настраиваем фон лупы (то же фото, но увеличенное)
+            lens.style.backgroundImage = `url('${mainPhoto.src}')`;
+            lens.style.backgroundSize = `${rect.width * zoom}px ${rect.height * zoom}px`;
+            
+            // Смещаем фон внутри лупы, чтобы показать нужную область
+            lens.style.backgroundPosition = `-${(x * zoom) - lensRadius}px -${(y * zoom) - lensRadius}px`;
+        }
+
+        // События для мыши
+        photoContainer.addEventListener('mouseenter', () => { isHovering = true; });
+        photoContainer.addEventListener('mouseleave', () => { 
+            isHovering = false; 
+            lens.style.display = 'none'; 
+        });
+        photoContainer.addEventListener('mousemove', moveLens);
+
+        // События для тачскрина (пальца)
+        photoContainer.addEventListener('touchstart', (e) => { 
+            isHovering = true; 
+            moveLens(e); 
+        }, { passive: false });
+        
+        photoContainer.addEventListener('touchmove', (e) => { 
+            if (isHovering) moveLens(e); 
+        }, { passive: false });
+        
+        photoContainer.addEventListener('touchend', () => { 
+            isHovering = false; 
+            lens.style.display = 'none'; 
+        });
+
         // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', () => {
             const path = window.location.pathname;
@@ -509,4 +617,3 @@
     </script>
 </body>
 </html>
-
