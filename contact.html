@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- Разрешаем масштабирование и скролл -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -58,29 +57,37 @@
         }
 
         html, body {
-            /* РАЗБЛОКИРОВКА ПРОКРУТКИ */
-            overflow-x: hidden; /* Запрещаем только горизонтальный скролл */
-            overflow-y: auto;   /* Разрешаем вертикальный скролл */
-            height: auto;       /* Высота по содержимому */
+            /* Изначально разрешаем скролл для загрузки */
+            overflow-x: hidden;
+            overflow-y: auto; 
+            height: auto;
             width: 100%;
-            position: relative; /* Убрали fixed */
+            position: relative;
             background-color: var(--bg-color);
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            /* Убрали flex с body, чтобы работала прокрутка */
-            touch-action: pan-y; /* Разрешаем скролл вверх-вниз */
+            touch-action: pan-y;
             -webkit-user-select: none;
             user-select: none;
             overscroll-behavior: none;
+            /* Плавная прокрутка для автоскролла */
+            scroll-behavior: smooth; 
         }
 
-        /* --- ВЕРХНЯЯ ОБЛАСТЬ ДЛЯ СКРЫТИЯ ПАНЕЛИ --- */
+        /* Класс для блокировки скролла после загрузки */
+        body.scroll-locked {
+            overflow: hidden;
+            height: 100vh;
+            position: fixed;
+            width: 100%;
+            touch-action: none;
+        }
+
         .top-scroll-area {
             width: 100%;
-            height: 150px; /* Высота области, на которую нужно прокрутить */
-            background: transparent; 
+            height: 150px; 
             flex-shrink: 0;
         }
 
@@ -104,11 +111,10 @@
             flex-direction: column;
             align-items: center;
             justify-content: center; 
-            /* Убрали height: 100%, чтобы контейнер не растягивался на весь экран искусственно */
-            min-height: 80vh; /* Занимает большую часть экрана, но позволяет скроллить */
+            min-height: 80vh;
             transition: all 0.3s ease;
-            margin-top: 20px; /* Небольшой отступ сверху */
-            margin-bottom: 100px; /* Отступ снизу для футера и панели */
+            margin-top: 20px;
+            margin-bottom: 100px;
         }
         
         .logo-container {
@@ -361,7 +367,7 @@
 </head>
 <body>
 
-    <!-- ВЕРХНЯЯ ОБЛАСТЬ ДЛЯ ПРОКРУТКИ (СКРЫВАЕТ ПАНЕЛЬ) -->
+    <!-- ВЕРХНЯЯ ОБЛАСТЬ ДЛЯ ПЕРВОНАЧАЛЬНОЙ ПРОКРУТКИ -->
     <div class="top-scroll-area"></div>
 
     <div class="theme-toggle-container">
@@ -380,7 +386,8 @@
         <h1>РУСЛАН ГАДАЕВ</h1>
         <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
 
-        <a href="contact.vcf" class="btn-main" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТЫ</a>
+        <!-- Добавил ID кнопке для скрипта -->
+        <a href="contact.vcf" id="main-btn" class="btn-main" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТЫ</a>
 
         <div class="contact-section">
             <div class="contact-title">Связаться сейчас:</div>
@@ -412,6 +419,46 @@
     </div>
 
     <script>
+        // Функция автоматической прокрутки и блокировки
+        function initAutoScrollAndLock() {
+            const btn = document.getElementById('main-btn');
+            
+            if (btn) {
+                // Ждем немного, чтобы браузер точно отрисовал элементы
+                setTimeout(() => {
+                    // Получаем позицию кнопки относительно верха документа
+                    const btnPosition = btn.getBoundingClientRect().top + window.pageYOffset;
+                    // Получаем высоту экрана
+                    const screenHeight = window.innerHeight;
+                    
+                    // Вычисляем точку прокрутки: позиция кнопки минус половина экрана
+                    // Это поставит кнопку ровно по центру
+                    const scrollTarget = btnPosition - (screenHeight / 2);
+
+                    // Плавно скроллим к этой точке
+                    window.scrollTo({
+                        top: scrollTarget,
+                        behavior: 'smooth'
+                    });
+
+                    // Через 1 секунду (после завершения анимации скролла) блокируем страницу
+                    setTimeout(() => {
+                        document.body.classList.add('scroll-locked');
+                        // Сбрасываем плавный скролл, чтобы не было проблем при переключении вкладок (если будут)
+                        document.documentElement.style.scrollBehavior = 'auto';
+                    }, 1000);
+
+                }, 300);
+            } else {
+                // Если кнопка не найдена, просто блокируем сразу
+                document.body.classList.add('scroll-locked');
+            }
+        }
+
+        // Запускаем после полной загрузки страницы
+        window.addEventListener('load', initAutoScrollAndLock);
+
+        // Логика вкладок
         document.addEventListener('DOMContentLoaded', () => {
             const path = window.location.pathname;
             const links = document.querySelectorAll('.tab-link');
