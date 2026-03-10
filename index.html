@@ -405,7 +405,7 @@
                 ];
 
                 let delay = 0;
-                const step = 400; // Шаг задержки между элементами (мс)
+                const step = 500; // Шаг задержки между элементами (мс)
 
                 elements.forEach((id, index) => {
                     const el = document.getElementById(id);
@@ -417,7 +417,7 @@
                         delay += step;
                     }
                 });
-            }, 100);
+            }, 0);
 
             // Логика вкладок
             const path = window.location.pathname;
@@ -453,4 +453,5 @@
     </script>
 </body>
 </html>
+
 
