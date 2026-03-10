@@ -95,64 +95,20 @@
             padding-bottom: env(safe-area-inset-bottom);
         }
         
-        /* --- МЕДЛЕННАЯ И ПЛАВНАЯ АНИМАЦИЯ --- */
+        /* --- ЛОГОТИП И ЭЛЕМЕНТЫ (БЕЗ АНИМАЦИИ В CSS) --- */
+        /* Мы управляем видимостью через JS класс .visible */
         
-        /* Общий класс для плавного появления */
-        .slow-reveal {
-            opacity: 0;
-            transform: translateY(20px);
-            filter: blur(5px);
-            animation: revealSlowly 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-
-        /* Логотип: появляется без сдвига, только прозрачность и размытие */
         .logo-container {
             width: 135px;
             height: auto;
             margin: 0 auto 15px;
             pointer-events: none;
-            transition: filter 0.3s ease;
-            opacity: 0;
-            filter: blur(10px) brightness(0.5);
-            animation: logoMaterialize 2s ease-out forwards, breathe 3s infinite ease-in-out 2s;
-        }
-
-        /* Задержки для последовательности (медленно и важно) */
-        h1 { animation-delay: 0.4s; }
-        p.subtitle { animation-delay: 0.7s; }
-        .btn-main { animation-delay: 1.0s; }
-        .contact-section { animation-delay: 1.3s; }
-        
-        /* Панель и тумблер */
-        .tab-bar { 
-            opacity: 0;
-            transform: translate(-50%, 20px); /* Начальная позиция для анимации */
-            animation: revealSlowly 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-            animation-delay: 0.5s;
+            transition: filter 0.3s ease, opacity 1s ease;
+            opacity: 0; /* Скрыто по умолчанию */
         }
         
-        .theme-toggle-container {
-            opacity: 0;
-            transform: translateY(-20px);
-            filter: blur(5px);
-            animation: revealSlowly 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-            animation-delay: 0.2s;
-        }
-
-        /* Ключевые кадры */
-        @keyframes revealSlowly {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-                filter: blur(0);
-            }
-        }
-
-        @keyframes logoMaterialize {
-            to {
-                opacity: 1;
-                filter: blur(0) brightness(1);
-            }
+        .logo-container.visible {
+            opacity: 1;
         }
 
         .logo-svg {
@@ -171,9 +127,12 @@
             letter-spacing: 1.5px;
             text-transform: uppercase;
             line-height: 1.1;
-            transition: color 0.3s ease;
+            transition: color 0.3s ease, opacity 1s ease;
             color: var(--text-main);
+            opacity: 0;
         }
+        h1.visible { opacity: 1; }
+
         p.subtitle {
             font-size: 18px;
             color: var(--text-sec);
@@ -181,8 +140,10 @@
             font-weight: 400;
             letter-spacing: 0.5px;
             line-height: 1.2;
-            transition: color 0.3s ease;
+            transition: color 0.3s ease, opacity 1s ease;
+            opacity: 0;
         }
+        p.subtitle.visible { opacity: 1; }
 
         .btn-main {
             display: inline-flex;
@@ -203,7 +164,7 @@
             text-transform: uppercase;
             border: 1px solid var(--btn-border);
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            transition: all 0.3s ease, opacity 1s ease;
             box-sizing: border-box;
             position: relative;
             overflow: hidden;
@@ -213,8 +174,10 @@
             line-height: 1.2;
             width: 90%;
             max-width: 340px;
-            animation: breathe 3s infinite ease-in-out;
+            opacity: 0;
         }
+        .btn-main.visible { opacity: 1; }
+
         .btn-main:hover { 
             background: rgba(60, 60, 60, 0.8); 
             box-shadow: 0 6px 20px rgba(0,0,0,0.2); 
@@ -227,8 +190,11 @@
         .contact-section { 
             margin-top: 0; 
             margin-bottom: 20px; 
-            transition: color 0.3s ease; 
+            transition: color 0.3s ease, opacity 1s ease; 
+            opacity: 0;
         }
+        .contact-section.visible { opacity: 1; }
+
         .contact-title {
             font-size: 18px; font-weight: 400; margin: 0 0 20px 0;
             letter-spacing: 0.5px; color: var(--text-main); text-transform: none;
@@ -251,8 +217,6 @@
             position: relative; overflow: hidden; z-index: 1; cursor: pointer;
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
-            animation: breathe 3s infinite ease-in-out;
-            animation-delay: 0.5s;
         }
         .icon-btn.phone { background: var(--icon-phone); }
         .icon-btn.mail { background: var(--icon-mail); }
@@ -265,12 +229,12 @@
         .icon-btn:active { transform: scale(0.95); filter: brightness(0.9); }
         .icon-btn svg { width: 36px; height: 36px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
 
-        /* НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК - ЖЕСТКАЯ ЦЕНТРОВКА */
+        /* НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК - ЖЕСТКАЯ ФИКСАЦИЯ */
         .tab-bar { 
             position: fixed; 
             bottom: 25px; 
             left: 50%; 
-            /* Важно: transform сбрасывается анимацией в 0, но начальное позиционирование остается */
+            /* Центровка гарантирована математически */
             transform: translateX(-50%); 
             height: 42px; 
             max-width: 340px; 
@@ -286,9 +250,13 @@
             z-index: 1000; 
             margin-bottom: env(safe-area-inset-bottom);
             pointer-events: auto; 
-            transition: background-color 0.3s ease, border-color 0.3s ease;
+            transition: background-color 0.3s ease, border-color 0.3s ease, opacity 1s ease;
             padding: 0 4px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            opacity: 0; /* Скрыта по умолчанию */
+        }
+        .tab-bar.visible {
+            opacity: 1;
         }
 
         .tab-link {
@@ -339,7 +307,11 @@
             right: 20px;
             z-index: 1001;
             margin-top: env(safe-area-inset-top);
-            transition: top 0.3s ease;
+            transition: top 0.3s ease, opacity 1s ease;
+            opacity: 0;
+        }
+        .theme-toggle-container.visible {
+            opacity: 1;
         }
 
         .theme-toggle {
@@ -375,12 +347,12 @@
 <body>
 
     <!-- ТУМБЛЕР ТЕМЫ -->
-    <div class="theme-toggle-container">
+    <div class="theme-toggle-container" id="theme-toggle">
         <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
     </div>
 
     <div class="container">
-        <div class="logo-container">
+        <div class="logo-container" id="logo">
             <svg class="logo-svg" viewBox="0 0 291.11 243.46" xmlns="http://www.w3.org/2000/svg">
                 <path d="m 489.39,550.55 c 0.1,-0.36 14.6,-54.9 32.22,-121.21 17.62,-66.31 32.12,-120.84 32.22,-121.19 0.18,-0.6 4.74,-0.62 97.3,-0.52 l 97.11,0.1 2.79,0.79 c 7.36,2.08 13.02,5.24 17.85,9.98 5.31,5.21 9.05,11.9 10.72,19.2 1,4.34 1.07,11.52 0.15,15.81 -0.9,4.22 -13.51,51.49 -14.61,54.76 -1.08,3.21 -3.84,9.15 -5.65,12.18 -4.23,7.06 -11.63,15.11 -18.09,19.68 -6.17,4.36 -13.4,7.8 -20.49,9.74 -7.96,2.18 -9.48,2.28 -36.11,2.28 l -23.99,0 -28.42,16.4 c -15.63,9.02 -28.44,16.38 -28.47,16.35 -0.03,-0.03 4.75,-18.11 10.61,-40.18 l 10.67,-40.13 46.55,-0.09 c 43.95,-0.09 46.56,-0.12 46.73,-0.71 0.91,-3.13 12.59,-47.4 12.59,-47.73 0,-0.35 -14.68,-0.42 -70.94,-0.35 l -70.94,0.09 -21.5,80.96 c -11.82,44.53 -21.62,81.18 -21.78,81.44 -0.2,0.34 -49.75,29.18 -56.08,32.64 -0.54,0.3 -0.62,0.25 -0.46,-0.29 z" 
                       transform="translate(-489.30485,-307.57555)" 
@@ -388,12 +360,12 @@
             </svg>
         </div>
         
-        <h1 class="slow-reveal">РУСЛАН ГАДАЕВ</h1>
-        <p class="subtitle slow-reveal">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
+        <h1 id="title-name">РУСЛАН ГАДАЕВ</h1>
+        <p class="subtitle" id="title-sub">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
 
-        <a href="contact.vcf" class="btn-main slow-reveal" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТЫ</a>
+        <a href="contact.vcf" class="btn-main" id="main-btn" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТЫ</a>
 
-        <div class="contact-section slow-reveal">
+        <div class="contact-section" id="contact-block">
             <div class="contact-title">Связаться сейчас:</div>
             <div class="icons-row">
                 <a href="https://t.me/ruslan_gadaev" class="icon-btn" target="_blank" onclick="vibrate(30)">
@@ -411,14 +383,43 @@
     </div>
 
     <!-- ПАНЕЛЬ ВКЛАДОК -->
-    <div class="tab-bar">
+    <div class="tab-bar" id="tab-bar">
         <a href="https://gadaev.pro" class="tab-link" id="link-home">Главная</a>
         <a href="https://gadaev.pro/calculation" class="tab-link" id="link-calc">Расчет</a>
         <a href="https://gadaev.pro/contact" class="tab-link" id="link-contact">Контакты</a>
     </div>
 
     <script>
+        // --- УМНОЕ ПОЯВЛЕНИЕ ЭЛЕМЕНТОВ ---
         document.addEventListener('DOMContentLoaded', () => {
+            // Запускаем цепочку появления с небольшой задержкой после загрузки
+            setTimeout(() => {
+                const elements = [
+                    'theme-toggle',
+                    'logo',
+                    'title-name',
+                    'title-sub',
+                    'main-btn',
+                    'contact-block',
+                    'tab-bar'
+                ];
+
+                let delay = 0;
+                const step = 200; // Шаг задержки между элементами (мс)
+
+                elements.forEach((id, index) => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        // Добавляем класс visible с нарастающей задержкой
+                        setTimeout(() => {
+                            el.classList.add('visible');
+                        }, delay);
+                        delay += step;
+                    }
+                });
+            }, 100);
+
+            // Логика вкладок
             const path = window.location.pathname;
             const links = document.querySelectorAll('.tab-link');
             links.forEach(el => el.classList.remove('active'));
