@@ -11,9 +11,8 @@
             --bg-color: #000000;
             --text-main: #ffffff;
             --text-sec: #666666;
-            --btn-bg-start: #242424; 
-            --btn-bg-end: #121212;
-            --btn-border: #333333;
+            --btn-bg: rgba(40, 40, 40, 0.6); /* Полупрозрачный фон */
+            --btn-border: rgba(255,255,255,0.1);
             --btn-text: #e0e0e0;
             --logo-filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
             --toggle-bg: #333;
@@ -26,6 +25,11 @@
             --tab-text-active: #ffffff;
             --tab-bg-active: rgba(255,255,255,0.15);
             --tab-hover: rgba(255,255,255,0.05);
+            
+            /* Цвета иконок (Полупрозрачные) */
+            --icon-tg: rgba(42, 171, 238, 0.7);
+            --icon-phone: rgba(52, 199, 89, 0.7);
+            --icon-mail: rgba(255, 149, 0, 0.7);
         }
 
         /* СВЕТЛАЯ ТЕМА */
@@ -33,9 +37,8 @@
             --bg-color: #F2F2F7;
             --text-main: #000000;
             --text-sec: #8E8E93;
-            --btn-bg-start: #ffffff; 
-            --btn-bg-end: #f0f0f0;
-            --btn-border: #d1d1d6;
+            --btn-bg: rgba(255, 255, 255, 0.6);
+            --btn-border: rgba(0,0,0,0.1);
             --btn-text: #000000;
             --logo-filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
             --toggle-bg: #e5e5ea;
@@ -48,6 +51,11 @@
             --tab-text-active: #000000;
             --tab-bg-active: rgba(0,0,0,0.08);
             --tab-hover: rgba(0,0,0,0.03);
+            
+            /* Цвета иконок (Полупрозрачные) */
+            --icon-tg: rgba(42, 171, 238, 0.8);
+            --icon-phone: rgba(52, 199, 89, 0.8);
+            --icon-mail: rgba(255, 149, 0, 0.8);
         }
 
         html, body {
@@ -89,12 +97,14 @@
             transition: all 0.3s ease;
         }
         
+        /* --- ЛОГОТИП (УМЕНЬШЕН И ПУЛЬСИРУЕТ) --- */
         .logo-container {
-            width: 200px;
+            width: 160px; /* Уменьшили с 200px */
             height: auto;
             margin: 0 auto 15px;
             pointer-events: none;
             transition: filter 0.3s ease;
+            animation: breathe 3s infinite ease-in-out; /* Пульсация */
         }
 
         .logo-svg {
@@ -126,21 +136,23 @@
             transition: color 0.3s ease;
         }
 
-        /* --- КНОПКА СОХРАНИТЬ КОНТАКТЫ (МЕНЬШЕ СКРУГЛЕНИЕ) --- */
+        /* --- КНОПКА СОХРАНИТЬ КОНТАКТЫ (ПРОЗРАЧНАЯ И АДАПТИВНАЯ) --- */
         .btn-main {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 22px 32px;
+            padding: 20px 32px;
             margin-bottom: 35px;
             margin-top: 5px;
-            background: linear-gradient(180deg, var(--btn-bg-start) 0%, var(--btn-bg-end) 100%);
+            /* Прозрачный фон вместо градиента */
+            background: var(--btn-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             color: var(--btn-text);
             text-decoration: none;
-            /* Было 50px, стало 16px - аккуратные углы */
-            border-radius: 16px; 
-            font-weight: 300;
-            font-size: 19px;
+            border-radius: 16px;
+            font-weight: 400;
+            font-size: 17px;
             letter-spacing: 1.2px;
             text-transform: uppercase;
             border: 1px solid var(--btn-border);
@@ -153,10 +165,19 @@
             cursor: pointer;
             white-space: nowrap;
             line-height: 1.2;
-            min-width: 260px;
+            /* Ширина как у панели вкладок */
+            width: 90%;
+            max-width: 340px;
+            animation: breathe 3s infinite ease-in-out; /* Пульсация */
         }
-        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
-        .btn-main:active { transform: translateY(1px); opacity: 0.8; }
+        .btn-main:hover { 
+            background: rgba(60, 60, 60, 0.8); 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2); 
+        }
+        body.light-mode .btn-main:hover {
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .btn-main:active { transform: scale(0.96); opacity: 0.8; }
 
         .contact-section { margin-top: 0; margin-bottom: 40px; transition: color 0.3s ease; }
         .contact-title {
@@ -170,24 +191,35 @@
             font-weight: 400; letter-spacing: 0.5px; transition: color 0.3s ease;
         }
 
+        /* --- ИКОНКИ (ПОЛУПРОЗРАЧНЫЕ И ПУЛЬСИРУЮТ) --- */
         .icon-btn {
             display: flex; align-items: center; justify-content: center;
-            width: 75px; height: 75px;
-            background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
-            /* Иконки оставил с хорошим скруглением (20px), так как они квадратные по форме */
+            width: 70px; height: 70px;
+            /* Полупрозрачные цвета */
+            background: var(--icon-tg); 
             border-radius: 20px; 
             text-decoration: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s;
             position: relative; overflow: hidden; z-index: 1; cursor: pointer;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            animation: breathe 3s infinite ease-in-out; /* Пульсация */
+            animation-delay: 0.5s; /* Небольшая задержка для красоты */
         }
-        .icon-btn.phone { background: linear-gradient(135deg, #34C759 0%, #30B34E 100%); }
-        .icon-btn.mail { background: linear-gradient(135deg, #FF9500 0%, #E68600 100%); }
-        .icon-btn:hover { transform: scale(1.05); box-shadow: 0 6px 15px rgba(0,0,0,0.3); }
+        .icon-btn.phone { background: var(--icon-phone); }
+        .icon-btn.mail { background: var(--icon-mail); }
+        
+        .icon-btn:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3); 
+            /* При наведении делаем чуть ярче */
+            filter: brightness(1.1); 
+        }
         .icon-btn:active { transform: scale(0.95); filter: brightness(0.9); }
-        .icon-btn svg { width: 38px; height: 38px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
+        .icon-btn svg { width: 36px; height: 36px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
 
-        /* --- НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК (МЕНЬШЕ СКРУГЛЕНИЕ) --- */
+        /* --- НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК --- */
         .tab-bar { 
             position: fixed; 
             bottom: 40px; 
@@ -199,7 +231,6 @@
             background: var(--tab-bg); 
             backdrop-filter: blur(20px); 
             -webkit-backdrop-filter: blur(20px);
-            /* Было 21px, стало 12px - строгие углы */
             border-radius: 12px; 
             border: 1px solid var(--tab-border); 
             display: flex; 
@@ -224,7 +255,6 @@
             font-weight: 400; 
             text-transform: uppercase;
             text-decoration: none;
-            /* Было 18px, стало 10px - под стиль панели */
             border-radius: 10px; 
             transition: all 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
             pointer-events: auto;
@@ -268,7 +298,14 @@
             opacity: 0.8;
         }
 
-        /* --- ТУМБЛЕР ТЕМЫ (СВЕРХУ) --- */
+        /* --- АНИМАЦИЯ ДЫХАНИЯ --- */
+        @keyframes breathe {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); } /* Легкое увеличение */
+            100% { transform: scale(1); }
+        }
+
+        /* --- ТУМБЛЕР ТЕМЫ --- */
         .theme-toggle-container {
             position: fixed;
             top: 20px;
@@ -283,7 +320,7 @@
             width: 44px;
             height: 26px;
             background-color: var(--toggle-bg);
-            border-radius: 30px; /* Тумблер оставил круглым, так удобнее пальцем */
+            border-radius: 30px;
             cursor: pointer;
             transition: background-color 0.3s ease;
             border: 1px solid rgba(0,0,0,0.05);
@@ -310,7 +347,7 @@
 </head>
 <body>
 
-    <!-- ТУМБЛЕР ТЕМЫ (СВЕРХУ) -->
+    <!-- ТУМБЛЕР ТЕМЫ -->
     <div class="theme-toggle-container">
         <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
     </div>
@@ -346,14 +383,14 @@
         </div>
     </div>
 
-    <!-- ПАНЕЛЬ ВКЛАДОК (ВНИЗУ) -->
+    <!-- ПАНЕЛЬ ВКЛАДОК -->
     <div class="tab-bar">
         <a href="https://gadaev.pro" class="tab-link" id="link-home">Главная</a>
         <a href="https://gadaev.pro/calculation" class="tab-link" id="link-calc">Расчет</a>
         <a href="https://gadaev.pro/contact" class="tab-link" id="link-contact">Контакты</a>
     </div>
 
-    <!-- ТЕКСТ В САМОМ НИЗУ (ПОД ПАНЕЛЬЮ) -->
+    <!-- ТЕКСТ ВНИЗУ -->
     <div class="bottom-footer">
         с 2015 года | Gadaev.pro
     </div>
