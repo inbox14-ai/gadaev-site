@@ -81,7 +81,6 @@
         .container {
             width: 100%;
             max-width: 480px;
-            /* Убрали большие отступы, оставили только боковые */
             padding: 0 20px; 
             position: relative;
             z-index: 1;
@@ -89,16 +88,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* ГЛАВНОЕ ИЗМЕНЕНИЕ: Идеальная центровка по вертикали */
             justify-content: center; 
             height: 100%;
             transition: all 0.3s ease;
-            /* Добавляем небольшой отступ сверху для безопасной зоны, но центр остается центром */
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
         }
         
-        /* ЛОГОТИП */
         .logo-container {
             width: 160px;
             height: auto;
@@ -137,13 +133,12 @@
             transition: color 0.3s ease;
         }
 
-        /* КНОПКА СОХРАНИТЬ КОНТАКТЫ */
         .btn-main {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             padding: 20px 32px;
-            margin-bottom: 35px; /* Отступ до иконок */
+            margin-bottom: 35px; 
             margin-top: 5px;
             background: var(--btn-bg);
             backdrop-filter: blur(10px);
@@ -180,7 +175,7 @@
 
         .contact-section { 
             margin-top: 0; 
-            margin-bottom: 20px; /* Чуть меньше отступ снизу */
+            margin-bottom: 20px; 
             transition: color 0.3s ease; 
         }
         .contact-title {
@@ -194,7 +189,16 @@
             font-weight: 400; letter-spacing: 0.5px; transition: color 0.3s ease;
         }
 
-        /* ИКОНКИ */
+        /* --- МАГИЯ ЦЕНТРОВКИ ПО НИЗУ КНОПКИ --- */
+        /* Этот невидимый блок компенсирует высоту иконок и отступов, 
+           поднимая центр контейнера ровно на нижнюю грань кнопки */
+        .centering-spacer {
+            height: 107px; /* Высота иконок (70) + отступы (20+12+5) */
+            width: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
         .icon-btn {
             display: flex; align-items: center; justify-content: center;
             width: 70px; height: 70px;
@@ -220,7 +224,6 @@
         .icon-btn:active { transform: scale(0.95); filter: brightness(0.9); }
         .icon-btn svg { width: 36px; height: 36px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
 
-        /* НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК */
         .tab-bar { 
             position: fixed; 
             bottom: 40px; 
@@ -281,7 +284,6 @@
             background: var(--tab-bg-active);
         }
 
-        /* ТЕКСТ ВНИЗУ */
         .bottom-footer {
             position: fixed;
             bottom: 12px; 
@@ -299,14 +301,12 @@
             opacity: 0.8;
         }
 
-        /* АНИМАЦИЯ ДЫХАНИЯ */
         @keyframes breathe {
             0% { transform: scale(1); }
             50% { transform: scale(1.03); }
             100% { transform: scale(1); }
         }
 
-        /* ТУМБЛЕР ТЕМЫ */
         .theme-toggle-container {
             position: fixed;
             top: 20px;
@@ -348,7 +348,6 @@
 </head>
 <body>
 
-    <!-- ТУМБЛЕР ТЕМЫ -->
     <div class="theme-toggle-container">
         <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
     </div>
@@ -382,16 +381,17 @@
             </div>
             <p class="contact-subtitle">Выберите удобный способ связи</p>
         </div>
+
+        <!-- Невидимый распорный элемент для идеальной центровки низа кнопки -->
+        <div class="centering-spacer"></div>
     </div>
 
-    <!-- ПАНЕЛЬ ВКЛАДОК -->
     <div class="tab-bar">
         <a href="https://gadaev.pro" class="tab-link" id="link-home">Главная</a>
         <a href="https://gadaev.pro/calculation" class="tab-link" id="link-calc">Расчет</a>
         <a href="https://gadaev.pro/contact" class="tab-link" id="link-contact">Контакты</a>
     </div>
 
-    <!-- ТЕКСТ ВНИЗУ -->
     <div class="bottom-footer">
         с 2015 года | Gadaev.pro
     </div>
