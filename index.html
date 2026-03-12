@@ -23,6 +23,8 @@
             
             --toggle-bg: #333;
             --toggle-circle: #fff;
+            
+            --header-height: 130px; /* Высота шапки */
         }
 
         body.light-mode {
@@ -70,23 +72,31 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-top: env(safe-area-inset-top);
+            padding-top: calc(env(safe-area-inset-top) + var(--header-height) + 20px); /* ОТСТУП ДЛЯ ФИКСИРОВАННОЙ ШАПКИ */
             padding-bottom: 100px;
         }
 
-        /* ВЕРХНЯЯ ЧАСТЬ С ЛОГОТИПОМ И ТЕКСТОМ */
+        /* ФИКСИРОВАННАЯ ШАПКА */
         .header-section {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             width: 100%;
+            max-width: 640px;
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            margin-bottom: 25px;
             gap: 20px;
+            z-index: 1002; /* ВЫШЕ ТАБ-БАРА (1000), НИЖЕ ТУМБЛЕРА (1001) */
+            padding: 0 20px;
+            box-sizing: border-box;
+            margin-top: env(safe-area-inset-top); /* ОТСТУП КАК У ТУМБЛЕРА */
         }
 
-        /* ЛОГОТИП СЛЕВА - УВЕЛИЧЕН */
+        /* ЛОГОТИП СЛЕВА */
         .header-logo {
-            width: 90px; /* УВЕЛИЧЕНО С 60px */
+            width: 90px;
             height: 90px;
             flex-shrink: 0;
         }
@@ -98,7 +108,7 @@
             filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
         }
 
-        /* ТЕКСТ СПРАВА - ВЫРОВНЕН */
+        /* ТЕКСТ СПРАВА */
         .header-text {
             display: flex;
             flex-direction: column;
@@ -108,7 +118,7 @@
         }
 
         .header-text-line1 {
-            font-size: 22px; /* УВЕЛИЧЕНО */
+            font-size: 22px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1.5px;
@@ -118,21 +128,21 @@
         }
 
         .header-text-line2 {
-            font-size: 22px; /* УВЕЛИЧЕНО И СДЕЛАНО ОДИНАКОВЫМ */
-            font-weight: 700; /* СДЕЛАНО ЖИРНЫМ КАК ПЕРВАЯ */
+            font-size: 22px;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            color: var(--text-main); /* СДЕЛАНО БЕЛЫМ */
+            color: var(--text-main);
             line-height: 1.2;
             text-align: left;
         }
 
         .header-text-line3 {
-            font-size: 22px; /* УВЕЛИЧЕНО И СДЕЛАНО ОДИНАКОВЫМ */
-            font-weight: 700; /* СДЕЛАНО ЖИРНЫМ */
+            font-size: 22px;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            color: var(--text-main); /* СДЕЛАНО БЕЛЫМ */
+            color: var(--text-main);
             line-height: 1.2;
             text-align: left;
         }
@@ -305,7 +315,7 @@
             cursor: none;
         }
 
-        /* СПИСОК УСЛУГ - КНОПКИ-РАМКИ */
+        /* СПИСОК УСЛУГ */
         .service-list {
             width: 100%;
             max-width: 500px;
@@ -473,9 +483,10 @@
         @media (max-width: 768px) {
             .header-section {
                 gap: 15px;
+                padding: 0 15px;
             }
             .header-logo {
-                width: 70px; /* НА МОБИЛЬНЫХ ПОМЕНЬШЕ */
+                width: 70px;
                 height: 70px;
             }
             .header-text {
@@ -484,7 +495,7 @@
             .header-text-line1,
             .header-text-line2,
             .header-text-line3 {
-                font-size: 18px; /* НА МОБИЛЬНЫХ ПОМЕНЬШЕ */
+                font-size: 18px;
             }
             .page-title { font-size: 18px; }
             .page-subtitle { font-size: 14px; }
@@ -513,25 +524,25 @@
         <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
     </div>
 
-    <div class="main-container">
-        <!-- ВЕРХНЯЯ ЧАСТЬ С ЛОГОТИПОМ И ТЕКСТОМ -->
-        <div class="header-section">
-            <!-- ЛОГОТИП СЛЕВА -->
-            <div class="header-logo">
-                <svg viewBox="0 0 291.11 243.46" xmlns="http://www.w3.org/2000/svg">
-                    <path d="m 489.39,550.55 c 0.1,-0.36 14.6,-54.9 32.22,-121.21 17.62,-66.31 32.12,-120.84 32.22,-121.19 0.18,-0.6 4.74,-0.62 97.3,-0.52 l 97.11,0.1 2.79,0.79 c 7.36,2.08 13.02,5.24 17.85,9.98 5.31,5.21 9.05,11.9 10.72,19.2 1,4.34 1.07,11.52 0.15,15.81 -0.9,4.22 -13.51,51.49 -14.61,54.76 -1.08,3.21 -3.84,9.15 -5.65,12.18 -4.23,7.06 -11.63,15.11 -18.09,19.68 -6.17,4.36 -13.4,7.8 -20.49,9.74 -7.96,2.18 -9.48,2.28 -36.11,2.28 l -23.99,0 -28.42,16.4 c -15.63,9.02 -28.44,16.38 -28.47,16.35 -0.03,-0.03 4.75,-18.11 10.61,-40.18 l 10.67,-40.13 46.55,-0.09 c 43.95,-0.09 46.56,-0.12 46.73,-0.71 0.91,-3.13 12.59,-47.4 12.59,-47.73 0,-0.35 -14.68,-0.42 -70.94,-0.35 l -70.94,0.09 -21.5,80.96 c -11.82,44.53 -21.62,81.18 -21.78,81.44 -0.2,0.34 -49.75,29.18 -56.08,32.64 -0.54,0.3 -0.62,0.25 -0.46,-0.29 z" 
-                          transform="translate(-489.30485,-307.57555)"/>
-                </svg>
-            </div>
-            
-            <!-- ТЕКСТ СПРАВА -->
-            <div class="header-text">
-                <div class="header-text-line1">ЧАСТНЫЙ ЭКСПЕРТ</div>
-                <div class="header-text-line2">ПОМОЩЬ В ПРИЕМКЕ</div>
-                <div class="header-text-line3">КВАРТИРЫ ОТ ЗАСТРОЙЩИКА</div>
-            </div>
+    <!-- ФИКСИРОВАННАЯ ШАПКА -->
+    <div class="header-section">
+        <!-- ЛОГОТИП СЛЕВА -->
+        <div class="header-logo">
+            <svg viewBox="0 0 291.11 243.46" xmlns="http://www.w3.org/2000/svg">
+                <path d="m 489.39,550.55 c 0.1,-0.36 14.6,-54.9 32.22,-121.21 17.62,-66.31 32.12,-120.84 32.22,-121.19 0.18,-0.6 4.74,-0.62 97.3,-0.52 l 97.11,0.1 2.79,0.79 c 7.36,2.08 13.02,5.24 17.85,9.98 5.31,5.21 9.05,11.9 10.72,19.2 1,4.34 1.07,11.52 0.15,15.81 -0.9,4.22 -13.51,51.49 -14.61,54.76 -1.08,3.21 -3.84,9.15 -5.65,12.18 -4.23,7.06 -11.63,15.11 -18.09,19.68 -6.17,4.36 -13.4,7.8 -20.49,9.74 -7.96,2.18 -9.48,2.28 -36.11,2.28 l -23.99,0 -28.42,16.4 c -15.63,9.02 -28.44,16.38 -28.47,16.35 -0.03,-0.03 4.75,-18.11 10.61,-40.18 l 10.67,-40.13 46.55,-0.09 c 43.95,-0.09 46.56,-0.12 46.73,-0.71 0.91,-3.13 12.59,-47.4 12.59,-47.73 0,-0.35 -14.68,-0.42 -70.94,-0.35 l -70.94,0.09 -21.5,80.96 c -11.82,44.53 -21.62,81.18 -21.78,81.44 -0.2,0.34 -49.75,29.18 -56.08,32.64 -0.54,0.3 -0.62,0.25 -0.46,-0.29 z" 
+                      transform="translate(-489.30485,-307.57555)"/>
+            </svg>
         </div>
+        
+        <!-- ТЕКСТ СПРАВА -->
+        <div class="header-text">
+            <div class="header-text-line1">ЧАСТНЫЙ ЭКСПЕРТ</div>
+            <div class="header-text-line2">ПОМОЩЬ В ПРИЕМКЕ</div>
+            <div class="header-text-line3">КВАРТИРЫ ОТ ЗАСТРОЙЩИКА</div>
+        </div>
+    </div>
 
+    <div class="main-container">
         <!-- НАВИГАЦИЯ -->
         <div class="photo-wrapper">
             <button class="nav-btn" id="prevBtn" onclick="changePhoto(-1)" aria-label="Предыдущее фото">
