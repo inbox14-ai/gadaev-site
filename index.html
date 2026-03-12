@@ -44,7 +44,7 @@
 
         .main-container {
             width: 100%;
-            max-width: 480px;
+            max-width: 1280px; /* МАКСИМАЛЬНАЯ ШИРИНА 1280px */
             padding: 20px;
             box-sizing: border-box;
             display: flex;
@@ -77,16 +77,16 @@
         .photo-wrapper {
             position: relative;
             width: 100%;
-            max-width: 400px;
-            margin-bottom: 25px;
+            max-width: 1280px; /* РАМКА 1280px */
+            margin: 0 auto 25px auto;
             cursor: crosshair;
         }
 
         .photo-container {
             width: 100%;
-            aspect-ratio: 16/10;
+            aspect-ratio: 16/9; /* ПРОПОРЦИЯ 1280x720 */
             border-radius: 16px;
-            overflow: visible; /* ЛУПА МОЖЕТ ВЫХОДИТЬ */
+            overflow: visible;
             box-shadow: 0 10px 40px rgba(0,0,0,0.4);
             border: 1px solid rgba(255,255,255,0.1);
             position: relative;
@@ -95,9 +95,9 @@
         .photo-container img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* ЗАПОЛНЯЕТ РАМКУ ТОЧНО */
+            object-fit: cover;
             display: block;
-            border-radius: 16px; /* ЗАКРУГЛЕННЫЕ УГЛЫ */
+            border-radius: 16px;
             filter: grayscale(100%);
             transition: filter 0.3s ease;
             pointer-events: none;
@@ -126,6 +126,7 @@
 
         .service-list {
             width: 100%;
+            max-width: 600px;
             text-align: left;
             margin-bottom: 30px;
         }
@@ -153,6 +154,7 @@
 
         .buttons-container {
             width: 100%;
+            max-width: 500px;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -191,7 +193,7 @@
             transform: scale(0.98);
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .page-title { font-size: 18px; }
             .page-subtitle { font-size: 14px; }
             .service-item { font-size: 13px; }
@@ -260,7 +262,7 @@
         const mainPhoto = document.getElementById('mainPhoto');
         
         const zoomLevel = 2.5;
-        const lensOffset = 70; // Смещение лупы выше пальца
+        const lensOffset = 70;
 
         function moveLens(e) {
             e.preventDefault();
@@ -276,34 +278,26 @@
 
             const rect = photoContainer.getBoundingClientRect();
             
-            // Позиция пальца/курсора
             const fingerX = clientX - rect.left;
             const fingerY = clientY - rect.top;
 
-            // Позиция ЦЕНТРА ЛУПЫ (выше пальца)
             const lensCenterX = fingerX;
             const lensCenterY = fingerY - lensOffset;
 
-            // Ограничиваем ТОЛЬКО для того, чтобы центр лупы был в пределах фото
-            // Но лупа может выходить за края на половину своего размера
             const lensRadius = lens.offsetWidth / 2;
             let constrainedLensX = lensCenterX;
             let constrainedLensY = lensCenterY;
             
-            // Разрешаем лупе выходить за края на половину
             if (constrainedLensX < 0) constrainedLensX = 0;
             if (constrainedLensX > rect.width) constrainedLensX = rect.width;
             if (constrainedLensY < 0) constrainedLensY = 0;
             if (constrainedLensY > rect.height) constrainedLensY = rect.height;
 
-            // Показываем лупу
             lens.style.display = 'block';
             
-            // Позиционируем лупу (её центр)
             lens.style.left = constrainedLensX + 'px';
             lens.style.top = constrainedLensY + 'px';
 
-            // Увеличиваем ИМЕННО ЦЕНТР ЛУПЫ
             const bgX = (constrainedLensX / rect.width) * 100;
             const bgY = (constrainedLensY / rect.height) * 100;
             
@@ -316,12 +310,10 @@
             lens.style.display = 'none';
         }
 
-        // События для мыши
         photoContainer.addEventListener('mouseenter', () => lens.style.display = 'block');
         photoContainer.addEventListener('mouseleave', hideLens);
         photoContainer.addEventListener('mousemove', moveLens);
 
-        // События для тачскрина
         photoContainer.addEventListener('touchstart', (e) => {
             moveLens(e);
         }, { passive: false });
@@ -336,14 +328,12 @@
             if (navigator.vibrate) navigator.vibrate(duration);
         }
 
-        // Переключение темы
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
         }
 
-        // Загрузка темы
         window.addEventListener('load', () => {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
