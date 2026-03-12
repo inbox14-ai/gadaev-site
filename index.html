@@ -13,6 +13,18 @@
             --btn-bg-start: #1a1a1a;
             --btn-bg-end: #000000;
             --btn-border: #333333;
+            
+            /* СТИЛИ ВКЛАДОК ИЗ ПЕРВОГО КОДА */
+            --tab-bg: rgba(30, 30, 30, 0.85);
+            --tab-border: rgba(255,255,255,0.08);
+            --tab-text: #888888;
+            --tab-text-active: #ffffff;
+            --tab-bg-active: rgba(255,255,255,0.15);
+            --tab-hover: rgba(255,255,255,0.05);
+            
+            /* СТИЛИ ТУМБЛЕРА ИЗ ПЕРВОГО КОДА */
+            --toggle-bg: #333;
+            --toggle-circle: #fff;
         }
 
         body.light-mode {
@@ -22,6 +34,18 @@
             --btn-bg-start: #ffffff;
             --btn-bg-end: #e0e0e0;
             --btn-border: #cccccc;
+            
+            /* СВЕТЛАЯ ТЕМА ВКЛАДОК */
+            --tab-bg: rgba(255, 255, 255, 0.9);
+            --tab-border: rgba(0,0,0,0.05);
+            --tab-text: #888888;
+            --tab-text-active: #000000;
+            --tab-bg-active: rgba(0,0,0,0.08);
+            --tab-hover: rgba(0,0,0,0.03);
+            
+            /* СВЕТЛАЯ ТЕМА ТУМБЛЕРА */
+            --toggle-bg: #e5e5ea;
+            --toggle-circle: #ffffff;
         }
 
         html, body {
@@ -30,6 +54,7 @@
             width: 100%;
             margin: 0;
             padding: 0;
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
         body {
@@ -39,7 +64,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
         .main-container {
@@ -271,6 +295,105 @@
             color: #000000;
         }
 
+        /* НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК (ИЗ ПЕРВОГО КОДА) */
+        .tab-bar { 
+            position: fixed; 
+            bottom: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            height: 42px; 
+            max-width: 340px; 
+            width: 90%; 
+            background: var(--tab-bg); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 12px; 
+            border: 1px solid var(--tab-border); 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center; 
+            z-index: 1000; 
+            margin-bottom: env(safe-area-inset-bottom);
+            pointer-events: auto; 
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            padding: 0 4px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .tab-link {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--tab-text);
+            font-size: 13px; 
+            font-weight: 400; 
+            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 10px; 
+            transition: all 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+            pointer-events: auto;
+            cursor: pointer;
+            padding: 0 6px;
+            letter-spacing: 0.6px; 
+        }
+
+        .tab-link.active {
+            color: var(--tab-text-active);
+            background: var(--tab-bg-active);
+            font-weight: 500; 
+        }
+
+        @media (hover: hover) {
+            .tab-link:hover {
+                background: var(--tab-hover);
+                color: var(--tab-text-active);
+            }
+        }
+        .tab-link:active {
+            transform: scale(0.95);
+            background: var(--tab-bg-active);
+        }
+
+        /* ТУМБЛЕР ТЕМЫ (ИЗ ПЕРВОГО КОДА) */
+        .theme-toggle-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            margin-top: env(safe-area-inset-top);
+            transition: top 0.3s ease;
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 44px;
+            height: 26px;
+            background-color: var(--toggle-bg);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .theme-toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--toggle-circle);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        body.light-mode .theme-toggle::after {
+            transform: translateX(18px);
+        }
+
         @media (max-width: 768px) {
             .page-title { font-size: 18px; }
             .page-subtitle { font-size: 14px; }
@@ -290,6 +413,11 @@
     </style>
 </head>
 <body>
+
+    <!-- ТУМБЛЕР ТЕМЫ (ИЗ ПЕРВОГО КОДА) -->
+    <div class="theme-toggle-container">
+        <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
+    </div>
 
     <div class="main-container">
         <h2 class="page-title">ЧАСТНАЯ ЭКСПЕРТИЗА<br>ПРИЕМКА КВАРТИР</h2>
@@ -350,6 +478,13 @@
                 <span>Помощь в получении компенсации</span>
             </div>
         </div>
+    </div>
+
+    <!-- ПАНЕЛЬ ВКЛАДОК (ИЗ ПЕРВОГО КОДА) -->
+    <div class="tab-bar" id="tabBar">
+        <a href="https://gadaev.pro" class="tab-link" id="link-home">Главная</a>
+        <a href="https://gadaev.pro/calculation" class="tab-link" id="link-calc">Цены</a>
+        <a href="https://gadaev.pro/contact" class="tab-link" id="link-contact">Контакты</a>
     </div>
 
     <script>
@@ -497,25 +632,86 @@
 
         photoContainer.addEventListener('touchend', hideLens);
 
-        function vibrate(duration) {
-            if (navigator.vibrate) navigator.vibrate(duration);
+        // СВАЙП НА ПАНЕЛИ ВКЛАДОК (ИЗ ПЕРВОГО КОДА)
+        const tabBar = document.getElementById('tabBar');
+        let tabTouchStartX = 0;
+        let tabTouchEndX = 0;
+
+        tabBar.addEventListener('touchstart', (e) => {
+            tabTouchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        tabBar.addEventListener('touchend', (e) => {
+            tabTouchEndX = e.changedTouches[0].screenX;
+            handleTabSwipe();
+        }, { passive: true });
+
+        function handleTabSwipe() {
+            const diff = tabTouchStartX - tabTouchEndX;
+            if (Math.abs(diff) < 30) return;
+
+            const links = document.querySelectorAll('.tab-link');
+            let currentIndex = 0;
+            links.forEach((link, index) => {
+                if (link.classList.contains('active')) currentIndex = index;
+            });
+
+            if (diff > 0) {
+                if (currentIndex < links.length - 1) {
+                    links[currentIndex + 1].click();
+                }
+            } else {
+                if (currentIndex > 0) {
+                    links[currentIndex - 1].click();
+                }
+            }
+        }
+
+        // АВТО-ОПРЕДЕЛЕНИЕ ТЕМЫ (ИЗ ПЕРВОГО КОДА)
+        window.addEventListener('load', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                if (savedTheme === 'light') {
+                    document.body.classList.add('light-mode');
+                }
+            } else {
+                const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+                if (prefersLight) {
+                    document.body.classList.add('light-mode');
+                }
+            }
+            updateIndicators();
+            updateButtons();
+            updateTabActive();
+        });
+
+        // ПОДСВЕТКА АКТИВНОЙ ВКЛАДКИ
+        function updateTabActive() {
+            const path = window.location.pathname;
+            const links = document.querySelectorAll('.tab-link');
+            links.forEach(el => el.classList.remove('active'));
+
+            if (path.includes('/contact') || path.endsWith('contact.html') || path.endsWith('contact')) {
+                document.getElementById('link-contact').classList.add('active');
+            } else if (path.includes('/calculation')) {
+                document.getElementById('link-calc').classList.add('active');
+            } else {
+                document.getElementById('link-home').classList.add('active');
+            }
         }
 
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            vibrate(20);
         }
 
-        window.addEventListener('load', () => {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'light') {
-                document.body.classList.add('light-mode');
-            }
-            updateIndicators();
-            updateButtons();
-        });
+        function vibrate(duration) {
+            if (navigator.vibrate) navigator.vibrate(duration);
+        }
     </script>
 
 </body>
 </html>
+
