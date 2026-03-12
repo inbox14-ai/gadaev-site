@@ -44,7 +44,7 @@
 
         .main-container {
             width: 100%;
-            max-width: 1280px; /* МАКСИМАЛЬНАЯ ШИРИНА 1280px */
+            max-width: 640px; /* УМЕНЬШЕНО В 2 РАЗА */
             padding: 20px;
             box-sizing: border-box;
             display: flex;
@@ -77,14 +77,14 @@
         .photo-wrapper {
             position: relative;
             width: 100%;
-            max-width: 1280px; /* РАМКА 1280px */
+            max-width: 640px; /* 640px ВМЕСТО 1280px */
             margin: 0 auto 25px auto;
             cursor: crosshair;
         }
 
         .photo-container {
             width: 100%;
-            aspect-ratio: 16/9; /* ПРОПОРЦИЯ 1280x720 */
+            aspect-ratio: 16/9; /* ПРОПОРЦИЯ 640x360 */
             border-radius: 16px;
             overflow: visible;
             box-shadow: 0 10px 40px rgba(0,0,0,0.4);
@@ -126,7 +126,7 @@
 
         .service-list {
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
             text-align: left;
             margin-bottom: 30px;
         }
@@ -154,7 +154,7 @@
 
         .buttons-container {
             width: 100%;
-            max-width: 500px;
+            max-width: 400px;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -256,7 +256,6 @@
     </div>
 
     <script>
-        // ЛУПА - ЛОГИКА
         const lens = document.getElementById('lens');
         const photoContainer = document.getElementById('photoContainer');
         const mainPhoto = document.getElementById('mainPhoto');
