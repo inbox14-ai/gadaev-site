@@ -4,97 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Руслан Гадаев | Инженер ПГС</title>
+    <title>Руслан Гадаев | Приемка квартир в новостройках</title>
     <style>
         :root {
-            /* ТЕМНАЯ ТЕМА */
-            --bg-color: #000000;
+            --bg-color: #050505;
             --text-main: #ffffff;
-            --text-sec: #666666;
-            --btn-bg: rgba(40, 40, 40, 0.6);
-            --btn-border: rgba(255,255,255,0.1);
-            --btn-text: #e0e0e0;
-            --logo-filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
-            --toggle-bg: #333;
-            --toggle-circle: #fff;
-            
-            --tab-bg: rgba(30, 30, 30, 0.85);
-            --tab-border: rgba(255,255,255,0.08);
-            --tab-text: #888888;
-            --tab-text-active: #ffffff;
-            --tab-bg-active: rgba(255,255,255,0.15);
-            --tab-hover: rgba(255,255,255,0.05);
-            
-            --icon-tg: rgba(42, 171, 238, 0.7);
-            --icon-phone: rgba(52, 199, 89, 0.7);
-            --icon-mail: rgba(255, 149, 0, 0.7);
+            --text-sec: #888888;
+            --btn-bg-start: #1a1a1a;
+            --btn-bg-end: #000000;
+            --btn-border: #333333;
+            --logo-filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
         }
 
-        /* СВЕТЛАЯ ТЕМА */
         body.light-mode {
-            --bg-color: #F2F2F7;
+            --bg-color: #f0f0f0;
             --text-main: #000000;
-            --text-sec: #8E8E93;
-            --btn-bg: rgba(255, 255, 255, 0.6);
-            --btn-border: rgba(0,0,0,0.1);
-            --btn-text: #000000;
+            --text-sec: #666666;
+            --btn-bg-start: #ffffff;
+            --btn-bg-end: #e0e0e0;
+            --btn-border: #cccccc;
             --logo-filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
-            --toggle-bg: #e5e5ea;
-            --toggle-circle: #ffffff;
-
-            --tab-bg: rgba(255, 255, 255, 0.9);
-            --tab-border: rgba(0,0,0,0.05);
-            --tab-text: #888888;
-            --tab-text-active: #000000;
-            --tab-bg-active: rgba(0,0,0,0.08);
-            --tab-hover: rgba(0,0,0,0.03);
-            
-            --icon-tg: rgba(42, 171, 238, 0.8);
-            --icon-phone: rgba(52, 199, 89, 0.8);
-            --icon-mail: rgba(255, 149, 0, 0.8);
         }
 
         html, body {
-            overflow: hidden;
+            overflow-x: hidden;
             height: 100%;
-            position: fixed;
             width: 100%;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            touch-action: none;
-            -webkit-user-select: none;
-            user-select: none;
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        .container {
+        .main-container {
             width: 100%;
             max-width: 480px;
-            padding: 0 20px; 
-            position: relative;
-            z-index: 1;
+            padding: 20px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; 
-            height: 100%;
-            transition: all 0.3s ease;
             padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
+            padding-bottom: 100px;
         }
-        
+
         .logo-container {
             width: 135px;
             height: auto;
@@ -114,248 +75,53 @@
         }
 
         h1 {
-            font-size: 30px;
+            font-size: 26px;
             font-weight: 700;
-            margin: 5px 0 8px 0;
+            margin: 5px 0 5px 0;
             letter-spacing: 1.5px;
             text-transform: uppercase;
-            line-height: 1.1;
-            transition: color 0.3s ease;
+            line-height: 1.2;
+            text-align: center;
             color: var(--text-main);
         }
-        p.subtitle {
-            font-size: 18px;
+
+        .subtitle {
+            font-size: 14px;
             color: var(--text-sec);
-            margin: 0 0 30px 0;
+            margin: 0 0 25px 0;
             font-weight: 400;
             letter-spacing: 0.5px;
-            line-height: 1.2;
-            transition: color 0.3s ease;
+            text-align: center;
         }
 
-        .btn-main {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 32px;
-            margin-bottom: 35px; 
-            margin-top: 5px;
-            background: var(--btn-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            color: var(--btn-text);
-            text-decoration: none;
-            border-radius: 16px;
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 0 5px 0;
+            text-align: center;
+            line-height: 1.3;
+            color: var(--text-main);
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: var(--text-sec);
+            margin: 0 0 25px 0;
             font-weight: 400;
-            font-size: 17px;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            border: 1px solid var(--btn-border);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            cursor: pointer;
-            white-space: nowrap;
-            line-height: 1.2;
-            width: 90%;
-            max-width: 340px;
-            animation: breathe 3s infinite ease-in-out;
-        }
-        .btn-main:hover { 
-            background: rgba(60, 60, 60, 0.8); 
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2); 
-        }
-        body.light-mode .btn-main:hover {
-            background: rgba(255, 255, 255, 0.9);
-        }
-        .btn-main:active { transform: scale(0.96); opacity: 0.8; }
-
-        .contact-section { 
-            margin-top: 0; 
-            margin-bottom: 20px; 
-            transition: color 0.3s ease; 
-        }
-        .contact-title {
-            font-size: 18px; font-weight: 400; margin: 0 0 20px 0;
-            letter-spacing: 0.5px; color: var(--text-main); text-transform: none;
-            transition: color 0.3s ease;
-        }
-        .icons-row { display: flex; justify-content: center; gap: 25px; margin-bottom: 12px; }
-        .contact-subtitle {
-            font-size: 15px; color: var(--text-sec); margin: 0;
-            font-weight: 400; letter-spacing: 0.5px; transition: color 0.3s ease;
-        }
-
-        .icon-btn {
-            display: flex; align-items: center; justify-content: center;
-            width: 70px; height: 70px;
-            background: var(--icon-tg); 
-            border-radius: 20px; 
-            text-decoration: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s;
-            position: relative; overflow: hidden; z-index: 1; cursor: pointer;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            animation: breathe 3s infinite ease-in-out;
-            animation-delay: 0.5s;
-        }
-        .icon-btn.phone { background: var(--icon-phone); }
-        .icon-btn.mail { background: var(--icon-mail); }
-        
-        .icon-btn:hover { 
-            transform: scale(1.05); 
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3); 
-            filter: brightness(1.1); 
-        }
-        .icon-btn:active { transform: scale(0.95); filter: brightness(0.9); }
-        .icon-btn svg { width: 36px; height: 36px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
-
-        /* НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК */
-        .tab-bar { 
-            position: fixed; 
-            bottom: 25px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            height: 42px; 
-            max-width: 340px; 
-            width: 90%; 
-            background: var(--tab-bg); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 12px; 
-            border: 1px solid var(--tab-border); 
-            display: flex; 
-            justify-content: space-around; 
-            align-items: center; 
-            z-index: 1000; 
-            margin-bottom: env(safe-area-inset-bottom);
-            pointer-events: auto; 
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-            padding: 0 4px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .tab-link {
-            flex: 1;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--tab-text);
-            font-size: 13px; 
-            font-weight: 400; 
-            text-transform: uppercase;
-            text-decoration: none;
-            border-radius: 10px; 
-            transition: all 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
-            pointer-events: auto;
-            cursor: pointer;
-            padding: 0 6px;
-            letter-spacing: 0.6px; 
-        }
-
-        .tab-link.active {
-            color: var(--tab-text-active);
-            background: var(--tab-bg-active);
-            font-weight: 500; 
-        }
-
-        @media (hover: hover) {
-            .tab-link:hover {
-                background: var(--tab-hover);
-                color: var(--tab-text-active);
-            }
-        }
-        .tab-link:active {
-            transform: scale(0.95);
-            background: var(--tab-bg-active);
-        }
-
-        @keyframes breathe {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
-        }
-
-        .theme-toggle-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1001;
-            margin-top: env(safe-area-inset-top);
-            transition: top 0.3s ease;
-        }
-
-        .theme-toggle {
-            position: relative;
-            width: 44px;
-            height: 26px;
-            background-color: var(--toggle-bg);
-            border-radius: 30px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .theme-toggle::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background-color: var(--toggle-circle);
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-        }
-
-        body.light-mode .theme-toggle::after {
-            transform: translateX(18px);
-        }
-
-        /* Стили для страниц */
-        .page {
-            display: none;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            position: relative;
-        }
-        .page.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        /* Пустые страницы */
-        .page-empty {
-            background-color: var(--bg-color);
-        }
-
-        /* --- ИНТЕРАКТИВНОЕ ФОТО С ЛУПОЙ --- */
-        .photo-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            cursor: crosshair;
+            text-align: center;
+            text-transform: lowercase;
         }
 
         .photo-container {
-            position: relative;
-            width: 95%;
-            height: 90%;
-            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 16/10;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            margin-bottom: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
             border: 1px solid rgba(255,255,255,0.1);
         }
 
@@ -364,256 +130,172 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            pointer-events: none; /* Чтобы картинка не перетаскивалась браузером */
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
         }
 
-        /* Круглая лупа */
-        .lens {
-            position: absolute;
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            cursor: none;
-            pointer-events: none;
-            display: none;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.2);
-            z-index: 10;
-            /* Размер лупы */
-            width: 150px;
-            height: 150px;
-            /* Фон будет задан через JS */
-            background-repeat: no-repeat;
-            background-color: var(--bg-color);
+        .photo-container:hover img {
+            filter: grayscale(0%);
         }
 
-        /* Адаптация под мобильные */
-        @media (max-width: 768px) {
-            .lens {
-                width: 100px;
-                height: 100px;
-                border-width: 2px;
-            }
-            .photo-container {
-                width: 100%;
-                height: 100%;
-                border-radius: 0;
-                border: none;
-            }
+        .service-list {
+            width: 100%;
+            text-align: left;
+            margin-bottom: 30px;
         }
 
+        .service-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: var(--text-sec);
+            line-height: 1.4;
+        }
+
+        .check-icon {
+            color: #ffffff;
+            font-weight: 700;
+            margin-right: 12px;
+            min-width: 20px;
+            font-size: 15px;
+        }
+
+        body.light-mode .check-icon {
+            color: #000000;
+        }
+
+        .buttons-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-main {
+            display: block;
+            width: 100%;
+            padding: 18px 25px;
+            background: linear-gradient(145deg, var(--btn-bg-start), var(--btn-bg-end));
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: 1px solid var(--btn-border);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-sizing: border-box;
+        }
+
+        .btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        body.light-mode .btn-main:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn-main:active {
+            transform: scale(0.98);
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 22px; }
+            .page-title { font-size: 18px; }
+            .page-subtitle { font-size: 14px; }
+            .service-item { font-size: 13px; }
+            .btn-main { font-size: 14px; padding: 16px 20px; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- ТУМБЛЕР ТЕМЫ -->
-    <div class="theme-toggle-container">
-        <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
-    </div>
-
-    <!-- СТРАНИЦА 1: ГЛАВНАЯ (С ФОТО И ЛУПОЙ) -->
-    <div class="page page-empty active" id="page-home">
-        <div class="photo-wrapper" id="photo-wrapper">
-            <div class="photo-container" id="photo-container">
-                <!-- Замени src="room.jpg" на имя своего файла -->
-                <img src="room.jpg" alt="Интерьер после ремонта" id="main-photo">
-            </div>
-            <!-- Элемент лупы -->
-            <div class="lens" id="lens"></div>
+    <div class="main-container">
+        <div class="logo-container">
+            <svg class="logo-svg" viewBox="0 0 291.11 243.46" xmlns="http://www.w3.org/2000/svg">
+                <path d="m 489.39,550.55 c 0.1,-0.36 14.6,-54.9 32.22,-121.21 17.62,-66.31 32.12,-120.84 32.22,-121.19 0.18,-0.6 4.74,-0.62 97.3,-0.52 l 97.11,0.1 2.79,0.79 c 7.36,2.08 13.02,5.24 17.85,9.98 5.31,5.21 9.05,11.9 10.72,19.2 1,4.34 1.07,11.52 0.15,15.81 -0.9,4.22 -13.51,51.49 -14.61,54.76 -1.08,3.21 -3.84,9.15 -5.65,12.18 -4.23,7.06 -11.63,15.11 -18.09,19.68 -6.17,4.36 -13.4,7.8 -20.49,9.74 -7.96,2.18 -9.48,2.28 -36.11,2.28 l -23.99,0 -28.42,16.4 c -15.63,9.02 -28.44,16.38 -28.47,16.35 -0.03,-0.03 4.75,-18.11 10.61,-40.18 l 10.67,-40.13 46.55,-0.09 c 43.95,-0.09 46.56,-0.12 46.73,-0.71 0.91,-3.13 12.59,-47.4 12.59,-47.73 0,-0.35 -14.68,-0.42 -70.94,-0.35 l -70.94,0.09 -21.5,80.96 c -11.82,44.53 -21.62,81.18 -21.78,81.44 -0.2,0.34 -49.75,29.18 -56.08,32.64 -0.54,0.3 -0.62,0.25 -0.46,-0.29 z" 
+                      transform="translate(-489.30485,-307.57555)" />
+            </svg>
         </div>
-    </div>
 
-    <!-- СТРАНИЦА 2: РАСЧЕТ (ПУСТАЯ) -->
-    <div class="page page-empty" id="page-calc"></div>
+        <h1>РУСЛАН ГАДАЕВ</h1>
+        <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
 
-    <!-- СТРАНИЦА 3: КОНТАКТЫ (С КОНТЕНТОМ) -->
-    <div class="page" id="page-contact">
-        <div class="container">
-            <div class="logo-container">
-                <svg class="logo-svg" viewBox="0 0 291.11 243.46" xmlns="http://www.w3.org/2000/svg">
-                    <path d="m 489.39,550.55 c 0.1,-0.36 14.6,-54.9 32.22,-121.21 17.62,-66.31 32.12,-120.84 32.22,-121.19 0.18,-0.6 4.74,-0.62 97.3,-0.52 l 97.11,0.1 2.79,0.79 c 7.36,2.08 13.02,5.24 17.85,9.98 5.31,5.21 9.05,11.9 10.72,19.2 1,4.34 1.07,11.52 0.15,15.81 -0.9,4.22 -13.51,51.49 -14.61,54.76 -1.08,3.21 -3.84,9.15 -5.65,12.18 -4.23,7.06 -11.63,15.11 -18.09,19.68 -6.17,4.36 -13.4,7.8 -20.49,9.74 -7.96,2.18 -9.48,2.28 -36.11,2.28 l -23.99,0 -28.42,16.4 c -15.63,9.02 -28.44,16.38 -28.47,16.35 -0.03,-0.03 4.75,-18.11 10.61,-40.18 l 10.67,-40.13 46.55,-0.09 c 43.95,-0.09 46.56,-0.12 46.73,-0.71 0.91,-3.13 12.59,-47.4 12.59,-47.73 0,-0.35 -14.68,-0.42 -70.94,-0.35 l -70.94,0.09 -21.5,80.96 c -11.82,44.53 -21.62,81.18 -21.78,81.44 -0.2,0.34 -49.75,29.18 -56.08,32.64 -0.54,0.3 -0.62,0.25 -0.46,-0.29 z" 
-                          transform="translate(-489.30485,-307.57555)" 
-                          fill="currentColor"/>
-                </svg>
+        <h2 class="page-title">ЧАСТНАЯ ЭКСПЕРТИЗА<br>ПРИЕМКА КВАРТИР</h2>
+        <p class="page-subtitle">в новостройках</p>
+
+        <div class="photo-container">
+            <img src="room.jpg" alt="Интерьер после приемки">
+        </div>
+
+        <div class="service-list">
+            <div class="service-item">
+                <span class="check-icon">✓</span>
+                <span>Проверка качества отделки</span>
             </div>
-            
-            <h1>РУСЛАН ГАДАЕВ</h1>
-            <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
-
-            <a href="contact.vcf" class="btn-main" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТЫ</a>
-
-            <div class="contact-section">
-                <div class="contact-title">Связаться сейчас:</div>
-                <div class="icons-row">
-                    <a href="https://t.me/ruslan_gadaev" class="icon-btn" target="_blank" onclick="vibrate(30)">
-                        <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.116.033.378.018.58z"/></svg>
-                    </a>
-                    <a href="tel:+79777075755" class="icon-btn phone" onclick="vibrate(30)">
-                        <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
-                    </a>
-                    <a href="mailto:ruslan@gadaev.pro" class="icon-btn mail" onclick="vibrate(30)">
-                        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                    </a>
-                </div>
-                <p class="contact-subtitle">Выберите удобный способ связи</p>
+            <div class="service-item">
+                <span class="check-icon">✓</span>
+                <span>Проверка инженерных коммуникаций</span>
+            </div>
+            <div class="service-item">
+                <span class="check-icon">✓</span>
+                <span>Замер отклонений от СНиП, СП, ГОСТ</span>
+            </div>
+            <div class="service-item">
+                <span class="check-icon">✓</span>
+                <span>Проверка на соответствие СанПиН</span>
+            </div>
+            <div class="service-item">
+                <span class="check-icon">✓</span>
+                <span>Выявление дефектов строительства</span>
+            </div>
+            <div class="service-item">
+                <span class="check-icon">✓</span>
+                <span>Составление дефектной ведомости</span>
+            </div>
+            <div class="service-item">
+                <span class="check-icon">✓</span>
+                <span>Помощь в получении компенсации</span>
             </div>
         </div>
-    </div>
 
-    <!-- ПАНЕЛЬ ВКЛАДОК (БЕЗ ССЫЛОК) -->
-    <div class="tab-bar">
-        <div class="tab-link active" onclick="switchTab(0)">Главная</div>
-        <div class="tab-link" onclick="switchTab(1)">Расчет</div>
-        <div class="tab-link" onclick="switchTab(2)">Контакты</div>
+        <div class="buttons-container">
+            <a href="tel:+79777075755" class="btn-main" onclick="vibrate(50)">ЗАКАЗАТЬ ЭКСПЕРТИЗУ</a>
+            <a href="https://gadaev.pro/calculation" class="btn-main" onclick="vibrate(50)">РАСЧИТАТЬ СТОИМОСТЬ</a>
+        </div>
     </div>
 
     <script>
-        let currentPage = 0; // По умолчанию Главная
-
-        // Переключение вкладок
-        function switchTab(index) {
-            if (index === currentPage) return;
-            currentPage = index;
-            
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            document.querySelectorAll('.page')[index].classList.add('active');
-            
-            document.querySelectorAll('.tab-link').forEach((link, i) => {
-                if (i === index) link.classList.add('active');
-                else link.classList.remove('active');
-            });
-            
-            vibrate(20);
+        function vibrate(duration) {
+            if (navigator.vibrate) navigator.vibrate(duration);
         }
 
-        // СВАЙПЫ ВЛЕВО-ВПРАВО
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-        document.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-
-        document.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }, { passive: true });
-
-        function handleSwipe() {
-            const diff = touchStartX - touchEndX;
-            if (Math.abs(diff) < 50) return;
-            
-            if (diff > 0) {
-                if (currentPage < 2) switchTab(currentPage + 1);
-            } else {
-                if (currentPage > 0) switchTab(currentPage - 1);
-            }
-        }
-
-        // --- ЛОГИКА ЛУПЫ ---
-        const lens = document.getElementById('lens');
-        const photoContainer = document.getElementById('photo-container');
-        const mainPhoto = document.getElementById('main-photo');
-        const photoWrapper = document.getElementById('photo-wrapper');
-        
-        let isHovering = false;
-
-        // Функция движения лупы
-        function moveLens(e) {
-            e.preventDefault();
-            
-            // Получаем координаты курсора или пальца
-            let clientX, clientY;
-            if (e.touches && e.touches.length > 0) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
-
-            // Координаты контейнера фото
-            const rect = photoContainer.getBoundingClientRect();
-            
-            // Позиция курсора внутри контейнера
-            let x = clientX - rect.left;
-            let y = clientY - rect.top;
-
-            // Ограничиваем движение лупы границами фото
-            const lensRadius = lens.offsetWidth / 2;
-            
-            if (x < lensRadius) x = lensRadius;
-            if (x > rect.width - lensRadius) x = rect.width - lensRadius;
-            if (y < lensRadius) y = lensRadius;
-            if (y > rect.height - lensRadius) y = rect.height - lensRadius;
-
-            // Двигаем лупу
-            lens.style.display = 'block';
-            lens.style.left = (x - lensRadius) + 'px';
-            lens.style.top = (y - lensRadius) + 'px';
-
-            // Вычисляем коэффициент увеличения (10 раз)
-            const zoom = 10;
-            
-            // Настраиваем фон лупы (то же фото, но увеличенное)
-            lens.style.backgroundImage = `url('${mainPhoto.src}')`;
-            lens.style.backgroundSize = `${rect.width * zoom}px ${rect.height * zoom}px`;
-            
-            // Смещаем фон внутри лупы, чтобы показать нужную область
-            lens.style.backgroundPosition = `-${(x * zoom) - lensRadius}px -${(y * zoom) - lensRadius}px`;
-        }
-
-        // События для мыши
-        photoContainer.addEventListener('mouseenter', () => { isHovering = true; });
-        photoContainer.addEventListener('mouseleave', () => { 
-            isHovering = false; 
-            lens.style.display = 'none'; 
-        });
-        photoContainer.addEventListener('mousemove', moveLens);
-
-        // События для тачскрина (пальца)
-        photoContainer.addEventListener('touchstart', (e) => { 
-            isHovering = true; 
-            moveLens(e); 
-        }, { passive: false });
-        
-        photoContainer.addEventListener('touchmove', (e) => { 
-            if (isHovering) moveLens(e); 
-        }, { passive: false });
-        
-        photoContainer.addEventListener('touchend', () => { 
-            isHovering = false; 
-            lens.style.display = 'none'; 
-        });
-
-        // Инициализация при загрузке
-        document.addEventListener('DOMContentLoaded', () => {
-            const path = window.location.pathname;
-            
-            if (path.includes('/calculation')) {
-                switchTab(1);
-            } else if (path.includes('/contact') || path.endsWith('contact.html') || path.endsWith('contact')) {
-                switchTab(2);
-            } else {
-                switchTab(0);
-            }
-        });
-
+        // Переключение темы (если нужно)
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            vibrate(20);
         }
 
+        // Загрузка сохраненной темы
         window.addEventListener('load', () => {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
                 document.body.classList.add('light-mode');
             }
         });
-
-        function vibrate(duration) {
-            if (navigator.vibrate) navigator.vibrate(duration);
-        }
     </script>
+
 </body>
 </html>
