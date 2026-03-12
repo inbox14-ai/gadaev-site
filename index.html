@@ -90,12 +90,13 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.4);
             border: 1px solid rgba(255,255,255,0.1);
             position: relative;
+            background: #000;
         }
 
         .photo-container img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain; /* ФОТО ВЛЕЗАЕТ ЦЕЛИКОМ */
             display: block;
             filter: grayscale(100%);
             transition: filter 0.3s ease;
@@ -109,30 +110,18 @@
         /* ЛУПА */
         .lens {
             position: absolute;
-            width: 120px;
-            height: 120px;
-            border: 3px solid rgba(255, 255, 255, 0.9);
+            width: 100px;
+            height: 100px;
+            border: 1.5px solid rgba(255, 255, 255, 0.9); /* ТОНКАЯ РАМКА */
             border-radius: 50%;
             display: none;
             pointer-events: none;
             z-index: 10;
-            box-shadow: 0 0 20px rgba(0,0,0,0.6), inset 0 0 30px rgba(0,0,0,0.4);
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
             background-color: var(--bg-color);
             background-repeat: no-repeat;
             overflow: hidden;
-            /* Лупа смещена выше пальца на 80px */
             transform: translate(-50%, -50%);
-        }
-
-        .lens::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.1) 100%);
-            pointer-events: none;
         }
 
         .service-list {
@@ -208,8 +197,8 @@
             .service-item { font-size: 13px; }
             .btn-main { font-size: 14px; padding: 16px 20px; }
             .lens {
-                width: 100px;
-                height: 100px;
+                width: 80px;
+                height: 80px;
             }
         }
     </style>
@@ -269,15 +258,13 @@
         const lens = document.getElementById('lens');
         const photoContainer = document.getElementById('photoContainer');
         const mainPhoto = document.getElementById('mainPhoto');
-        const photoWrapper = document.getElementById('photoWrapper');
         
-        const zoomLevel = 2.5; // Увеличение в 2.5 раза
-        const lensOffset = 80; // Смещение лупы выше пальца (в пикселях)
+        const zoomLevel = 2.5;
+        const lensOffset = 70; // Смещение лупы выше пальца
 
         function moveLens(e) {
             e.preventDefault();
             
-            // Получаем координаты
             let clientX, clientY;
             if (e.touches && e.touches.length > 0) {
                 clientX = e.touches[0].clientX;
@@ -289,30 +276,34 @@
 
             const rect = photoContainer.getBoundingClientRect();
             
-            // Позиция курсора/пальца относительно фото
-            let x = clientX - rect.left;
-            let y = clientY - rect.top;
+            // Позиция пальца/курсора
+            const fingerX = clientX - rect.left;
+            const fingerY = clientY - rect.top;
 
-            // Ограничиваем в пределах фото
+            // Позиция ЦЕНТРА ЛУПЫ (выше пальца)
+            const lensCenterX = fingerX;
+            const lensCenterY = fingerY - lensOffset;
+
+            // Ограничиваем центр лупы в пределах фото
             const lensRadius = lens.offsetWidth / 2;
-            if (x < lensRadius) x = lensRadius;
-            if (x > rect.width - lensRadius) x = rect.width - lensRadius;
-            if (y < lensRadius) y = lensRadius;
-            if (y > rect.height - lensRadius) y = rect.height - lensRadius;
+            let constrainedLensX = lensCenterX;
+            let constrainedLensY = lensCenterY;
+            
+            if (constrainedLensX < lensRadius) constrainedLensX = lensRadius;
+            if (constrainedLensX > rect.width - lensRadius) constrainedLensX = rect.width - lensRadius;
+            if (constrainedLensY < lensRadius) constrainedLensY = lensRadius;
+            if (constrainedLensY > rect.height - lensRadius) constrainedLensY = rect.height - lensRadius;
 
             // Показываем лупу
             lens.style.display = 'block';
             
-            // Позиция лупы (смещена выше пальца)
-            const lensX = x;
-            const lensY = y - lensOffset;
-            
-            lens.style.left = lensX + 'px';
-            lens.style.top = lensY + 'px';
+            // Позиционируем лупу (её центр)
+            lens.style.left = constrainedLensX + 'px';
+            lens.style.top = constrainedLensY + 'px';
 
-            // Настраиваем фон лупы (увеличенное фото)
-            const bgX = (x / rect.width) * 100;
-            const bgY = (y / rect.height) * 100;
+            // Увеличиваем ИМЕННО ЦЕНТР ЛУПЫ
+            const bgX = (constrainedLensX / rect.width) * 100;
+            const bgY = (constrainedLensY / rect.height) * 100;
             
             lens.style.backgroundImage = `url('${mainPhoto.src}')`;
             lens.style.backgroundSize = `${rect.width * zoomLevel}px ${rect.height * zoomLevel}px`;
