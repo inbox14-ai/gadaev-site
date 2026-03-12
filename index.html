@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Руслан Гадаев | Приемка квартир в новостройках</title>
+    <title>Приемка квартир в новостройках | Частная экспертиза</title>
     <style>
         :root {
             --bg-color: #050505;
@@ -13,7 +13,6 @@
             --btn-bg-start: #1a1a1a;
             --btn-bg-end: #000000;
             --btn-border: #333333;
-            --logo-filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
         }
 
         body.light-mode {
@@ -23,7 +22,6 @@
             --btn-bg-start: #ffffff;
             --btn-bg-end: #e0e0e0;
             --btn-border: #cccccc;
-            --logo-filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
         }
 
         html, body {
@@ -56,44 +54,6 @@
             padding-bottom: 100px;
         }
 
-        .logo-container {
-            width: 135px;
-            height: auto;
-            margin: 0 auto 15px;
-            pointer-events: none;
-            transition: filter 0.3s ease;
-            animation: breathe 3s infinite ease-in-out;
-        }
-
-        .logo-svg {
-            width: 100%;
-            height: auto;
-            display: block;
-            fill: var(--text-main);
-            filter: var(--logo-filter);
-            transition: fill 0.3s ease, filter 0.3s ease;
-        }
-
-        h1 {
-            font-size: 26px;
-            font-weight: 700;
-            margin: 5px 0 5px 0;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            line-height: 1.2;
-            text-align: center;
-            color: var(--text-main);
-        }
-
-        .subtitle {
-            font-size: 14px;
-            color: var(--text-sec);
-            margin: 0 0 25px 0;
-            font-weight: 400;
-            letter-spacing: 0.5px;
-            text-align: center;
-        }
-
         .page-title {
             font-size: 20px;
             font-weight: 700;
@@ -114,15 +74,22 @@
             text-transform: lowercase;
         }
 
-        .photo-container {
+        .photo-wrapper {
+            position: relative;
             width: 100%;
             max-width: 400px;
+            margin-bottom: 25px;
+            cursor: crosshair;
+        }
+
+        .photo-container {
+            width: 100%;
             aspect-ratio: 16/10;
             border-radius: 16px;
             overflow: hidden;
-            margin-bottom: 25px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.4);
             border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
         }
 
         .photo-container img {
@@ -132,10 +99,40 @@
             display: block;
             filter: grayscale(100%);
             transition: filter 0.3s ease;
+            pointer-events: none;
         }
 
         .photo-container:hover img {
             filter: grayscale(0%);
+        }
+
+        /* ЛУПА */
+        .lens {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: none;
+            pointer-events: none;
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(0,0,0,0.6), inset 0 0 30px rgba(0,0,0,0.4);
+            background-color: var(--bg-color);
+            background-repeat: no-repeat;
+            overflow: hidden;
+            /* Лупа смещена выше пальца на 80px */
+            transform: translate(-50%, -50%);
+        }
+
+        .lens::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.1) 100%);
+            pointer-events: none;
         }
 
         .service-list {
@@ -205,38 +202,29 @@
             transform: scale(0.98);
         }
 
-        @keyframes breathe {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-        }
-
         @media (max-width: 600px) {
-            h1 { font-size: 22px; }
             .page-title { font-size: 18px; }
             .page-subtitle { font-size: 14px; }
             .service-item { font-size: 13px; }
             .btn-main { font-size: 14px; padding: 16px 20px; }
+            .lens {
+                width: 100px;
+                height: 100px;
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="main-container">
-        <div class="logo-container">
-            <svg class="logo-svg" viewBox="0 0 291.11 243.46" xmlns="http://www.w3.org/2000/svg">
-                <path d="m 489.39,550.55 c 0.1,-0.36 14.6,-54.9 32.22,-121.21 17.62,-66.31 32.12,-120.84 32.22,-121.19 0.18,-0.6 4.74,-0.62 97.3,-0.52 l 97.11,0.1 2.79,0.79 c 7.36,2.08 13.02,5.24 17.85,9.98 5.31,5.21 9.05,11.9 10.72,19.2 1,4.34 1.07,11.52 0.15,15.81 -0.9,4.22 -13.51,51.49 -14.61,54.76 -1.08,3.21 -3.84,9.15 -5.65,12.18 -4.23,7.06 -11.63,15.11 -18.09,19.68 -6.17,4.36 -13.4,7.8 -20.49,9.74 -7.96,2.18 -9.48,2.28 -36.11,2.28 l -23.99,0 -28.42,16.4 c -15.63,9.02 -28.44,16.38 -28.47,16.35 -0.03,-0.03 4.75,-18.11 10.61,-40.18 l 10.67,-40.13 46.55,-0.09 c 43.95,-0.09 46.56,-0.12 46.73,-0.71 0.91,-3.13 12.59,-47.4 12.59,-47.73 0,-0.35 -14.68,-0.42 -70.94,-0.35 l -70.94,0.09 -21.5,80.96 c -11.82,44.53 -21.62,81.18 -21.78,81.44 -0.2,0.34 -49.75,29.18 -56.08,32.64 -0.54,0.3 -0.62,0.25 -0.46,-0.29 z" 
-                      transform="translate(-489.30485,-307.57555)" />
-            </svg>
-        </div>
-
-        <h1>РУСЛАН ГАДАЕВ</h1>
-        <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
-
         <h2 class="page-title">ЧАСТНАЯ ЭКСПЕРТИЗА<br>ПРИЕМКА КВАРТИР</h2>
         <p class="page-subtitle">в новостройках</p>
 
-        <div class="photo-container">
-            <img src="room.jpg" alt="Интерьер после приемки">
+        <div class="photo-wrapper" id="photoWrapper">
+            <div class="photo-container" id="photoContainer">
+                <img src="room.jpg" alt="Интерьер после приемки" id="mainPhoto">
+            </div>
+            <div class="lens" id="lens"></div>
         </div>
 
         <div class="service-list">
@@ -271,24 +259,98 @@
         </div>
 
         <div class="buttons-container">
-            <a href="tel:+79777075755" class="btn-main" onclick="vibrate(50)">ЗАКАЗАТЬ ЭКСПЕРТИЗУ</a>
+            <a href="https://gadaev.pro/contact" class="btn-main" onclick="vibrate(50)">ЗАКАЗАТЬ ЭКСПЕРТИЗУ</a>
             <a href="https://gadaev.pro/calculation" class="btn-main" onclick="vibrate(50)">РАСЧИТАТЬ СТОИМОСТЬ</a>
         </div>
     </div>
 
     <script>
+        // ЛУПА - ЛОГИКА
+        const lens = document.getElementById('lens');
+        const photoContainer = document.getElementById('photoContainer');
+        const mainPhoto = document.getElementById('mainPhoto');
+        const photoWrapper = document.getElementById('photoWrapper');
+        
+        const zoomLevel = 2.5; // Увеличение в 2.5 раза
+        const lensOffset = 80; // Смещение лупы выше пальца (в пикселях)
+
+        function moveLens(e) {
+            e.preventDefault();
+            
+            // Получаем координаты
+            let clientX, clientY;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+
+            const rect = photoContainer.getBoundingClientRect();
+            
+            // Позиция курсора/пальца относительно фото
+            let x = clientX - rect.left;
+            let y = clientY - rect.top;
+
+            // Ограничиваем в пределах фото
+            const lensRadius = lens.offsetWidth / 2;
+            if (x < lensRadius) x = lensRadius;
+            if (x > rect.width - lensRadius) x = rect.width - lensRadius;
+            if (y < lensRadius) y = lensRadius;
+            if (y > rect.height - lensRadius) y = rect.height - lensRadius;
+
+            // Показываем лупу
+            lens.style.display = 'block';
+            
+            // Позиция лупы (смещена выше пальца)
+            const lensX = x;
+            const lensY = y - lensOffset;
+            
+            lens.style.left = lensX + 'px';
+            lens.style.top = lensY + 'px';
+
+            // Настраиваем фон лупы (увеличенное фото)
+            const bgX = (x / rect.width) * 100;
+            const bgY = (y / rect.height) * 100;
+            
+            lens.style.backgroundImage = `url('${mainPhoto.src}')`;
+            lens.style.backgroundSize = `${rect.width * zoomLevel}px ${rect.height * zoomLevel}px`;
+            lens.style.backgroundPosition = `${bgX}% ${bgY}%`;
+        }
+
+        function hideLens() {
+            lens.style.display = 'none';
+        }
+
+        // События для мыши
+        photoContainer.addEventListener('mouseenter', () => lens.style.display = 'block');
+        photoContainer.addEventListener('mouseleave', hideLens);
+        photoContainer.addEventListener('mousemove', moveLens);
+
+        // События для тачскрина
+        photoContainer.addEventListener('touchstart', (e) => {
+            moveLens(e);
+        }, { passive: false });
+
+        photoContainer.addEventListener('touchmove', (e) => {
+            moveLens(e);
+        }, { passive: false });
+
+        photoContainer.addEventListener('touchend', hideLens);
+
         function vibrate(duration) {
             if (navigator.vibrate) navigator.vibrate(duration);
         }
 
-        // Переключение темы (если нужно)
+        // Переключение темы
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
         }
 
-        // Загрузка сохраненной темы
+        // Загрузка темы
         window.addEventListener('load', () => {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
