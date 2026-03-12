@@ -79,7 +79,7 @@
             position: relative;
             width: 100%;
             max-width: 640px;
-            margin: 0 auto 0 auto; /* УБРАЛ НИЖНИЙ ОТСТУП */
+            margin: 0 auto 0 auto;
             display: flex;
             align-items: stretch;
             gap: 4px;
@@ -194,7 +194,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-top: 8px; /* МИНИМАЛЬНЫЙ ОТСТУП ОТ ФОТО */
+            margin-top: 8px;
             margin-bottom: 20px;
             justify-content: center;
         }
@@ -271,52 +271,10 @@
             color: #000000;
         }
 
-        .buttons-container {
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .btn-main {
-            display: block;
-            width: 100%;
-            padding: 18px 25px;
-            background: linear-gradient(145deg, var(--btn-bg-start), var(--btn-bg-end));
-            color: var(--text-main);
-            text-decoration: none;
-            border-radius: 14px;
-            font-weight: 600;
-            font-size: 15px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            border: 1px solid var(--btn-border);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            box-sizing: border-box;
-        }
-
-        .btn-main:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-
-        body.light-mode .btn-main:hover {
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-        }
-
-        .btn-main:active {
-            transform: scale(0.98);
-        }
-
         @media (max-width: 768px) {
             .page-title { font-size: 18px; }
             .page-subtitle { font-size: 14px; }
             .service-item { font-size: 13px; }
-            .btn-main { font-size: 14px; padding: 16px 20px; }
             .lens {
                 width: 120px;
                 height: 120px;
@@ -391,11 +349,6 @@
                 <span class="check-icon">✓</span>
                 <span>Помощь в получении компенсации</span>
             </div>
-        </div>
-
-        <div class="buttons-container">
-            <a href="https://gadaev.pro/contact" class="btn-main" onclick="vibrate(50)">ЗАКАЗАТЬ ЭКСПЕРТИЗУ</a>
-            <a href="https://gadaev.pro/calculation" class="btn-main" onclick="vibrate(50)">РАСЧИТАТЬ СТОИМОСТЬ</a>
         </div>
     </div>
 
