@@ -79,7 +79,7 @@
             position: relative;
             width: 100%;
             max-width: 640px;
-            margin: 0 auto 25px auto;
+            margin: 0 auto 0 auto; /* УБРАЛ НИЖНИЙ ОТСТУП */
             display: flex;
             align-items: stretch;
             gap: 4px;
@@ -162,7 +162,7 @@
         .photo-container {
             flex: 1;
             aspect-ratio: 16/9;
-            border-radius: 6px; /* ТАКОЕ ЖЕ КАК У КНОПОК */
+            border-radius: 6px;
             overflow: visible;
             box-shadow: 0 10px 40px rgba(0,0,0,0.4);
             border: 1px solid rgba(255,255,255,0.1);
@@ -189,12 +189,13 @@
             filter: grayscale(0%);
         }
 
-        /* ЭЛЕГАНТНЫЕ ИНДИКАТОРЫ */
+        /* ЭЛЕГАНТНЫЕ ИНДИКАТОРЫ - ПРИЖАТЫ К ФОТО */
         .photo-indicators {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 6px; /* ЕЩЁ БЛИЖЕ К ФОТО */
+            margin-top: 8px; /* МИНИМАЛЬНЫЙ ОТСТУП ОТ ФОТО */
+            margin-bottom: 20px;
             justify-content: center;
         }
 
@@ -224,10 +225,10 @@
             background: rgba(0,0,0,0.9);
         }
 
-        /* ЛУПА МЕНЬШЕ */
+        /* ЛУПА */
         .lens {
             position: absolute;
-            width: 150px; /* БЫЛО 180px */
+            width: 150px;
             height: 150px;
             border: 1.5px solid rgba(255, 255, 255, 0.9);
             border-radius: 50%;
@@ -317,7 +318,7 @@
             .service-item { font-size: 13px; }
             .btn-main { font-size: 14px; padding: 16px 20px; }
             .lens {
-                width: 120px; /* БЫЛО 150px */
+                width: 120px;
                 height: 120px;
             }
             .nav-btn {
@@ -356,6 +357,9 @@
         <div class="photo-indicators" id="indicatorArea">
             <div class="indicator inactive" id="indicator0" onclick="goToPhoto(0)"></div>
             <div class="indicator inactive" id="indicator1" onclick="goToPhoto(1)"></div>
+            <div class="indicator inactive" id="indicator2" onclick="goToPhoto(2)"></div>
+            <div class="indicator inactive" id="indicator3" onclick="goToPhoto(3)"></div>
+            <div class="indicator inactive" id="indicator4" onclick="goToPhoto(4)"></div>
         </div>
 
         <div class="service-list">
@@ -396,7 +400,8 @@
     </div>
 
     <script>
-        const photos = ['room.jpg', 'room2.jpg'];
+        // 5 ФОТО
+        const photos = ['room.jpg', 'room2.jpg', 'room3.jpg', 'room4.jpg', 'room5.jpg'];
         let currentPhotoIndex = 0;
 
         const lens = document.getElementById('lens');
