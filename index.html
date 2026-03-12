@@ -86,18 +86,18 @@
             width: 100%;
             aspect-ratio: 16/10;
             border-radius: 16px;
-            overflow: hidden;
+            overflow: visible; /* ЛУПА МОЖЕТ ВЫХОДИТЬ */
             box-shadow: 0 10px 40px rgba(0,0,0,0.4);
             border: 1px solid rgba(255,255,255,0.1);
             position: relative;
-            background: #000;
         }
 
         .photo-container img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* ФОТО ВЛЕЗАЕТ ЦЕЛИКОМ */
+            object-fit: cover; /* ЗАПОЛНЯЕТ РАМКУ ТОЧНО */
             display: block;
+            border-radius: 16px; /* ЗАКРУГЛЕННЫЕ УГЛЫ */
             filter: grayscale(100%);
             transition: filter 0.3s ease;
             pointer-events: none;
@@ -110,14 +110,14 @@
         /* ЛУПА */
         .lens {
             position: absolute;
-            width: 100px;
-            height: 100px;
-            border: 1.5px solid rgba(255, 255, 255, 0.9); /* ТОНКАЯ РАМКА */
+            width: 140px;
+            height: 140px;
+            border: 1.5px solid rgba(255, 255, 255, 0.9);
             border-radius: 50%;
             display: none;
             pointer-events: none;
             z-index: 10;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            box-shadow: 0 0 20px rgba(0,0,0,0.6);
             background-color: var(--bg-color);
             background-repeat: no-repeat;
             overflow: hidden;
@@ -197,8 +197,8 @@
             .service-item { font-size: 13px; }
             .btn-main { font-size: 14px; padding: 16px 20px; }
             .lens {
-                width: 80px;
-                height: 80px;
+                width: 110px;
+                height: 110px;
             }
         }
     </style>
@@ -284,15 +284,17 @@
             const lensCenterX = fingerX;
             const lensCenterY = fingerY - lensOffset;
 
-            // Ограничиваем центр лупы в пределах фото
+            // Ограничиваем ТОЛЬКО для того, чтобы центр лупы был в пределах фото
+            // Но лупа может выходить за края на половину своего размера
             const lensRadius = lens.offsetWidth / 2;
             let constrainedLensX = lensCenterX;
             let constrainedLensY = lensCenterY;
             
-            if (constrainedLensX < lensRadius) constrainedLensX = lensRadius;
-            if (constrainedLensX > rect.width - lensRadius) constrainedLensX = rect.width - lensRadius;
-            if (constrainedLensY < lensRadius) constrainedLensY = lensRadius;
-            if (constrainedLensY > rect.height - lensRadius) constrainedLensY = rect.height - lensRadius;
+            // Разрешаем лупе выходить за края на половину
+            if (constrainedLensX < 0) constrainedLensX = 0;
+            if (constrainedLensX > rect.width) constrainedLensX = rect.width;
+            if (constrainedLensY < 0) constrainedLensY = 0;
+            if (constrainedLensY > rect.height) constrainedLensY = rect.height;
 
             // Показываем лупу
             lens.style.display = 'block';
