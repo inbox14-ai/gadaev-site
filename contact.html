@@ -25,9 +25,9 @@
             --tab-bg-active: rgba(255,255,255,0.15);
             --tab-hover: rgba(255,255,255,0.05);
             
-            --icon-tg: rgba(42, 171, 238, 0.7);
-            --icon-phone: rgba(52, 199, 89, 0.7);
-            --icon-mail: rgba(255, 149, 0, 0.7);
+            --icon-tg: rgba(42, 171, 238, 0.4); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
+            --icon-phone: rgba(52, 199, 89, 0.4); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
+            --icon-mail: rgba(255, 149, 0, 0.4); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
         }
 
         /* СВЕТЛАЯ ТЕМА */
@@ -49,9 +49,9 @@
             --tab-bg-active: rgba(0,0,0,0.08);
             --tab-hover: rgba(0,0,0,0.03);
             
-            --icon-tg: rgba(42, 171, 238, 0.8);
-            --icon-phone: rgba(52, 199, 89, 0.8);
-            --icon-mail: rgba(255, 149, 0, 0.8);
+            --icon-tg: rgba(42, 171, 238, 0.5); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
+            --icon-phone: rgba(52, 199, 89, 0.5); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
+            --icon-mail: rgba(255, 149, 0, 0.5); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
         }
 
         html, body {
@@ -217,7 +217,6 @@
         /* НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК */
         .tab-bar { 
             position: fixed; 
-            /* ИЗМЕНЕНО: Сдвинуто ниже с 40px на 35px */
             bottom: 20px; 
             left: 50%; 
             transform: translateX(-50%); 
@@ -275,8 +274,6 @@
             transform: scale(0.95);
             background: var(--tab-bg-active);
         }
-
-        /* Блок footer удален */
 
         @keyframes breathe {
             0% { transform: scale(1); }
@@ -362,15 +359,67 @@
     </div>
 
     <!-- ПАНЕЛЬ ВКЛАДОК -->
-    <div class="tab-bar">
+    <div class="tab-bar" id="tabBar">
         <a href="https://gadaev.pro" class="tab-link" id="link-home">Главная</a>
-        <a href="https://gadaev.pro/calculation" class="tab-link" id="link-calc">Расчет</a>
+        <a href="https://gadaev.pro/calculation" class="tab-link" id="link-calc">Цены</a>
         <a href="https://gadaev.pro/contact" class="tab-link" id="link-contact">Контакты</a>
     </div>
 
-    <!-- Текст удален -->
-
     <script>
+        // АВТО-ОПРЕДЕЛЕНИЕ ТЕМЫ ПРИ ЗАГРУЗКЕ
+        window.addEventListener('load', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                // Если есть сохраненная тема - используем её
+                if (savedTheme === 'light') {
+                    document.body.classList.add('light-mode');
+                }
+            } else {
+                // Если нет сохраненной - определяем по системе
+                const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+                if (prefersLight) {
+                    document.body.classList.add('light-mode');
+                }
+            }
+        });
+
+        // СВАЙП НА ПАНЕЛИ ВКЛАДОК
+        const tabBar = document.getElementById('tabBar');
+        let tabTouchStartX = 0;
+        let tabTouchEndX = 0;
+
+        tabBar.addEventListener('touchstart', (e) => {
+            tabTouchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        tabBar.addEventListener('touchend', (e) => {
+            tabTouchEndX = e.changedTouches[0].screenX;
+            handleTabSwipe();
+        }, { passive: true });
+
+        function handleTabSwipe() {
+            const diff = tabTouchStartX - tabTouchEndX;
+            if (Math.abs(diff) < 30) return;
+
+            const links = document.querySelectorAll('.tab-link');
+            let currentIndex = 0;
+            links.forEach((link, index) => {
+                if (link.classList.contains('active')) currentIndex = index;
+            });
+
+            if (diff > 0) {
+                // Свайп влево → следующая вкладка
+                if (currentIndex < links.length - 1) {
+                    links[currentIndex + 1].click();
+                }
+            } else {
+                // Свайп вправо → предыдущая вкладка
+                if (currentIndex > 0) {
+                    links[currentIndex - 1].click();
+                }
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const path = window.location.pathname;
             const links = document.querySelectorAll('.tab-link');
@@ -392,24 +441,10 @@
             vibrate(20);
         }
 
-        window.addEventListener('load', () => {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'light') {
-                document.body.classList.add('light-mode');
-            }
-        });
-
         function vibrate(duration) {
             if (navigator.vibrate) navigator.vibrate(duration);
         }
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
 
