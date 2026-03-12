@@ -79,15 +79,15 @@
             width: 100%;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-start;
             margin-bottom: 25px;
-            gap: 15px;
+            gap: 20px;
         }
 
-        /* ЛОГОТИП СЛЕВА */
+        /* ЛОГОТИП СЛЕВА - УВЕЛИЧЕН */
         .header-logo {
-            width: 60px;
-            height: 60px;
+            width: 90px; /* УВЕЛИЧЕНО С 60px */
+            height: 90px;
             flex-shrink: 0;
         }
 
@@ -95,44 +95,46 @@
             width: 100%;
             height: 100%;
             fill: var(--text-main);
-            filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
         }
 
-        /* ТЕКСТ СПРАВА */
+        /* ТЕКСТ СПРАВА - ВЫРОВНЕН */
         .header-text {
-            flex: 1;
-            text-align: left;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 2px;
+            gap: 3px;
+            min-width: 280px;
         }
 
         .header-text-line1 {
-            font-size: 25px;
+            font-size: 22px; /* УВЕЛИЧЕНО */
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             color: var(--text-main);
             line-height: 1.2;
+            text-align: left;
         }
 
         .header-text-line2 {
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 22px; /* УВЕЛИЧЕНО И СДЕЛАНО ОДИНАКОВЫМ */
+            font-weight: 700; /* СДЕЛАНО ЖИРНЫМ КАК ПЕРВАЯ */
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: var(--text-sec);
+            letter-spacing: 1.5px;
+            color: var(--text-main); /* СДЕЛАНО БЕЛЫМ */
             line-height: 1.2;
+            text-align: left;
         }
 
         .header-text-line3 {
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 22px; /* УВЕЛИЧЕНО И СДЕЛАНО ОДИНАКОВЫМ */
+            font-weight: 700; /* СДЕЛАНО ЖИРНЫМ */
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: var(--text-sec);
+            letter-spacing: 1.5px;
+            color: var(--text-main); /* СДЕЛАНО БЕЛЫМ */
             line-height: 1.2;
+            text-align: left;
         }
 
         /* ЭЛЕГАНТНАЯ НАВИГАЦИЯ */
@@ -470,18 +472,19 @@
 
         @media (max-width: 768px) {
             .header-section {
-                gap: 10px;
+                gap: 15px;
             }
             .header-logo {
-                width: 50px;
-                height: 50px;
+                width: 70px; /* НА МОБИЛЬНЫХ ПОМЕНЬШЕ */
+                height: 70px;
             }
-            .header-text-line1 {
-                font-size: 14px;
+            .header-text {
+                min-width: 200px;
             }
+            .header-text-line1,
             .header-text-line2,
             .header-text-line3 {
-                font-size: 12px;
+                font-size: 18px; /* НА МОБИЛЬНЫХ ПОМЕНЬШЕ */
             }
             .page-title { font-size: 18px; }
             .page-subtitle { font-size: 14px; }
@@ -830,4 +833,3 @@
 
 </body>
 </html>
-
