@@ -87,7 +87,7 @@
 
         /* УЗКИЕ ВЫТЯНУТЫЕ КНОПКИ */
         .nav-btn {
-            width: 28px; /* ЕЩЁ УЖЕ */
+            width: 28px;
             height: auto;
             aspect-ratio: 16/9;
             border-radius: 6px;
@@ -139,7 +139,7 @@
 
         .nav-btn svg {
             width: 14px;
-            height: 28px; /* ВЫТЯНУТЫ ПО ВЫСОТЕ */
+            height: 28px;
             fill: currentColor;
             position: relative;
             z-index: 1;
@@ -162,7 +162,7 @@
         .photo-container {
             flex: 1;
             aspect-ratio: 16/9;
-            border-radius: 16px;
+            border-radius: 6px; /* ТАКОЕ ЖЕ КАК У КНОПОК */
             overflow: visible;
             box-shadow: 0 10px 40px rgba(0,0,0,0.4);
             border: 1px solid rgba(255,255,255,0.1);
@@ -175,7 +175,7 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            border-radius: 16px;
+            border-radius: 6px;
             filter: grayscale(100%);
             transition: filter 0.3s ease, opacity 0.4s ease;
             pointer-events: none;
@@ -194,7 +194,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 12px; /* ПРИЖАТЫ К ФОТО */
+            margin-bottom: 6px; /* ЕЩЁ БЛИЖЕ К ФОТО */
             justify-content: center;
         }
 
@@ -224,11 +224,11 @@
             background: rgba(0,0,0,0.9);
         }
 
-        /* ЛУПА */
+        /* ЛУПА МЕНЬШЕ */
         .lens {
             position: absolute;
-            width: 180px;
-            height: 180px;
+            width: 150px; /* БЫЛО 180px */
+            height: 150px;
             border: 1.5px solid rgba(255, 255, 255, 0.9);
             border-radius: 50%;
             display: none;
@@ -317,8 +317,8 @@
             .service-item { font-size: 13px; }
             .btn-main { font-size: 14px; padding: 16px 20px; }
             .lens {
-                width: 150px;
-                height: 150px;
+                width: 120px; /* БЫЛО 150px */
+                height: 120px;
             }
             .nav-btn {
                 width: 24px;
@@ -467,15 +467,13 @@
 
         function handleSwipe() {
             const diff = touchStartX - touchEndX;
-            if (Math.abs(diff) < 30) return; // Минимальное расстояние для свайпа
+            if (Math.abs(diff) < 30) return;
             
             if (diff > 0) {
-                // Свайп влево → следующее фото
                 if (currentPhotoIndex < photos.length - 1) {
                     changePhoto(1);
                 }
             } else {
-                // Свайп вправо → предыдущее фото
                 if (currentPhotoIndex > 0) {
                     changePhoto(-1);
                 }
