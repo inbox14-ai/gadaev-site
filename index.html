@@ -44,7 +44,7 @@
 
         .main-container {
             width: 100%;
-            max-width: 640px; /* УМЕНЬШЕНО В 2 РАЗА */
+            max-width: 640px;
             padding: 20px;
             box-sizing: border-box;
             display: flex;
@@ -77,19 +77,20 @@
         .photo-wrapper {
             position: relative;
             width: 100%;
-            max-width: 640px; /* 640px ВМЕСТО 1280px */
+            max-width: 640px;
             margin: 0 auto 25px auto;
-            cursor: crosshair;
+            cursor: none; /* СКРЫВАЕМ КУРСОР НА ВСЕМ БЛОКЕ */
         }
 
         .photo-container {
             width: 100%;
-            aspect-ratio: 16/9; /* ПРОПОРЦИЯ 640x360 */
+            aspect-ratio: 16/9;
             border-radius: 16px;
             overflow: visible;
             box-shadow: 0 10px 40px rgba(0,0,0,0.4);
             border: 1px solid rgba(255,255,255,0.1);
             position: relative;
+            cursor: none; /* СКРЫВАЕМ КУРСОР НАД ФОТО */
         }
 
         .photo-container img {
@@ -107,21 +108,21 @@
             filter: grayscale(0%);
         }
 
-        /* ЛУПА */
+        /* ЛУПА - БОЛЬШЕ И ВЫШЕ */
         .lens {
             position: absolute;
-            width: 140px;
-            height: 140px;
+            width: 180px; /* УВЕЛИЧЕНО С 140px */
+            height: 180px;
             border: 1.5px solid rgba(255, 255, 255, 0.9);
             border-radius: 50%;
             display: none;
             pointer-events: none;
             z-index: 10;
-            box-shadow: 0 0 20px rgba(0,0,0,0.6);
+            box-shadow: 0 0 25px rgba(0,0,0,0.7);
             background-color: var(--bg-color);
             background-repeat: no-repeat;
             overflow: hidden;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%); /* ЦЕНТР ЛУПЫ НА ТОЧКЕ КАСАНИЯ */
         }
 
         .service-list {
@@ -199,8 +200,8 @@
             .service-item { font-size: 13px; }
             .btn-main { font-size: 14px; padding: 16px 20px; }
             .lens {
-                width: 110px;
-                height: 110px;
+                width: 150px; /* БОЛЬШЕ НА МОБИЛЬНЫХ */
+                height: 150px;
             }
         }
     </style>
@@ -259,31 +260,36 @@
         const lens = document.getElementById('lens');
         const photoContainer = document.getElementById('photoContainer');
         const mainPhoto = document.getElementById('mainPhoto');
+        const photoWrapper = document.getElementById('photoWrapper');
         
         const zoomLevel = 2.5;
-        const lensOffset = 70;
+        const lensOffsetY = 100; // ЕЩЁ ВЫШЕ НАД ПАЛЬЦЕМ (было 70)
 
         function moveLens(e) {
             e.preventDefault();
             
             let clientX, clientY;
             if (e.touches && e.touches.length > 0) {
+                // СЕНСОРНЫЙ ЭКРАН
                 clientX = e.touches[0].clientX;
                 clientY = e.touches[0].clientY;
             } else {
+                // МЫШЬ
                 clientX = e.clientX;
                 clientY = e.clientY;
             }
 
             const rect = photoContainer.getBoundingClientRect();
             
-            const fingerX = clientX - rect.left;
-            const fingerY = clientY - rect.top;
+            // Позиция пальца/курсора относительно фото
+            const touchX = clientX - rect.left;
+            const touchY = clientY - rect.top;
 
-            const lensCenterX = fingerX;
-            const lensCenterY = fingerY - lensOffset;
+            // ЦЕНТР ЛУПЫ = ПОЗИЦИЯ ПАЛЬЦА/КУРСОРА (строго по центру)
+            const lensCenterX = touchX;
+            const lensCenterY = touchY - lensOffsetY; // СМЕЩЕНИЕ ВЫШЕ
 
-            const lensRadius = lens.offsetWidth / 2;
+            // Ограничиваем центр лупы в пределах фото
             let constrainedLensX = lensCenterX;
             let constrainedLensY = lensCenterY;
             
@@ -292,11 +298,14 @@
             if (constrainedLensY < 0) constrainedLensY = 0;
             if (constrainedLensY > rect.height) constrainedLensY = rect.height;
 
+            // Показываем лупу
             lens.style.display = 'block';
             
+            // Позиционируем ЦЕНТР лупы в точку касания
             lens.style.left = constrainedLensX + 'px';
             lens.style.top = constrainedLensY + 'px';
 
+            // Увеличиваем ИМЕННО ЦЕНТР лупы
             const bgX = (constrainedLensX / rect.width) * 100;
             const bgY = (constrainedLensY / rect.height) * 100;
             
@@ -309,10 +318,12 @@
             lens.style.display = 'none';
         }
 
+        // События для мыши
         photoContainer.addEventListener('mouseenter', () => lens.style.display = 'block');
         photoContainer.addEventListener('mouseleave', hideLens);
         photoContainer.addEventListener('mousemove', moveLens);
 
+        // События для тачскрина
         photoContainer.addEventListener('touchstart', (e) => {
             moveLens(e);
         }, { passive: false });
