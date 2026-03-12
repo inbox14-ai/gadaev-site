@@ -81,19 +81,19 @@
             max-width: 640px;
             margin: 0 auto 25px auto;
             display: flex;
-            align-items: center;
-            gap: 20px;
+            align-items: stretch;
+            gap: 4px;
         }
 
-        /* СОВРЕМЕННЫЕ КНОПКИ */
+        /* УЗКИЕ ВЫТЯНУТЫЕ КНОПКИ */
         .nav-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 36px;
+            height: auto;
+            aspect-ratio: 16/9;
+            border-radius: 8px;
             background: transparent;
             border: 1px solid rgba(255,255,255,0.15);
             color: var(--text-main);
-            font-size: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -113,14 +113,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent);
             opacity: 0;
             transition: opacity 0.4s ease;
         }
 
         .nav-btn:hover {
             border-color: rgba(255,255,255,0.4);
-            transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
 
@@ -129,7 +128,7 @@
         }
 
         .nav-btn:active {
-            transform: translateY(0);
+            transform: scale(0.98);
         }
 
         .nav-btn.disabled {
@@ -139,8 +138,8 @@
         }
 
         .nav-btn svg {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             fill: currentColor;
             position: relative;
             z-index: 1;
@@ -223,17 +222,6 @@
 
         body.light-mode .indicator.active {
             background: rgba(0,0,0,0.9);
-        }
-
-        /* НОМЕРА СТРАНИЦ */
-        .photo-counter {
-            font-size: 12px;
-            font-weight: 400;
-            letter-spacing: 2px;
-            color: var(--text-sec);
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            text-align: center;
         }
 
         /* ЛУПА */
@@ -333,12 +321,11 @@
                 height: 150px;
             }
             .nav-btn {
-                width: 42px;
-                height: 42px;
+                width: 32px;
             }
             .nav-btn svg {
-                width: 18px;
-                height: 18px;
+                width: 16px;
+                height: 16px;
             }
         }
     </style>
@@ -365,13 +352,11 @@
             </button>
         </div>
 
-        <!-- ИНДИКАТОРЫ + СЧЕТЧИК -->
+        <!-- ИНДИКАТОРЫ -->
         <div class="photo-indicators">
             <div class="indicator inactive" id="indicator0" onclick="goToPhoto(0)"></div>
             <div class="indicator inactive" id="indicator1" onclick="goToPhoto(1)"></div>
         </div>
-
-        <div class="photo-counter" id="photoCounter">01 / 02</div>
 
         <div class="service-list">
             <div class="service-item">
@@ -419,7 +404,6 @@
         const mainPhoto = document.getElementById('mainPhoto');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
-        const photoCounter = document.getElementById('photoCounter');
         
         const zoomLevel = 2.5;
         const lensOffsetY = 100;
@@ -444,7 +428,6 @@
                 
                 updateIndicators();
                 updateButtons();
-                updateCounter();
                 
                 vibrate(30);
             }, 150);
@@ -466,12 +449,6 @@
         function updateButtons() {
             prevBtn.classList.toggle('disabled', currentPhotoIndex === 0);
             nextBtn.classList.toggle('disabled', currentPhotoIndex === photos.length - 1);
-        }
-
-        function updateCounter() {
-            const current = String(currentPhotoIndex + 1).padStart(2, '0');
-            const total = String(photos.length).padStart(2, '0');
-            photoCounter.textContent = `${current} / ${total}`;
         }
 
         function moveLens(e) {
@@ -550,7 +527,6 @@
             }
             updateIndicators();
             updateButtons();
-            updateCounter();
         });
     </script>
 
