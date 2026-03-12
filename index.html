@@ -87,10 +87,10 @@
 
         /* УЗКИЕ ВЫТЯНУТЫЕ КНОПКИ */
         .nav-btn {
-            width: 36px;
+            width: 28px; /* ЕЩЁ УЖЕ */
             height: auto;
             aspect-ratio: 16/9;
-            border-radius: 8px;
+            border-radius: 6px;
             background: transparent;
             border: 1px solid rgba(255,255,255,0.15);
             color: var(--text-main);
@@ -138,8 +138,8 @@
         }
 
         .nav-btn svg {
-            width: 18px;
-            height: 18px;
+            width: 14px;
+            height: 28px; /* ВЫТЯНУТЫ ПО ВЫСОТЕ */
             fill: currentColor;
             position: relative;
             z-index: 1;
@@ -194,7 +194,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 12px; /* ПРИЖАТЫ К ФОТО */
             justify-content: center;
         }
 
@@ -321,11 +321,11 @@
                 height: 150px;
             }
             .nav-btn {
-                width: 32px;
+                width: 24px;
             }
             .nav-btn svg {
-                width: 16px;
-                height: 16px;
+                width: 12px;
+                height: 24px;
             }
         }
     </style>
@@ -352,8 +352,8 @@
             </button>
         </div>
 
-        <!-- ИНДИКАТОРЫ -->
-        <div class="photo-indicators">
+        <!-- ИНДИКАТОРЫ СО СВАЙПОМ -->
+        <div class="photo-indicators" id="indicatorArea">
             <div class="indicator inactive" id="indicator0" onclick="goToPhoto(0)"></div>
             <div class="indicator inactive" id="indicator1" onclick="goToPhoto(1)"></div>
         </div>
@@ -404,6 +404,7 @@
         const mainPhoto = document.getElementById('mainPhoto');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
+        const indicatorArea = document.getElementById('indicatorArea');
         
         const zoomLevel = 2.5;
         const lensOffsetY = 100;
@@ -449,6 +450,36 @@
         function updateButtons() {
             prevBtn.classList.toggle('disabled', currentPhotoIndex === 0);
             nextBtn.classList.toggle('disabled', currentPhotoIndex === photos.length - 1);
+        }
+
+        // СВАЙП НА ИНДИКАТОРАХ
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        indicatorArea.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        indicatorArea.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) < 30) return; // Минимальное расстояние для свайпа
+            
+            if (diff > 0) {
+                // Свайп влево → следующее фото
+                if (currentPhotoIndex < photos.length - 1) {
+                    changePhoto(1);
+                }
+            } else {
+                // Свайп вправо → предыдущее фото
+                if (currentPhotoIndex > 0) {
+                    changePhoto(-1);
+                }
+            }
         }
 
         function moveLens(e) {
