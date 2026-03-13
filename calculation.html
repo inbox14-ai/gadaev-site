@@ -13,3 +13,125 @@
     <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
     <link rel="manifest" href="/favicon/site.webmanifest">
     <meta name="theme-color" content="#050505" id="theme-color-meta">
+
+/* НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК */
+.tab-bar { 
+    position: fixed; 
+    bottom: 20px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    height: 42px; 
+    max-width: 340px; 
+    width: 90%; 
+    background: var(--tab-bg); 
+    backdrop-filter: blur(20px); 
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 12px; 
+    border: 1px solid var(--tab-border); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    z-index: 1000; 
+    margin-bottom: env(safe-area-inset-bottom);
+    pointer-events: auto; 
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    padding: 0 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    gap: 4px;
+}
+
+.tab-link {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tab-text);
+    font-size: 13px; 
+    font-weight: 400; 
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 10px; 
+    transition: all 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+    pointer-events: auto;
+    cursor: pointer;
+    padding: 0 4px;
+    letter-spacing: 0.6px;
+    white-space: nowrap; 
+}
+
+.tab-link.active {
+    color: var(--tab-text-active);
+    background: var(--tab-bg-active);
+    font-weight: 500; 
+}
+
+@media (hover: hover) {
+    .tab-link:hover {
+        background: var(--tab-hover);
+        color: var(--tab-text-active);
+    }
+}
+.tab-link:active {
+    transform: scale(0.95);
+    background: var(--tab-bg-active);
+}
+<!-- ПАНЕЛЬ ВКЛАДОК -->
+<div class="tab-bar" id="tabBar">
+    <a href="https://gadaev.pro" class="tab-link" id="link-home">Главная</a>
+    <a href="https://gadaev.pro/calculation" class="tab-link" id="link-calc">Цены</a>
+    <a href="https://gadaev.pro/contact" class="tab-link" id="link-contact">Контакты</a>
+</div>
+// СВАЙП НА ПАНЕЛИ ВКЛАДОК
+const tabBar = document.getElementById('tabBar');
+let tabTouchStartX = 0;
+let tabTouchEndX = 0;
+
+tabBar.addEventListener('touchstart', (e) => {
+    tabTouchStartX = e.changedTouches[0].screenX;
+}, { passive: true });
+
+tabBar.addEventListener('touchend', (e) => {
+    tabTouchEndX = e.changedTouches[0].screenX;
+    handleTabSwipe();
+}, { passive: true });
+
+function handleTabSwipe() {
+    const diff = tabTouchStartX - tabTouchEndX;
+    if (Math.abs(diff) < 30) return;
+
+    const links = document.querySelectorAll('.tab-link');
+    let currentIndex = 0;
+    links.forEach((link, index) => {
+        if (link.classList.contains('active')) currentIndex = index;
+    });
+
+    if (diff > 0) {
+        if (currentIndex < links.length - 1) {
+            links[currentIndex + 1].click();
+        }
+    } else {
+        if (currentIndex > 0) {
+            links[currentIndex - 1].click();
+        }
+    }
+}
+
+// ПОДСВЕТКА АКТИВНОЙ ВКЛАДКИ
+window.addEventListener('load', () => {
+    updateTabActive();
+});
+
+function updateTabActive() {
+    const path = window.location.pathname;
+    const links = document.querySelectorAll('.tab-link');
+    links.forEach(el => el.classList.remove('active'));
+
+    if (path.includes('/contact') || path.endsWith('contact.html') || path.endsWith('contact')) {
+        document.getElementById('link-contact').classList.add('active');
+    } else if (path.includes('/calculation')) {
+        document.getElementById('link-calc').classList.add('active');
+    } else {
+        document.getElementById('link-home').classList.add('active');
+    }
+}
