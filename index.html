@@ -4,7 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#050505" id="theme-color-meta">
     <title>Приемка квартир в новостройках | Частная экспертиза</title>
+    
+    <!-- ДИНАМИЧЕСКИЙ ФАВИКОН -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 291.11 243.46'%3E%3Cpath d='m 489.39,550.55 c 0.1,-0.36 14.6,-54.9 32.22,-121.21 17.62,-66.31 32.12,-120.84 32.22,-121.19 0.18,-0.6 4.74,-0.62 97.3,-0.52 l 97.11,0.1 2.79,0.79 c 7.36,2.08 13.02,5.24 17.85,9.98 5.31,5.21 9.05,11.9 10.72,19.2 1,4.34 1.07,11.52 0.15,15.81 -0.9,4.22 -13.51,51.49 -14.61,54.76 -1.08,3.21 -3.84,9.15 -5.65,12.18 -4.23,7.06 -11.63,15.11 -18.09,19.68 -6.17,4.36 -13.4,7.8 -20.49,9.74 -7.96,2.18 -9.48,2.28 -36.11,2.28 l -23.99,0 -28.42,16.4 c -15.63,9.02 -28.44,16.38 -28.47,16.35 -0.03,-0.03 4.75,-18.11 10.61,-40.18 l 10.67,-40.13 46.55,-0.09 c 43.95,-0.09 46.56,-0.12 46.73,-0.71 0.91,-3.13 12.59,-47.4 12.59,-47.73 0,-0.35 -14.68,-0.42 -70.94,-0.35 l -70.94,0.09 -21.5,80.96 c -11.82,44.53 -21.62,81.18 -21.78,81.44 -0.2,0.34 -49.75,29.18 -56.08,32.64 -0.54,0.3 -0.62,0.25 -0.46,-0.29 z' transform='translate(-489.30485,-307.57555)' fill='%23ffffff'/%3E%3C/svg%3E" id="favicon">
+    
+    <!-- Apple Touch Icon (для iOS) -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 291.11 243.46'%3E%3Cpath d='m 489.39,550.55 c 0.1,-0.36 14.6,-54.9 32.22,-121.21 17.62,-66.31 32.12,-120.84 32.22,-121.19 0.18,-0.6 4.74,-0.62 97.3,-0.52 l 97.11,0.1 2.79,0.79 c 7.36,2.08 13.02,5.24 17.85,9.98 5.31,5.21 9.05,11.9 10.72,19.2 1,4.34 1.07,11.52 0.15,15.81 -0.9,4.22 -13.51,51.49 -14.61,54.76 -1.08,3.21 -3.84,9.15 -5.65,12.18 -4.23,7.06 -11.63,15.11 -18.09,19.68 -6.17,4.36 -13.4,7.8 -20.49,9.74 -7.96,2.18 -9.48,2.28 -36.11,2.28 l -23.99,0 -28.42,16.4 c -15.63,9.02 -28.44,16.38 -28.47,16.35 -0.03,-0.03 4.75,-18.11 10.61,-40.18 l 10.67,-40.13 46.55,-0.09 c 43.95,-0.09 46.56,-0.12 46.73,-0.71 0.91,-3.13 12.59,-47.4 12.59,-47.73 0,-0.35 -14.68,-0.42 -70.94,-0.35 l -70.94,0.09 -21.5,80.96 c -11.82,44.53 -21.62,81.18 -21.78,81.44 -0.2,0.34 -49.75,29.18 -56.08,32.64 -0.54,0.3 -0.62,0.25 -0.46,-0.29 z' transform='translate(-489.30485,-307.57555)' fill='%23ffffff'/%3E%3C/svg%3E">
+    
     <style>
         :root {
             --bg-color: #050505;
@@ -87,7 +96,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 20px; /* УВЕЛИЧЕН ОТСТУП */
+            gap: 20px;
             z-index: 1002;
             padding: 0 20px;
             box-sizing: border-box;
@@ -114,7 +123,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 4px; /* УВЕЛИЧЕН ОТСТУП МЕЖДУ СТРОКАМИ */
+            gap: 4px;
             text-align: justify;
         }
 
@@ -124,7 +133,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--text-main);
-            line-height: 1.4; /* УВЕЛИЧЕН ИНТЕРВАЛ */
+            line-height: 1.4;
             text-align: justify;
             text-justify: inter-word;
         }
@@ -135,7 +144,7 @@
             text-transform: uppercase;
             letter-spacing: 0.8px;
             color: var(--text-sec);
-            line-height: 1.4; /* УВЕЛИЧЕН ИНТЕРВАЛ */
+            line-height: 1.4;
             text-align: justify;
             text-justify: inter-word;
         }
@@ -146,7 +155,7 @@
             text-transform: uppercase;
             letter-spacing: 0.8px;
             color: var(--text-sec);
-            line-height: 1.4; /* УВЕЛИЧЕН ИНТЕРВАЛ */
+            line-height: 1.4;
             text-align: justify;
             text-justify: inter-word;
         }
@@ -265,19 +274,19 @@
             filter: grayscale(0%);
         }
 
-        /* ИНДИКАТОРЫ - СДЕЛАНЫ ЗАМЕТНЕЕ */
+        /* ИНДИКАТОРЫ */
         .photo-indicators {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-top: 12px; /* УВЕЛИЧЕН ОТСТУП */
-            margin-bottom: 25px; /* УВЕЛИЧЕН ОТСТУП */
+            margin-top: 12px;
+            margin-bottom: 25px;
             justify-content: center;
         }
 
         .indicator {
-            height: 3px; /* УВЕЛИЧЕНА ТОЛЩИНА */
-            background: rgba(255,255,255,0.3); /* СДЕЛАН ЗАМЕТНЕЕ */
+            height: 3px;
+            background: rgba(255,255,255,0.3);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             position: relative;
@@ -320,7 +329,7 @@
             cursor: none;
         }
 
-        /* СПИСОК УСЛУГ - УЛУЧШЕННЫЕ ОТСТУПЫ */
+        /* СПИСОК УСЛУГ */
         .service-list {
             width: 100%;
             max-width: 500px;
@@ -329,16 +338,16 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 14px; /* УВЕЛИЧЕН ОТСТУП МЕЖДУ КНОПКАМИ */
+            gap: 14px;
         }
 
         .service-item {
             display: flex;
             align-items: center;
-            justify-content: flex-start; /* ВЫРАВНИВАНИЕ ПО ЛЕВОМУ КРАЮ */
+            justify-content: flex-start;
             width: 100%;
             max-width: 450px;
-            padding: 16px 20px; /* УВЕЛИЧЕНЫ ОТСТУПЫ */
+            padding: 16px 20px;
             background: linear-gradient(145deg, rgba(30,30,30,0.6), rgba(15,15,15,0.8));
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 12px;
@@ -364,7 +373,7 @@
             height: 24px;
             background: rgba(52, 199, 89, 0.3);
             border-radius: 4px;
-            margin-right: 16px; /* УВЕЛИЧЕН ОТСТУП */
+            margin-right: 16px;
             flex-shrink: 0;
         }
 
@@ -407,7 +416,7 @@
             margin-bottom: env(safe-area-inset-bottom);
             pointer-events: auto; 
             transition: background-color 0.3s ease, border-color 0.3s ease;
-            padding: 0 8px; /* УВЕЛИЧЕНЫ ОТСТУПЫ */
+            padding: 0 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
@@ -426,7 +435,7 @@
             transition: all 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
             pointer-events: auto;
             cursor: pointer;
-            padding: 0 8px; /* УВЕЛИЧЕНЫ ОТСТУПЫ */
+            padding: 0 8px;
             letter-spacing: 0.6px; 
         }
 
@@ -656,6 +665,28 @@
         const lensOffsetY = 100;
         const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
+        // ФУНКЦИЯ ДЛЯ ГЕНЕРАЦИИ SVG ФАВИКОНА С НУЖНЫМ ЦВЕТОМ
+        function getFaviconSVG(color) {
+            const encodedSvg = encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 291.11 243.46"><path d="m 489.39,550.55 c 0.1,-0.36 14.6,-54.9 32.22,-121.21 17.62,-66.31 32.12,-120.84 32.22,-121.19 0.18,-0.6 4.74,-0.62 97.3,-0.52 l 97.11,0.1 2.79,0.79 c 7.36,2.08 13.02,5.24 17.85,9.98 5.31,5.21 9.05,11.9 10.72,19.2 1,4.34 1.07,11.52 0.15,15.81 -0.9,4.22 -13.51,51.49 -14.61,54.76 -1.08,3.21 -3.84,9.15 -5.65,12.18 -4.23,7.06 -11.63,15.11 -18.09,19.68 -6.17,4.36 -13.4,7.8 -20.49,9.74 -7.96,2.18 -9.48,2.28 -36.11,2.28 l -23.99,0 -28.42,16.4 c -15.63,9.02 -28.44,16.38 -28.47,16.35 -0.03,-0.03 4.75,-18.11 10.61,-40.18 l 10.67,-40.13 46.55,-0.09 c 43.95,-0.09 46.56,-0.12 46.73,-0.71 0.91,-3.13 12.59,-47.4 12.59,-47.73 0,-0.35 -14.68,-0.42 -70.94,-0.35 l -70.94,0.09 -21.5,80.96 c -11.82,44.53 -21.62,81.18 -21.78,81.44 -0.2,0.34 -49.75,29.18 -56.08,32.64 -0.54,0.3 -0.62,0.25 -0.46,-0.29 z" transform="translate(-489.30485,-307.57555)" fill="${color}"/></svg>`);
+            return `data:image/svg+xml,${encodedSvg}`;
+        }
+
+        // ФУНКЦИЯ ДЛЯ ОБНОВЛЕНИЯ ФАВИКОНА
+        function updateFavicon(isLight) {
+            const faviconColor = isLight ? '%23000000' : '%23ffffff'; // Чёрный для светлой темы, белый для тёмной
+            const favicon = document.getElementById('favicon');
+            const themeColorMeta = document.getElementById('theme-color-meta');
+            
+            if (favicon) {
+                favicon.href = getFaviconSVG(isLight ? '#000000' : '#ffffff');
+            }
+            
+            // Обновляем цвет темы для мобильных браузеров
+            if (themeColorMeta) {
+                themeColorMeta.content = isLight ? '#f0f0f0' : '#050505';
+            }
+        }
+
         function changePhoto(direction) {
             const newIndex = currentPhotoIndex + direction;
             if (newIndex >= 0 && newIndex < photos.length) {
@@ -823,11 +854,17 @@
             if (savedTheme) {
                 if (savedTheme === 'light') {
                     document.body.classList.add('light-mode');
+                    updateFavicon(true);
+                } else {
+                    updateFavicon(false);
                 }
             } else {
                 const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
                 if (prefersLight) {
                     document.body.classList.add('light-mode');
+                    updateFavicon(true);
+                } else {
+                    updateFavicon(false);
                 }
             }
             updateIndicators();
@@ -853,6 +890,7 @@
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateFavicon(isLight); // Обновляем фавикон при смене темы
             vibrate(20);
         }
 
