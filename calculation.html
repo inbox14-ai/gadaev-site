@@ -182,15 +182,6 @@
             links.forEach((link, index) => {
                 if (link.classList.contains('active')) currentIndex = index;
             });
-
-            if (diff > 0) {
-                if (currentIndex < links.length - 1) {
-                    links[currentIndex + 1].click();
-                }
-            } else {
-                if (currentIndex > 0) {
-                    links[currentIndex - 1].click();
-                }
             }
         }
 
