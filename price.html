@@ -165,10 +165,10 @@
             const links = document.querySelectorAll('.tab-link');
             links.forEach(el => el.classList.remove('active'));
 
-            if (path.includes('/contact') || path.endsWith('contact.html') || path.endsWith('contact')) {
-                document.getElementById('link-contact').classList.add('active');
-            } else if (path.includes('/price')) {
+            if (path.includes('/price') || path.endsWith('price.html') || path.endsWith('price')) {
                 document.getElementById('link-price').classList.add('active');
+            } else if (path.includes('/contact')) {
+                document.getElementById('link-contact').classList.add('active');
             } else {
                 document.getElementById('link-home').classList.add('active');
             }
