@@ -163,12 +163,12 @@
             image-rendering: crisp-edges;
         }
 
-        /* ===== ССЫЛКА "О СЕБЕ" — стили как у "ИНЖЕНЕР ПГС..." ===== */
+        /* ===== ССЫЛКА "О СЕБЕ" ===== */
         .about-link {
             position: fixed;
-            top: 35px; /* ← Одинаковый отступ с тумблером */
-            left: 16px; /* ← Одинаковый боковой отступ */
-            font-size: 18px; /* ← Как у subtitle */
+            top: 35px;
+            left: 16px;
+            font-size: 18px;
             font-weight: 400;
             color: var(--text-sec);
             text-decoration: none;
@@ -185,20 +185,20 @@
             opacity: 0.7;
         }
 
-        /* ===== ТУМБЛЕР ТЕМЫ — уменьшенный и выровненный ===== */
+        /* ===== ТУМБЛЕР ТЕМЫ — 20px высота ===== */
         .theme-toggle-container {
             position: fixed;
-            top: 35px; /* ← Тот же отступ что у "О себе" */
-            right: 16px; /* ← Тот же боковой отступ что у "О себе" */
+            top: 35px; /* ← Без изменений */
+            right: 16px; /* ← Без изменений */
             z-index: 1001;
         }
 
         .theme-toggle {
             position: relative;
-            width: 30px; /* ← Пропорционально уменьшено (было 44px) */
-            height: 18px; /* ← Новая высота */
+            width: 34px; /* ← Пропорционально (было 30px) */
+            height: 20px; /* ← Новая высота (было 18px) */
             background-color: var(--toggle-bg);
-            border-radius: 18px; /* ← Закругление под новую высоту */
+            border-radius: 20px; /* ← Под новую высоту */
             cursor: pointer;
             border: 1px solid rgba(0,0,0,0.05);
         }
@@ -208,15 +208,15 @@
             position: absolute;
             top: 2px;
             left: 2px;
-            width: 14px; /* ← Пропорционально уменьшен (был 20px) */
-            height: 14px;
+            width: 16px; /* ← Пропорционально (было 14px) */
+            height: 16px;
             background-color: var(--toggle-circle);
             border-radius: 50%;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         body.light-mode .theme-toggle::after {
-            transform: translateX(12px); /* ← Пропорционально (было 18px) */
+            transform: translateX(14px); /* ← Пропорционально (было 12px) */
         }
 
         .container {
@@ -427,10 +427,10 @@
         <div class="ticks-large"></div>
     </div>
 
-    <!-- ССЫЛКА "О СЕБЕ" (левый верхний угол) -->
+    <!-- ССЫЛКА "О СЕБЕ" -->
     <a href="https://gadaev.pro/me" class="about-link">О себе</a>
 
-    <!-- ТУМБЛЕР ТЕМЫ (уменьшенный, выровненный) -->
+    <!-- ТУМБЛЕР ТЕМЫ -->
     <div class="theme-toggle-container">
         <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
     </div>
