@@ -845,7 +845,8 @@
             updateTabActive();
         });
 
-        function updateTabActive() {
+        // ПОДСВЕТКА АКТИВНОЙ ВКЛАДКИ
+        document.addEventListener('DOMContentLoaded', () => {
             const path = window.location.pathname;
             const links = document.querySelectorAll('.tab-link');
             links.forEach(el => el.classList.remove('active'));
@@ -857,7 +858,7 @@
             } else {
                 document.getElementById('link-home').classList.add('active');
             }
-        }
+        });
 
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
@@ -869,11 +870,6 @@
             if (themeColorMeta) {
                 themeColorMeta.content = isLight ? '#f0f0f0' : '#050505';
             }
-            vibrate(20);
-        }
-
-        function vibrate(duration) {
-            if (navigator.vibrate) navigator.vibrate(duration);
         }
     </script>
 
