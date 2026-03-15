@@ -413,6 +413,12 @@
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            
+            // Обновляем цвет темы для мобильных браузеров
+            const themeColorMeta = document.getElementById('theme-color-meta');
+            if (themeColorMeta) {
+                themeColorMeta.content = isLight ? '#f0f0f0' : '#050505';
+            }
         }
     </script>
 </body>
