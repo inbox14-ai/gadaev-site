@@ -406,16 +406,16 @@
         .icon-btn:active { transform: scale(0.95); filter: brightness(0.9); }
         .icon-btn svg { width: 36px; height: 36px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
 
-        /* ===== КОНТАКТЫ (100px ВНИЗ ОТ ЦЕНТРА) ===== */
+        /* ===== КОНТАКТЫ ===== */
         .contact-info {
             position: fixed;
-            top: 50%;
+            top: calc(50% + 150px);
             left: 50%;
-            transform: translate(-50%, calc(-50% + 100px));
+            transform: translate(-50%, -50%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             z-index: 1;
             pointer-events: none;
             width: 90%;
