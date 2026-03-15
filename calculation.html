@@ -159,6 +159,24 @@
             }
         });
 
+        // ПОДСВЕТКА АКТИВНОЙ ВКЛАДКИ
+        window.addEventListener('load', () => {
+            updateTabActive();
+        });
+
+        function updateTabActive() {
+            const path = window.location.pathname;
+            const links = document.querySelectorAll('.tab-link');
+            links.forEach(el => el.classList.remove('active'));
+
+            if (path.includes('/contact') || path.endsWith('contact.html') || path.endsWith('contact')) {
+                document.getElementById('link-contact').classList.add('active');
+            } else if (path.includes('/calculation')) {
+                document.getElementById('link-calc').classList.add('active');
+            } else {
+                document.getElementById('link-home').classList.add('active');
+            }
+        }
     </script>
 </body>
 </html>
