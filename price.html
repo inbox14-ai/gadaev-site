@@ -178,15 +178,45 @@
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            
-            // Обновляем цвет темы для мобильных браузеров
-            const themeColorMeta = document.getElementById('theme-color-meta');
-            if (themeColorMeta) {
-                themeColorMeta.content = isLight ? '#f0f0f0' : '#050505';
-            }
         }
+        
+// ===== ФУНКЦИЯ ОБНОВЛЕНИЯ ЦВЕТА ТЕМЫ =====
+function updateThemeColor() {
+    const themeColorMeta = document.getElementById('theme-color-meta');
+    const isLight = document.body.classList.contains('light-mode');
+    
+    if (themeColorMeta) {
+        themeColorMeta.content = isLight ? '#f0f0f0' : '#050505';
+    }
+}
+
+// ===== ПРИ ЗАГРУЗКЕ СТРАНИЦЫ =====
+window.addEventListener('load', () => {
+    const savedTheme = localStorage.getItem('theme');
+    
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+    } else if (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.body.classList.add('light-mode');
+    }
+    
+    updateThemeColor();  // ← Применяем цвет сразу при загрузке!
+    
+    updateIndicators();
+    updateButtons();
+    updateTabActive();
+});
+
+// ===== ПРИ ПЕРЕКЛЮЧЕНИИ ТЕМЫ =====
+function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    const isLight = document.body.classList.contains('light-mode');
+    
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    
+    updateThemeColor();  // ← Обновляем цвет при переключении
+    vibrate(20);
+}
     </script>
 </body>
 </html>
-
-
