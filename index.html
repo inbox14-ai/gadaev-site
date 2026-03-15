@@ -396,31 +396,32 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         }
 
-        /* НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК */
+         /* НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК */
         .tab-bar { 
             position: fixed; 
-            bottom: 20px; 
+            bottom: 10px; 
             left: 50%; 
             transform: translateX(-50%); 
-            height: 42px; 
+            height: 35px; 
             max-width: 340px; 
-            width: 90%; 
+            width: 100%; 
             background: var(--tab-bg); 
             backdrop-filter: blur(20px); 
             -webkit-backdrop-filter: blur(20px);
             border-radius: 12px; 
             border: 1px solid var(--tab-border); 
             display: flex; 
-            justify-content: space-around; 
+            justify-content: space-between; 
             align-items: center; 
             z-index: 1000; 
             margin-bottom: env(safe-area-inset-bottom);
             pointer-events: auto; 
             transition: background-color 0.3s ease, border-color 0.3s ease;
-            padding: 0 8px;
+            padding: 1px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            gap: 0px;
         }
-
+        
         .tab-link {
             flex: 1;
             height: 100%;
@@ -436,10 +437,11 @@
             transition: all 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
             pointer-events: auto;
             cursor: pointer;
-            padding: 0 8px;
-            letter-spacing: 0.6px; 
+            padding: 0 6px;
+            letter-spacing: 0.6px;
+            white-space: nowrap;
         }
-
+        
         .tab-link.active {
             color: var(--tab-text-active);
             background: var(--tab-bg-active);
