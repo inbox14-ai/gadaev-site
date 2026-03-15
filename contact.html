@@ -308,12 +308,12 @@
         }
         .btn-main:active { transform: scale(0.96); opacity: 0.8; }
 
-        /* ===== КНОПКА "СВЯЗАТЬСЯ СЕЙЧАС" (всегда видна) ===== */
+        /* ===== ЕДИНОЕ ОКНО "СВЯЗАТЬСЯ СЕЙЧАС" ===== */
         .contact-card {
             width: 90%;
             max-width: 340px;
             margin-bottom: 0;
-            margin-top: 0;
+            margin-top: 15px;
             background: var(--btn-bg);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
@@ -325,7 +325,7 @@
             cursor: pointer;
             position: relative;
             z-index: 10;
-            overflow: visible; /* ← Важно для absolute контента */
+            overflow: hidden; /* ← Скрываем выходящий контент */
         }
         .contact-card:hover {
             background: rgba(60, 60, 60, 0.98);
@@ -346,37 +346,31 @@
             text-transform: uppercase;
             color: var(--btn-text);
             user-select: none;
-            border-radius: 16px;
+            position: relative;
+            z-index: 2;
         }
 
-        /* Раскрывающийся контент (ABSOLUTE) */
+        /* Раскрывающийся контент (часть единого блока) */
         .contact-card-content {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease;
-            z-index: 10;
-            pointer-events: none; /* Чтобы не мешал кликам */
+            background: var(--btn-bg);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            position: relative;
+            z-index: 1;
         }
         .contact-card.open .contact-card-content {
             max-height: 200px;
-            pointer-events: auto;
         }
 
         .contact-card-content-inner {
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: var(--btn-bg);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            border: 1px solid var(--btn-border);
-            border-radius: 16px;
             padding: 15px 20px 20px 20px;
-            margin-top: 8px;
+            border-top: 1px solid var(--btn-border); /* ← Визуальное разделение */
         }
 
         .icons-row { display: flex; justify-content: center; gap: 25px; margin-bottom: 15px; }
@@ -408,7 +402,7 @@
         .icon-btn:active { transform: scale(0.95); filter: brightness(0.9); }
         .icon-btn svg { width: 36px; height: 36px; fill: #ffffff !important; position: relative; z-index: 2; pointer-events: none; }
 
-        /* ===== КОНТАКТЫ (в потоке, ниже карточки) ===== */
+        /* ===== КОНТАКТЫ (перекрываются карточкой) ===== */
         .contact-info {
             width: 90%;
             max-width: 340px;
@@ -416,9 +410,11 @@
             flex-direction: column;
             align-items: center;
             gap: 8px;
-            margin-top: 15px;
+            margin-top: 0; /* ← Убран отступ, чтобы карточка перекрывала */
             margin-bottom: 0;
             z-index: 1;
+            position: relative;
+            top: -10px; /* ← Чуть выше чтобы карточка перекрывала */
         }
 
         .contact-info-item {
@@ -592,10 +588,9 @@
 
         <a href="contact.vcf" class="btn-main">СОХРАНИТЬ КОНТАКТЫ</a>
 
-        <!-- КНОПКА "СВЯЗАТЬСЯ СЕЙЧАС" (всегда видна) -->
+        <!-- ЕДИНОЕ ОКНО "СВЯЗАТЬСЯ СЕЙЧАС" -->
         <div class="contact-card" id="contactCard" onclick="toggleContactCard()">
             <div class="contact-card-header">СВЯЗАТЬСЯ СЕЙЧАС</div>
-            <!-- Раскрывающийся контент (ABSOLUTE) -->
             <div class="contact-card-content">
                 <div class="contact-card-content-inner">
                     <div class="icons-row">
@@ -614,7 +609,7 @@
             </div>
         </div>
 
-        <!-- КОНТАКТЫ (в потоке, ниже карточки) -->
+        <!-- КОНТАКТЫ (перекрываются карточкой) -->
         <div class="contact-info">
             <div class="contact-info-item" onclick="copyToClipboard('+7 (977) 707-57-55')">
                 <svg class="contact-info-icon phone" viewBox="0 0 24 24">
