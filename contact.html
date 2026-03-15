@@ -417,18 +417,6 @@
             links.forEach((link, index) => {
                 if (link.classList.contains('active')) currentIndex = index;
             });
-
-            if (diff > 0) {
-                // Свайп влево → следующая вкладка
-                if (currentIndex < links.length - 1) {
-                    links[currentIndex + 1].click();
-                }
-            } else {
-                // Свайп вправо → предыдущая вкладка
-                if (currentIndex > 0) {
-                    links[currentIndex - 1].click();
-                }
-            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
