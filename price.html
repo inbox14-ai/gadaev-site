@@ -99,21 +99,21 @@
             border-radius: 0 0 3px 3px;
         }
 
-        /* Штрихи линейки (6.4px между центрами, белые, смотрят вниз) */
+        /* Штрихи линейки (6.18px между центрами, белые, смотрят вниз) */
         .top-ruler::after {
             content: '';
             position: absolute;
             top: 2px;
             left: 0;
             width: 100%;
-            height: 15px;
+            height: 13px; /* ← ИЗМЕНЕНО С 15px НА 13px */
             background: repeating-linear-gradient(
                 90deg,
                 transparent 0px,
-                transparent 5.4px,
-                rgba(255,255,255,0.6) 5.4px,
-                rgba(255,255,255,0.6) 6.4px,
-                transparent 6.4px
+                transparent 5.18px,
+                rgba(255,255,255,0.6) 5.18px,
+                rgba(255,255,255,0.6) 6.18px,
+                transparent 6.18px
             );
             opacity: 0.9;
             image-rendering: pixelated;
