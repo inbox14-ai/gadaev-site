@@ -406,18 +406,18 @@
         .icon-btn:active { transform: scale(0.95); filter: brightness(0.9); }
         .icon-btn svg { width: 36px; height: 36px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
 
-        /* ===== КОНТАКТЫ (ЖЁСТКО ФИКСИРОВАННЫЕ) ===== */
+        /* ===== КОНТАКТЫ (ЖЁСТКО ФИКСИРОВАННЫЕ ПО ЦЕНТРУ ЭКРАНА) ===== */
         .contact-info {
             position: fixed;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            bottom: 60px;
+            transform: translate(-50%, -50%); /* ← Центрирование по вертикали и горизонтали */
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 8px;
             z-index: 1;
-            pointer-events: none;
+            pointer-events: none; /* Чтобы клики проходили сквозь контейнер */
             width: 90%;
             max-width: 340px;
         }
