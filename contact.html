@@ -394,31 +394,7 @@
             }
         });
 
-        // СВАЙП НА ПАНЕЛИ ВКЛАДОК
-        const tabBar = document.getElementById('tabBar');
-        let tabTouchStartX = 0;
-        let tabTouchEndX = 0;
-
-        tabBar.addEventListener('touchstart', (e) => {
-            tabTouchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-
-        tabBar.addEventListener('touchend', (e) => {
-            tabTouchEndX = e.changedTouches[0].screenX;
-            handleTabSwipe();
-        }, { passive: true });
-
-        function handleTabSwipe() {
-            const diff = tabTouchStartX - tabTouchEndX;
-            if (Math.abs(diff) < 30) return;
-
-            const links = document.querySelectorAll('.tab-link');
-            let currentIndex = 0;
-            links.forEach((link, index) => {
-                if (link.classList.contains('active')) currentIndex = index;
-            });
-        }
-
+        // ПОДСВЕТКА АКТИВНОЙ ВКЛАДКИ
         document.addEventListener('DOMContentLoaded', () => {
             const path = window.location.pathname;
             const links = document.querySelectorAll('.tab-link');
@@ -437,11 +413,6 @@
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            vibrate(20);
-        }
-
-        function vibrate(duration) {
-            if (navigator.vibrate) navigator.vibrate(duration);
         }
     </script>
 </body>
