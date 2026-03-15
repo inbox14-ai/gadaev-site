@@ -99,19 +99,6 @@
             border-radius: 0 0 3px 3px;
         }
 
-        /* ===== НОВЫЙ ШТРИХ: самый первый слева (26px, отступ 6.5px) ===== */
-        .top-ruler .tick-first {
-            position: absolute;
-            top: 2px;
-            left: 6.5px; /* ← Отступ 6.5px от левого края */
-            width: 1px;  /* Толщина штриха */
-            height: 26px; /* Высота как у больших */
-            background: #ffffff; /* Чистый белый */
-            pointer-events: none;
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
-        }
-
         /* Маленькие штрихи - высота 13px, каждые 6.5px */
         .top-ruler .ticks-small {
             position: absolute;
@@ -240,7 +227,6 @@
 
     <!-- ВЕРХНЯЯ ГЛЯНЦЕВАЯ ПОЛОСА-ЛИНЕЙКА -->
     <div class="top-ruler">
-        <div class="tick-first"></div> <!-- ← НОВЫЙ ПЕРВЫЙ ШТРИХ -->
         <div class="ticks-small"></div>
         <div class="ticks-medium"></div>
         <div class="ticks-large"></div>
