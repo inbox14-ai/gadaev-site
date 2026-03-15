@@ -34,9 +34,9 @@
             --tab-bg-active: rgba(255,255,255,0.15);
             --tab-hover: rgba(255,255,255,0.05);
             
-            --icon-tg: rgba(42, 171, 238, 0.4); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
-            --icon-phone: rgba(52, 199, 89, 0.4); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
-            --icon-mail: rgba(255, 149, 0, 0.4); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
+            --icon-tg: rgba(42, 171, 238, 0.4);
+            --icon-phone: rgba(52, 199, 89, 0.4);
+            --icon-mail: rgba(255, 149, 0, 0.4);
         }
 
         /* СВЕТЛАЯ ТЕМА */
@@ -58,9 +58,9 @@
             --tab-bg-active: rgba(0,0,0,0.08);
             --tab-hover: rgba(0,0,0,0.03);
             
-            --icon-tg: rgba(42, 171, 238, 0.5); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
-            --icon-phone: rgba(52, 199, 89, 0.5); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
-            --icon-mail: rgba(255, 149, 0, 0.5); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
+            --icon-tg: rgba(42, 171, 238, 0.5);
+            --icon-phone: rgba(52, 199, 89, 0.5);
+            --icon-mail: rgba(255, 149, 0, 0.5);
         }
 
         html, body {
@@ -77,6 +77,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
+            padding-top: 30px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -85,6 +86,89 @@
             touch-action: none;
             -webkit-user-select: none;
             user-select: none;
+        }
+
+        /* ===== ВЕРХНЯЯ ГЛЯНЦЕВАЯ ПОЛОСА-ЛИНЕЙКА (ЭТАЛОН) ===== */
+        .top-ruler {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(180deg, #3a3a3a 0%, #0a0a0a 30%, #000000 50%, #0a0a0a 70%, #1a1a1a 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            z-index: 2000;
+            pointer-events: none;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.5);
+        }
+
+        .top-ruler::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.05) 40%, transparent 100%);
+            pointer-events: none;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .top-ruler .ticks-small {
+            position: absolute;
+            top: 2px;
+            left: 0;
+            width: 100%;
+            height: 13px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 5.5px,
+                #ffffff 5.5px,
+                #ffffff 6.5px,
+                transparent 6.5px
+            );
+            pointer-events: none;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        .top-ruler .ticks-medium {
+            position: absolute;
+            top: 2px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 31.5px,
+                #ffffff 31.5px,
+                #ffffff 32.5px,
+                transparent 32.5px
+            );
+            pointer-events: none;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        .top-ruler .ticks-large {
+            position: absolute;
+            top: 2px;
+            left: 0;
+            width: 100%;
+            height: 26px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 64px,
+                #ffffff 64px,
+                #ffffff 65px,
+                transparent 65px
+            );
+            pointer-events: none;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
         }
 
         .container {
@@ -333,6 +417,13 @@
 </head>
 <body>
 
+    <!-- ВЕРХНЯЯ ГЛЯНЦЕВАЯ ПОЛОСА-ЛИНЕЙКА (ЭТАЛОН) -->
+    <div class="top-ruler">
+        <div class="ticks-small"></div>
+        <div class="ticks-medium"></div>
+        <div class="ticks-large"></div>
+    </div>
+
     <!-- ТУМБЛЕР ТЕМЫ -->
     <div class="theme-toggle-container">
         <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
@@ -350,18 +441,18 @@
         <h1>РУСЛАН ГАДАЕВ</h1>
         <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
 
-        <a href="contact.vcf" class="btn-main" onclick="vibrate(50)">СОХРАНИТЬ КОНТАКТЫ</a>
+        <a href="contact.vcf" class="btn-main">СОХРАНИТЬ КОНТАКТЫ</a>
 
         <div class="contact-section">
             <div class="contact-title">Связаться сейчас:</div>
             <div class="icons-row">
-                <a href="https://t.me/ruslan_gadaev" class="icon-btn" target="_blank" onclick="vibrate(30)">
+                <a href="https://t.me/ruslan_gadaev" class="icon-btn" target="_blank">
                     <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.116.033.378.018.58z"/></svg>
                 </a>
-                <a href="tel:+79777075755" class="icon-btn phone" onclick="vibrate(30)">
+                <a href="tel:+79777075755" class="icon-btn phone">
                     <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
                 </a>
-                <a href="mailto:ruslan@gadaev.pro" class="icon-btn mail" onclick="vibrate(30)">
+                <a href="mailto:ruslan@gadaev.pro" class="icon-btn mail">
                     <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
                 </a>
             </div>
@@ -377,83 +468,48 @@
     </div>
 
     <script>
-        // АВТО-ОПРЕДЕЛЕНИЕ ТЕМЫ ПРИ ЗАГРУЗКЕ
-        window.addEventListener('load', () => {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) {
-                // Если есть сохраненная тема - используем её
-                if (savedTheme === 'light') {
-                    document.body.classList.add('light-mode');
-                }
-            } else {
-                // Если нет сохраненной - определяем по системе
-                const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-                if (prefersLight) {
-                    document.body.classList.add('light-mode');
-                }
+        // ===== ФУНКЦИЯ ОБНОВЛЕНИЯ ЦВЕТА ТЕМЫ =====
+        function updateThemeColor() {
+            const themeColorMeta = document.getElementById('theme-color-meta');
+            const isLight = document.body.classList.contains('light-mode');
+            if (themeColorMeta) {
+                themeColorMeta.content = isLight ? '#f0f0f0' : '#050505';
             }
-        });
+        }
 
-        // ПОДСВЕТКА АКТИВНОЙ ВКЛАДКИ
-        document.addEventListener('DOMContentLoaded', () => {
+        // ===== ПОДСВЕТКА АКТИВНОЙ ВКЛАДКИ =====
+        function updateTabActive() {
             const path = window.location.pathname;
             const links = document.querySelectorAll('.tab-link');
             links.forEach(el => el.classList.remove('active'));
-
             if (path.includes('/contact') || path.endsWith('contact.html') || path.endsWith('contact')) {
-                document.getElementById('link-contact').classList.add('active');
+                document.getElementById('link-contact')?.classList.add('active');
             } else if (path.includes('/price')) {
-                document.getElementById('link-calc').classList.add('active');
+                document.getElementById('link-calc')?.classList.add('active');
             } else {
-                document.getElementById('link-home').classList.add('active');
+                document.getElementById('link-home')?.classList.add('active');
             }
-        });
+        }
 
+        // ===== ПЕРЕКЛЮЧЕНИЕ ТЕМЫ =====
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateThemeColor();
         }
-        
-// ===== ФУНКЦИЯ ОБНОВЛЕНИЯ ЦВЕТА ТЕМЫ =====
-function updateThemeColor() {
-    const themeColorMeta = document.getElementById('theme-color-meta');
-    const isLight = document.body.classList.contains('light-mode');
-    
-    if (themeColorMeta) {
-        themeColorMeta.content = isLight ? '#f0f0f0' : '#050505';
-    }
-}
 
-// ===== ПРИ ЗАГРУЗКЕ СТРАНИЦЫ =====
-window.addEventListener('load', () => {
-    const savedTheme = localStorage.getItem('theme');
-    
-    if (savedTheme === 'light') {
-        document.body.classList.add('light-mode');
-    } else if (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches) {
-        document.body.classList.add('light-mode');
-    }
-    
-    updateThemeColor();  // ← Применяем цвет сразу при загрузке!
-    
-    updateIndicators();
-    updateButtons();
-    updateTabActive();
-});
-
-// ===== ПРИ ПЕРЕКЛЮЧЕНИИ ТЕМЫ =====
-function toggleTheme() {
-    document.body.classList.toggle('light-mode');
-    const isLight = document.body.classList.contains('light-mode');
-    
-    localStorage.setItem('theme', isLight ? 'light' : 'dark');
-    
-    updateThemeColor();  // ← Обновляем цвет при переключении
-    vibrate(20);
-}
+        // ===== ПРИ ЗАГРУЗКЕ СТРАНИЦЫ =====
+        window.addEventListener('load', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            } else if (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                document.body.classList.add('light-mode');
+            }
+            updateThemeColor();
+            updateTabActive();
+        });
     </script>
 </body>
 </html>
-
-
