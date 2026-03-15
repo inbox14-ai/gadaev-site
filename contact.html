@@ -20,25 +20,25 @@
             --bg-color: #000000;
             --text-main: #ffffff;
             --text-sec: #666666;
-            --btn-bg: rgba(40, 40, 40, 0.6);
-            --btn-border: rgba(255,255,255,0.1);
+            --btn-bg: rgba(40, 40, 40, 0.9); /* ← Меньше прозрачности */
+            --btn-border: rgba(255,255,255,0.2);
             --btn-text: #e0e0e0;
             --logo-filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
             --toggle-bg: #333;
             --toggle-circle: #fff;
             
-            --tab-bg: rgba(30, 30, 30, 0.85);
-            --tab-border: rgba(255,255,255,0.08);
+            --tab-bg: rgba(30, 30, 30, 0.95); /* ← Меньше прозрачности */
+            --tab-border: rgba(255,255,255,0.15);
             --tab-text: #888888;
             --tab-text-active: #ffffff;
-            --tab-bg-active: rgba(255,255,255,0.15);
-            --tab-hover: rgba(255,255,255,0.05);
+            --tab-bg-active: rgba(255,255,255,0.25);
+            --tab-hover: rgba(255,255,255,0.1);
             
-            --icon-tg: rgba(42, 171, 238, 0.4);
-            --icon-phone: rgba(52, 199, 89, 0.4);
-            --icon-mail: rgba(255, 149, 0, 0.4);
+            --icon-tg: rgba(42, 171, 238, 0.7); /* ← Меньше прозрачности */
+            --icon-phone: rgba(52, 199, 89, 0.7);
+            --icon-mail: rgba(255, 149, 0, 0.7);
             
-            /* Линейка — ТЁМНАЯ ТЕМА (фон как у страницы, штрихи белые) */
+            /* Линейка — ТЁМНАЯ ТЕМА */
             --ruler-bg: #000000;
             --ruler-tick: #ffffff;
         }
@@ -48,25 +48,25 @@
             --bg-color: #F2F2F7;
             --text-main: #000000;
             --text-sec: #8E8E93;
-            --btn-bg: rgba(255, 255, 255, 0.6);
-            --btn-border: rgba(0,0,0,0.1);
+            --btn-bg: rgba(255, 255, 255, 0.95); /* ← Меньше прозрачности */
+            --btn-border: rgba(0,0,0,0.15);
             --btn-text: #000000;
             --logo-filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
             --toggle-bg: #e5e5ea;
             --toggle-circle: #ffffff;
 
-            --tab-bg: rgba(255, 255, 255, 0.9);
-            --tab-border: rgba(0,0,0,0.05);
+            --tab-bg: rgba(255, 255, 255, 0.98); /* ← Меньше прозрачности */
+            --tab-border: rgba(0,0,0,0.1);
             --tab-text: #888888;
             --tab-text-active: #000000;
-            --tab-bg-active: rgba(0,0,0,0.08);
-            --tab-hover: rgba(0,0,0,0.03);
+            --tab-bg-active: rgba(0,0,0,0.12);
+            --tab-hover: rgba(0,0,0,0.06);
             
-            --icon-tg: rgba(42, 171, 238, 0.5);
-            --icon-phone: rgba(52, 199, 89, 0.5);
-            --icon-mail: rgba(255, 149, 0, 0.5);
+            --icon-tg: rgba(42, 171, 238, 0.8); /* ← Меньше прозрачности */
+            --icon-phone: rgba(52, 199, 89, 0.8);
+            --icon-mail: rgba(255, 149, 0, 0.8);
             
-            /* Линейка — СВЕТЛАЯ ТЕМА (фон как у страницы, штрихи чёрные) */
+            /* Линейка — СВЕТЛАЯ ТЕМА */
             --ruler-bg: #F2F2F7;
             --ruler-tick: #000000;
         }
@@ -76,7 +76,6 @@
             height: 100%;
             position: fixed;
             width: 100%;
-            /* ← УБРАНА ПЛАВНОСТЬ: переходы удалены для мгновенного переключения */
         }
 
         body {
@@ -93,7 +92,6 @@
             touch-action: none;
             -webkit-user-select: none;
             user-select: none;
-            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён */
         }
 
         /* ===== ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА (ФИНАЛЬНЫЙ ЭТАЛОН) ===== */
@@ -103,13 +101,11 @@
             left: 0;
             width: 100%;
             height: 26px;
-            background: var(--ruler-bg); /* Фон как у страницы, без прозрачности */
+            background: var(--ruler-bg);
             z-index: 2000;
             pointer-events: none;
-            /* Без теней, без градиентов, без границ — абсолютно плоский стиль */
         }
 
-        /* Маленькие штрихи - высота 13px, каждые 6.5px */
         .top-ruler .ticks-small {
             position: absolute;
             top: 0;
@@ -129,7 +125,6 @@
             image-rendering: crisp-edges;
         }
 
-        /* Средние штрихи (каждый 5-й) - высота 20px, каждые 32.5px */
         .top-ruler .ticks-medium {
             position: absolute;
             top: 0;
@@ -149,7 +144,6 @@
             image-rendering: crisp-edges;
         }
 
-        /* Большие штрихи (каждый 10-й) - высота 26px, каждые 65px */
         .top-ruler .ticks-large {
             position: absolute;
             top: 0;
@@ -169,6 +163,61 @@
             image-rendering: crisp-edges;
         }
 
+        /* ===== ССЫЛКА "О СЕБЕ" В ЛЕВОМ ВЕРХНЕМ УГЛУ ===== */
+        .about-link {
+            position: fixed;
+            top: 32px; /* ← Ниже линейки (26px + 6px отступ) */
+            left: 16px;
+            font-size: 12.5px; /* ← Как у "ИНЖЕНЕР ПГС..." */
+            font-weight: 300;
+            color: var(--text-sec); /* ← Как у "ИНЖЕНЕР ПГС..." */
+            text-decoration: none;
+            text-transform: none; /* ← "О себе" — без uppercase */
+            letter-spacing: 0.8px;
+            z-index: 1001;
+            transition: color 0.2s ease;
+        }
+        .about-link:hover {
+            color: var(--text-main);
+        }
+        .about-link:active {
+            opacity: 0.7;
+        }
+
+        /* ТУМБЛЕР ТЕМЫ — опущен ниже линейки */
+        .theme-toggle-container {
+            position: fixed;
+            top: 30px; /* ← Ниже линейки (26px + 4px отступ) */
+            right: 16px;
+            z-index: 1001;
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 44px;
+            height: 26px;
+            background-color: var(--toggle-bg);
+            border-radius: 30px;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .theme-toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--toggle-circle);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        body.light-mode .theme-toggle::after {
+            transform: translateX(18px);
+        }
+
         .container {
             width: 100%;
             max-width: 480px;
@@ -181,7 +230,6 @@
             align-items: center;
             justify-content: center; 
             height: 100%;
-            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён */
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
         }
@@ -191,7 +239,6 @@
             height: auto;
             margin: 0 auto 15px;
             pointer-events: none;
-            /* ← УБРАНА ПЛАВНОСТЬ: анимация breathe оставлена только для логотипа */
             animation: breathe 3s infinite ease-in-out;
         }
 
@@ -201,7 +248,6 @@
             display: block;
             fill: var(--text-main);
             filter: var(--logo-filter);
-            /* ← УБРАНА ПЛАВНОСТЬ: переходы удалены */
         }
 
         h1 {
@@ -211,7 +257,6 @@
             letter-spacing: 1.5px;
             text-transform: uppercase;
             line-height: 1.1;
-            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён */
             color: var(--text-main);
         }
         p.subtitle {
@@ -221,7 +266,6 @@
             font-weight: 400;
             letter-spacing: 0.5px;
             line-height: 1.2;
-            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён */
         }
 
         .btn-main {
@@ -243,7 +287,6 @@
             text-transform: uppercase;
             border: 1px solid var(--btn-border);
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            /* ← ПЛАВНОСТЬ ОСТАВЛЕНА ТОЛЬКО ДЛЯ ИНТЕРАКТИВА (ховер/актив), не для темы */
             transition: all 0.3s ease;
             box-sizing: border-box;
             position: relative;
@@ -257,28 +300,26 @@
             animation: breathe 3s infinite ease-in-out;
         }
         .btn-main:hover { 
-            background: rgba(60, 60, 60, 0.8); 
+            background: rgba(60, 60, 60, 0.95); 
             box-shadow: 0 6px 20px rgba(0,0,0,0.2); 
         }
         body.light-mode .btn-main:hover {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 1);
         }
         .btn-main:active { transform: scale(0.96); opacity: 0.8; }
 
         .contact-section { 
             margin-top: 0; 
             margin-bottom: 20px; 
-            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён */
         }
         .contact-title {
             font-size: 18px; font-weight: 400; margin: 0 0 15px 0;
             letter-spacing: 0.5px; color: var(--text-main); text-transform: none;
-            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён */
         }
         .icons-row { display: flex; justify-content: center; gap: 25px; margin-bottom: 12px; }
         .contact-subtitle {
             font-size: 15px; color: var(--text-sec); margin: 0;
-            font-weight: 400; letter-spacing: 0.5px; /* ← УБРАНА ПЛАВНОСТЬ: transition удалён */
+            font-weight: 400; letter-spacing: 0.5px;
         }
 
         .icon-btn {
@@ -288,7 +329,6 @@
             border-radius: 20px; 
             text-decoration: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            /* ← ПЛАВНОСТЬ ОСТАВЛЕНА ТОЛЬКО ДЛЯ ИНТЕРАКТИВА (ховер/актив), не для темы */
             transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s;
             position: relative; overflow: hidden; z-index: 1; cursor: pointer;
             backdrop-filter: blur(5px);
@@ -327,7 +367,6 @@
             z-index: 1000; 
             margin-bottom: env(safe-area-inset-bottom);
             pointer-events: auto; 
-            /* ← ПЛАВНОСТЬ ОСТАВЛЕНА ТОЛЬКО ДЛЯ ИНТЕРАКТИВА, не для смены темы */
             transition: background-color 0.3s ease, border-color 0.3s ease;
             padding: 1px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
@@ -346,7 +385,6 @@
             text-transform: uppercase;
             text-decoration: none;
             border-radius: 10px; 
-            /* ← ПЛАВНОСТЬ ОСТАВЛЕНА ТОЛЬКО ДЛЯ ИНТЕРАКТИВА */
             transition: all 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
             pointer-events: auto;
             cursor: pointer;
@@ -377,56 +415,21 @@
             50% { transform: scale(1.03); }
             100% { transform: scale(1); }
         }
-
-        .theme-toggle-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1001;
-            margin-top: env(safe-area-inset-top);
-            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён */
-        }
-
-        .theme-toggle {
-            position: relative;
-            width: 44px;
-            height: 26px;
-            background-color: var(--toggle-bg);
-            border-radius: 30px;
-            cursor: pointer;
-            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён для мгновенного переключения */
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .theme-toggle::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background-color: var(--toggle-circle);
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён для мгновенного переключения */
-        }
-
-        body.light-mode .theme-toggle::after {
-            transform: translateX(18px);
-        }
-
     </style>
 </head>
 <body>
 
-    <!-- ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА (ФИНАЛЬНЫЙ ЭТАЛОН) -->
+    <!-- ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА -->
     <div class="top-ruler">
         <div class="ticks-small"></div>
         <div class="ticks-medium"></div>
         <div class="ticks-large"></div>
     </div>
 
-    <!-- ТУМБЛЕР ТЕМЫ -->
+    <!-- ССЫЛКА "О СЕБЕ" (левый верхний угол) -->
+    <a href="https://gadaev.pro/me" class="about-link">О себе</a>
+
+    <!-- ТУМБЛЕР ТЕМЫ (опущен ниже линейки) -->
     <div class="theme-toggle-container">
         <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
     </div>
