@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
     <title>Руслан Гадаев | КОНТАКТЫ</title>
 
     <!-- ФАВИКОНЫ -->
@@ -20,25 +21,30 @@
             --bg-color: #000000;
             --text-main: #ffffff;
             --text-sec: #666666;
-            --btn-bg: rgba(40, 40, 40, 0.95); /* ← Одинаковая прозрачность */
+            --btn-bg: rgba(40, 40, 40, 0.95);
             --btn-border: rgba(255,255,255,0.15);
             --btn-text: #e0e0e0;
             --logo-filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
             --toggle-bg: #333;
             --toggle-circle: #fff;
             
-            --tab-bg: rgba(30, 30, 30, 0.95); /* ← Одинаковая прозрачность */
+            --tab-bg: rgba(30, 30, 30, 0.95);
             --tab-border: rgba(255,255,255,0.15);
             --tab-text: #888888;
             --tab-text-active: #ffffff;
             --tab-bg-active: rgba(255,255,255,0.25);
             --tab-hover: rgba(255,255,255,0.1);
             
-            --icon-tg: rgba(42, 171, 238, 0.95); /* ← Одинаковая прозрачность */
+            --icon-tg: rgba(42, 171, 238, 0.95);
             --icon-phone: rgba(52, 199, 89, 0.95);
             --icon-mail: rgba(255, 149, 0, 0.95);
             
-            /* Линейка — ТЁМНАЯ ТЕМА */
+            /* Цвета иконок для контактов */
+            --icon-phone-color: #34C759;
+            --icon-mail-color: #FF9500;
+            --icon-tg-color: #2AABEE;
+            
+            /* Линейка */
             --ruler-bg: #000000;
             --ruler-tick: #ffffff;
         }
@@ -48,25 +54,25 @@
             --bg-color: #F2F2F7;
             --text-main: #000000;
             --text-sec: #8E8E93;
-            --btn-bg: rgba(255, 255, 255, 0.95); /* ← Одинаковая прозрачность */
+            --btn-bg: rgba(255, 255, 255, 0.95);
             --btn-border: rgba(0,0,0,0.1);
             --btn-text: #000000;
             --logo-filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
             --toggle-bg: #e5e5ea;
             --toggle-circle: #ffffff;
 
-            --tab-bg: rgba(255, 255, 255, 0.95); /* ← Одинаковая прозрачность */
+            --tab-bg: rgba(255, 255, 255, 0.95);
             --tab-border: rgba(0,0,0,0.1);
             --tab-text: #888888;
             --tab-text-active: #000000;
             --tab-bg-active: rgba(0,0,0,0.12);
             --tab-hover: rgba(0,0,0,0.06);
             
-            --icon-tg: rgba(42, 171, 238, 0.95); /* ← Одинаковая прозрачность */
+            --icon-tg: rgba(42, 171, 238, 0.95);
             --icon-phone: rgba(52, 199, 89, 0.95);
             --icon-mail: rgba(255, 149, 0, 0.95);
             
-            /* Линейка — СВЕТЛАЯ ТЕМА */
+            /* Линейка */
             --ruler-bg: #F2F2F7;
             --ruler-tick: #000000;
         }
@@ -92,6 +98,7 @@
             touch-action: none;
             -webkit-user-select: none;
             user-select: none;
+            -webkit-touch-callout: none;
         }
 
         /* ===== ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА ===== */
@@ -277,7 +284,7 @@
             margin-bottom: 15px;
             margin-top: 0;
             background: var(--btn-bg);
-            backdrop-filter: blur(5px); /* ← Уменьшено с 10px до 5px */
+            backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             color: var(--btn-text);
             text-decoration: none;
@@ -292,7 +299,7 @@
             box-sizing: border-box;
             position: relative;
             overflow: hidden;
-            z-index: 100; /* ← Поверх всего контента */
+            z-index: 100;
             cursor: pointer;
             white-space: nowrap;
             line-height: 1.2;
@@ -309,14 +316,14 @@
         }
         .btn-main:active { transform: scale(0.96); opacity: 0.8; }
 
-        /* ===== КНОПКА "СВЯЗАТЬСЯ СЕЙЧАС" — ЕДИНАЯ КАРТОЧКА ===== */
+        /* ===== КНОПКА "СВЯЗАТЬСЯ СЕЙЧАС" ===== */
         .contact-card {
             width: 90%;
             max-width: 340px;
             margin-bottom: 0;
             margin-top: 0;
             background: var(--btn-bg);
-            backdrop-filter: blur(5px); /* ← Уменьшено с 10px до 5px */
+            backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             border: 1px solid var(--btn-border);
             border-radius: 16px;
@@ -326,7 +333,7 @@
             animation: breathe 3s infinite ease-in-out;
             cursor: pointer;
             position: relative;
-            z-index: 100; /* ← Поверх всего контента */
+            z-index: 100;
         }
         .contact-card:hover {
             background: rgba(60, 60, 60, 0.98);
@@ -399,6 +406,95 @@
         .icon-btn:active { transform: scale(0.95); filter: brightness(0.9); }
         .icon-btn svg { width: 36px; height: 36px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
 
+        /* ===== КОНТАКТЫ (ЖЁСТКО ФИКСИРОВАННЫЕ) ===== */
+        .contact-info {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 60px; /* Над панелью вкладок */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            z-index: 1; /* ← Как просил */
+            pointer-events: none; /* Чтобы клики проходили сквозь контейнер */
+            width: 90%;
+            max-width: 340px;
+        }
+
+        .contact-info-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 8px 16px;
+            cursor: pointer;
+            user-select: none;
+            transition: opacity 0.2s ease;
+            pointer-events: auto; /* Включаем клики для элементов */
+            width: 100%;
+        }
+        .contact-info-item:hover {
+            opacity: 0.8;
+        }
+        .contact-info-item:active {
+            opacity: 0.6;
+        }
+
+        .contact-info-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+        
+        /* Цвета иконок */
+        .contact-info-icon.phone { fill: var(--icon-phone-color); }
+        .contact-info-icon.mail { fill: var(--icon-mail-color); }
+        .contact-info-icon.tg { fill: var(--icon-tg-color); }
+
+        .contact-info-text {
+            font-size: 17px;
+            color: var(--text-main);
+            font-weight: 400;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            text-decoration: none !important;
+            color: var(--text-main) !important;
+            -webkit-text-fill-color: var(--text-main);
+        }
+
+        /* ===== TOAST УВЕДОМЛЕНИЕ ===== */
+        .toast {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(40, 40, 40, 0.98);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 3000;
+            white-space: nowrap;
+        }
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+        body.light-mode .toast {
+            background: rgba(255, 255, 255, 0.98);
+            color: #000000;
+        }
+
         /* НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК */
         .tab-bar { 
             position: fixed; 
@@ -409,7 +505,7 @@
             max-width: 340px; 
             width: 100%; 
             background: var(--tab-bg); 
-            backdrop-filter: blur(5px); /* ← Уменьшено с 20px до 5px */
+            backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             border-radius: 12px; 
             border: 1px solid var(--tab-border); 
@@ -529,6 +625,31 @@
         <a href="https://gadaev.pro/contact" class="tab-link" id="link-contact">Контакты</a>
     </div>
 
+    <!-- КОНТАКТЫ (ЖЁСТКО ФИКСИРОВАННЫЕ) -->
+    <div class="contact-info">
+        <div class="contact-info-item" onclick="copyToClipboard('+7 (977) 707-57-55')">
+            <svg class="contact-info-icon phone" viewBox="0 0 24 24">
+                <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
+            </svg>
+            <span class="contact-info-text">+7 (977) 707-57-55</span>
+        </div>
+        <div class="contact-info-item" onclick="copyToClipboard('ruslan@gadaev.pro')">
+            <svg class="contact-info-icon mail" viewBox="0 0 24 24">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            <span class="contact-info-text">ruslan@gadaev.pro</span>
+        </div>
+        <div class="contact-info-item" onclick="copyToClipboard('@ruslan_gadaev')">
+            <svg class="contact-info-icon tg" viewBox="0 0 24 24">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.116.033.378.018.58z"/>
+            </svg>
+            <span class="contact-info-text">@ruslan_gadaev</span>
+        </div>
+    </div>
+
+    <!-- TOAST УВЕДОМЛЕНИЕ -->
+    <div class="toast" id="toast">✓ Скопировано!</div>
+
     <script>
         // ===== ФУНКЦИЯ ОБНОВЛЕНИЯ ЦВЕТА ТЕМЫ =====
         function updateThemeColor() {
@@ -565,6 +686,24 @@
         function toggleContactCard() {
             const card = document.getElementById('contactCard');
             card.classList.toggle('open');
+        }
+
+        // ===== КОПИРОВАНИЕ В БУФЕР =====
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast();
+            }).catch(err => {
+                console.error('Ошибка копирования:', err);
+            });
+        }
+
+        // ===== ПОКАЗАТЬ TOAST УВЕДОМЛЕНИЕ =====
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
         }
 
         // ===== ПРИ ЗАГРУЗКЕ СТРАНИЦЫ =====
