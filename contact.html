@@ -20,21 +20,21 @@
             --bg-color: #000000;
             --text-main: #ffffff;
             --text-sec: #666666;
-            --btn-bg: rgba(40, 40, 40, 0.9); /* ← Меньше прозрачности */
+            --btn-bg: rgba(40, 40, 40, 0.9);
             --btn-border: rgba(255,255,255,0.2);
             --btn-text: #e0e0e0;
             --logo-filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
             --toggle-bg: #333;
             --toggle-circle: #fff;
             
-            --tab-bg: rgba(30, 30, 30, 0.95); /* ← Меньше прозрачности */
+            --tab-bg: rgba(30, 30, 30, 0.95);
             --tab-border: rgba(255,255,255,0.15);
             --tab-text: #888888;
             --tab-text-active: #ffffff;
             --tab-bg-active: rgba(255,255,255,0.25);
             --tab-hover: rgba(255,255,255,0.1);
             
-            --icon-tg: rgba(42, 171, 238, 0.7); /* ← Меньше прозрачности */
+            --icon-tg: rgba(42, 171, 238, 0.7);
             --icon-phone: rgba(52, 199, 89, 0.7);
             --icon-mail: rgba(255, 149, 0, 0.7);
             
@@ -48,21 +48,21 @@
             --bg-color: #F2F2F7;
             --text-main: #000000;
             --text-sec: #8E8E93;
-            --btn-bg: rgba(255, 255, 255, 0.95); /* ← Меньше прозрачности */
+            --btn-bg: rgba(255, 255, 255, 0.95);
             --btn-border: rgba(0,0,0,0.15);
             --btn-text: #000000;
             --logo-filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
             --toggle-bg: #e5e5ea;
             --toggle-circle: #ffffff;
 
-            --tab-bg: rgba(255, 255, 255, 0.98); /* ← Меньше прозрачности */
+            --tab-bg: rgba(255, 255, 255, 0.98);
             --tab-border: rgba(0,0,0,0.1);
             --tab-text: #888888;
             --tab-text-active: #000000;
             --tab-bg-active: rgba(0,0,0,0.12);
             --tab-hover: rgba(0,0,0,0.06);
             
-            --icon-tg: rgba(42, 171, 238, 0.8); /* ← Меньше прозрачности */
+            --icon-tg: rgba(42, 171, 238, 0.8);
             --icon-phone: rgba(52, 199, 89, 0.8);
             --icon-mail: rgba(255, 149, 0, 0.8);
             
@@ -94,7 +94,7 @@
             user-select: none;
         }
 
-        /* ===== ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА (ФИНАЛЬНЫЙ ЭТАЛОН) ===== */
+        /* ===== ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА ===== */
         .top-ruler {
             position: fixed;
             top: 0;
@@ -163,17 +163,18 @@
             image-rendering: crisp-edges;
         }
 
-        /* ===== ССЫЛКА "О СЕБЕ" В ЛЕВОМ ВЕРХНЕМ УГЛУ ===== */
+        /* ===== ССЫЛКА "О СЕБЕ" — стили как у "ИНЖЕНЕР ПГС..." ===== */
         .about-link {
             position: fixed;
-            top: 32px; /* ← Ниже линейки (26px + 6px отступ) */
-            left: 16px;
-            font-size: 12.5px; /* ← Как у "ИНЖЕНЕР ПГС..." */
-            font-weight: 300;
-            color: var(--text-sec); /* ← Как у "ИНЖЕНЕР ПГС..." */
+            top: 35px; /* ← Одинаковый отступ с тумблером */
+            left: 16px; /* ← Одинаковый боковой отступ */
+            font-size: 18px; /* ← Как у subtitle */
+            font-weight: 400;
+            color: var(--text-sec);
             text-decoration: none;
-            text-transform: none; /* ← "О себе" — без uppercase */
-            letter-spacing: 0.8px;
+            text-transform: none;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
             z-index: 1001;
             transition: color 0.2s ease;
         }
@@ -184,20 +185,20 @@
             opacity: 0.7;
         }
 
-        /* ТУМБЛЕР ТЕМЫ — опущен ниже линейки */
+        /* ===== ТУМБЛЕР ТЕМЫ — уменьшенный и выровненный ===== */
         .theme-toggle-container {
             position: fixed;
-            top: 30px; /* ← Ниже линейки (26px + 4px отступ) */
-            right: 16px;
+            top: 35px; /* ← Тот же отступ что у "О себе" */
+            right: 16px; /* ← Тот же боковой отступ что у "О себе" */
             z-index: 1001;
         }
 
         .theme-toggle {
             position: relative;
-            width: 44px;
-            height: 26px;
+            width: 30px; /* ← Пропорционально уменьшено (было 44px) */
+            height: 18px; /* ← Новая высота */
             background-color: var(--toggle-bg);
-            border-radius: 30px;
+            border-radius: 18px; /* ← Закругление под новую высоту */
             cursor: pointer;
             border: 1px solid rgba(0,0,0,0.05);
         }
@@ -207,15 +208,15 @@
             position: absolute;
             top: 2px;
             left: 2px;
-            width: 20px;
-            height: 20px;
+            width: 14px; /* ← Пропорционально уменьшен (был 20px) */
+            height: 14px;
             background-color: var(--toggle-circle);
             border-radius: 50%;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         body.light-mode .theme-toggle::after {
-            transform: translateX(18px);
+            transform: translateX(12px); /* ← Пропорционально (было 18px) */
         }
 
         .container {
@@ -429,7 +430,7 @@
     <!-- ССЫЛКА "О СЕБЕ" (левый верхний угол) -->
     <a href="https://gadaev.pro/me" class="about-link">О себе</a>
 
-    <!-- ТУМБЛЕР ТЕМЫ (опущен ниже линейки) -->
+    <!-- ТУМБЛЕР ТЕМЫ (уменьшенный, выровненный) -->
     <div class="theme-toggle-container">
         <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
     </div>
