@@ -160,11 +160,7 @@
         });
 
         // ПОДСВЕТКА АКТИВНОЙ ВКЛАДКИ
-        window.addEventListener('load', () => {
-            updateTabActive();
-        });
-
-        function updateTabActive() {
+        document.addEventListener('DOMContentLoaded', () => {
             const path = window.location.pathname;
             const links = document.querySelectorAll('.tab-link');
             links.forEach(el => el.classList.remove('active'));
@@ -176,8 +172,13 @@
             } else {
                 document.getElementById('link-home').classList.add('active');
             }
+        });
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
         }
     </script>
 </body>
 </html>
-
