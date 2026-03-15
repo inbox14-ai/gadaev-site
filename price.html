@@ -34,10 +34,10 @@
             --tab-bg-active: rgba(255,255,255,0.15);
             --tab-hover: rgba(255,255,255,0.05);
             
-            --icon-tg: rgba(42, 171, 238, 0.4); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
-            --icon-phone: rgba(52, 199, 89, 0.4); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
-            --icon-mail: rgba(255, 149, 0, 0.4); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
-}
+            --icon-tg: rgba(42, 171, 238, 0.4);
+            --icon-phone: rgba(52, 199, 89, 0.4);
+            --icon-mail: rgba(255, 149, 0, 0.4);
+        }
         
         /* СВЕТЛАЯ ТЕМА */
         body.light-mode {
@@ -58,26 +58,98 @@
             --tab-bg-active: rgba(0,0,0,0.08);
             --tab-hover: rgba(0,0,0,0.03);
             
-            --icon-tg: rgba(42, 171, 238, 0.5); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
-            --icon-phone: rgba(52, 199, 89, 0.5); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
-            --icon-mail: rgba(255, 149, 0, 0.5); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
+            --icon-tg: rgba(42, 171, 238, 0.5);
+            --icon-phone: rgba(52, 199, 89, 0.5);
+            --icon-mail: rgba(255, 149, 0, 0.5);
         }
 
         body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    font-weight: 400;
-    color: var(--text-main);
-}
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ===== ВЕРХНЯЯ ГЛЯНЦЕВАЯ ПОЛОСА-ЛИНЕЙКА ===== */
+        .top-ruler {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px; /* Тонкая полоса */
+            background: linear-gradient(180deg, #2a2a2a 0%, #000000 40%, #000000 60%, #1a1a1a 100%); /* Глянцевый чёрный */
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            z-index: 2000; /* Поверх всего */
+            pointer-events: none; /* Не мешает кликам */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+
+        /* Штрихи как на линейке (без цифр) */
+        .top-ruler::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background-image: 
+                /* Короткие штрихи каждые 5px */
+                repeating-linear-gradient(
+                    90deg,
+                    transparent 0px,
+                    transparent 4px,
+                    rgba(255,255,255,0.4) 4px,
+                    rgba(255,255,255,0.4) 5px,
+                    transparent 5px,
+                    transparent 10px
+                );
+            opacity: 0.7;
+        }
+
+        /* Длинные штрихи каждые 20px для ритма */
+        .top-ruler::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background-image: 
+                repeating-linear-gradient(
+                    90deg,
+                    transparent 0px,
+                    transparent 19px,
+                    rgba(255,255,255,0.7) 19px,
+                    rgba(255,255,255,0.7) 20px,
+                    transparent 20px,
+                    transparent 40px
+                );
+            opacity: 0.5;
+        }
+
+        /* Глянцевый блик сверху */
+        .top-ruler .gloss {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+            pointer-events: none;
+            border-radius: 0 0 2px 2px;
+        }
+
         /* НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК */
         .tab-bar { 
             position: fixed; 
             bottom: 10px; 
             left: 50%; 
             transform: translateX(-50%); 
-            height: 35px; 
+            height: 44px; /* Увеличено для удобства */
             max-width: 340px; 
-            width: 100%; 
+            width: 90%; 
             background: var(--tab-bg); 
             backdrop-filter: blur(20px); 
             -webkit-backdrop-filter: blur(20px);
@@ -90,9 +162,9 @@
             margin-bottom: env(safe-area-inset-bottom);
             pointer-events: auto; 
             transition: background-color 0.3s ease, border-color 0.3s ease;
-            padding: 1px;
+            padding: 0 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            gap: 0px;
+            gap: 2px;
         }
 
         .tab-link {
@@ -134,6 +206,12 @@
     </style>
 </head>
 <body>
+
+    <!-- ВЕРХНЯЯ ГЛЯНЦЕВАЯ ПОЛОСА-ЛИНЕЙКА -->
+    <div class="top-ruler">
+        <div class="gloss"></div>
+    </div>
+
     <!-- ПАНЕЛЬ ВКЛАДОК -->
     <div class="tab-bar" id="tabBar">
         <a href="https://gadaev.pro" class="tab-link" id="link-home">Главная</a>
@@ -142,81 +220,52 @@
     </div>
 
     <script>
-        // АВТО-ОПРЕДЕЛЕНИЕ ТЕМЫ ПРИ ЗАГРУЗКЕ
+        // ===== ФУНКЦИЯ ОБНОВЛЕНИЯ ЦВЕТА ТЕМЫ =====
+        function updateThemeColor() {
+            const themeColorMeta = document.getElementById('theme-color-meta');
+            const isLight = document.body.classList.contains('light-mode');
+            if (themeColorMeta) {
+                themeColorMeta.content = isLight ? '#f0f0f0' : '#050505';
+            }
+        }
+
+        // ===== ПРИ ЗАГРУЗКЕ СТРАНИЦЫ =====
         window.addEventListener('load', () => {
             const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) {
-                // Если есть сохраненная тема - используем её
-                if (savedTheme === 'light') {
-                    document.body.classList.add('light-mode');
-                }
-            } else {
-                // Если нет сохраненной - определяем по системе
-                const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-                if (prefersLight) {
-                    document.body.classList.add('light-mode');
-                }
+            
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            } else if (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                document.body.classList.add('light-mode');
             }
+            
+            updateThemeColor();
+            updateTabActive();
         });
 
-        // ПОДСВЕТКА АКТИВНОЙ ВКЛАДКИ
-        document.addEventListener('DOMContentLoaded', () => {
+        // ===== ПОДСВЕТКА АКТИВНОЙ ВКЛАДКИ =====
+        function updateTabActive() {
             const path = window.location.pathname;
             const links = document.querySelectorAll('.tab-link');
             links.forEach(el => el.classList.remove('active'));
 
             if (path.includes('/contact') || path.endsWith('contact.html') || path.endsWith('contact')) {
-                document.getElementById('link-contact').classList.add('active');
+                document.getElementById('link-contact')?.classList.add('active');
             } else if (path.includes('/price')) {
-                document.getElementById('link-calc').classList.add('active');
+                document.getElementById('link-calc')?.classList.add('active');
             } else {
-                document.getElementById('link-home').classList.add('active');
+                document.getElementById('link-home')?.classList.add('active');
             }
-        });
+        }
 
+        // ===== ПЕРЕКЛЮЧЕНИЕ ТЕМЫ =====
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateThemeColor();
+            if (navigator.vibrate) navigator.vibrate(20);
         }
-        
-// ===== ФУНКЦИЯ ОБНОВЛЕНИЯ ЦВЕТА ТЕМЫ =====
-function updateThemeColor() {
-    const themeColorMeta = document.getElementById('theme-color-meta');
-    const isLight = document.body.classList.contains('light-mode');
-    
-    if (themeColorMeta) {
-        themeColorMeta.content = isLight ? '#f0f0f0' : '#050505';
-    }
-}
-
-// ===== ПРИ ЗАГРУЗКЕ СТРАНИЦЫ =====
-window.addEventListener('load', () => {
-    const savedTheme = localStorage.getItem('theme');
-    
-    if (savedTheme === 'light') {
-        document.body.classList.add('light-mode');
-    } else if (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches) {
-        document.body.classList.add('light-mode');
-    }
-    
-    updateThemeColor();  // ← Применяем цвет сразу при загрузке!
-    
-    updateIndicators();
-    updateButtons();
-    updateTabActive();
-});
-
-// ===== ПРИ ПЕРЕКЛЮЧЕНИИ ТЕМЫ =====
-function toggleTheme() {
-    document.body.classList.toggle('light-mode');
-    const isLight = document.body.classList.contains('light-mode');
-    
-    localStorage.setItem('theme', isLight ? 'light' : 'dark');
-    
-    updateThemeColor();  // ← Обновляем цвет при переключении
-    vibrate(20);
-}
     </script>
 </body>
 </html>
