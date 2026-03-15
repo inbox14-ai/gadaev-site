@@ -99,14 +99,13 @@
             border-radius: 0 0 3px 3px;
         }
 
-        /* Штрихи линейки (только 1мм, белые, смотрят вниз) */
-        .top-ruler::after {
-            content: '';
+        /* Маленькие штрихи (1мм) - высота 15px */
+        .top-ruler .ticks-small {
             position: absolute;
             top: 2px;
             left: 0;
             width: 100%;
-            height: 15px; /* ← УВЕЛИЧЕНО ДО СЕРЕДИНЫ ПОЛОСЫ */
+            height: 15px;
             background: repeating-linear-gradient(
                 90deg,
                 transparent 0px,
@@ -117,6 +116,27 @@
                 transparent 8px
             );
             opacity: 0.9;
+            pointer-events: none;
+        }
+
+        /* Большие штрихи (каждый 11-й, 44px) - высота 30px */
+        .top-ruler .ticks-large {
+            position: absolute;
+            top: 0px;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 43px,
+                rgba(255,255,255,0.9) 43px,
+                rgba(255,255,255,0.9) 44px,
+                transparent 44px,
+                transparent 88px
+            );
+            opacity: 1;
+            pointer-events: none;
         }
 
         /* ===== НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК ===== */
@@ -186,7 +206,10 @@
 <body>
 
     <!-- ВЕРХНЯЯ ГЛЯНЦЕВАЯ ПОЛОСА-ЛИНЕЙКА -->
-    <div class="top-ruler"></div>
+    <div class="top-ruler">
+        <div class="ticks-small"></div>
+        <div class="ticks-large"></div>
+    </div>
 
     <!-- ПАНЕЛЬ ВКЛАДОК -->
     <div class="tab-bar" id="tabBar">
