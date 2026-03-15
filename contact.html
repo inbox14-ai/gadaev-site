@@ -38,8 +38,8 @@
             --icon-phone: rgba(52, 199, 89, 0.4);
             --icon-mail: rgba(255, 149, 0, 0.4);
             
-            /* Линейка — ТЁМНАЯ ТЕМА (стиль iOS) */
-            --ruler-bg: #1c1c1e;
+            /* Линейка — ТЁМНАЯ ТЕМА (чистый чёрный фон, белые штрихи) */
+            --ruler-bg: #000000;
             --ruler-tick: #ffffff;
         }
 
@@ -66,8 +66,8 @@
             --icon-phone: rgba(52, 199, 89, 0.5);
             --icon-mail: rgba(255, 149, 0, 0.5);
             
-            /* Линейка — СВЕТЛАЯ ТЕМА (стиль iOS) */
-            --ruler-bg: #f2f2f7;
+            /* Линейка — СВЕТЛАЯ ТЕМА (чистый белый фон, чёрные штрихи) */
+            --ruler-bg: #ffffff;
             --ruler-tick: #000000;
         }
 
@@ -84,8 +84,7 @@
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: 0;
-            padding-top: 26px; /* ← Под новую высоту линейки */
+            padding: 0; /* ← Убран padding-top: 26px */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -96,23 +95,23 @@
             user-select: none;
         }
 
-        /* ===== ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА (НОВЫЙ ЭТАЛОН — iOS стиль) ===== */
+        /* ===== ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА (ФИНАЛЬНЫЙ ЭТАЛОН) ===== */
         .top-ruler {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 26px;
-            background: var(--ruler-bg);
+            background: var(--ruler-bg); /* Чистый цвет без прозрачности */
             z-index: 2000;
             pointer-events: none;
-            /* Без теней, без градиентов, без границ — чистый плоский стиль */
+            /* Без теней, без градиентов, без границ — абсолютно плоский стиль */
         }
 
         /* Маленькие штрихи - высота 13px, каждые 6.5px */
         .top-ruler .ticks-small {
             position: absolute;
-            top: 0; /* ← Убран отступ 2px */
+            top: 0;
             left: 0;
             width: 100%;
             height: 13px;
@@ -132,7 +131,7 @@
         /* Средние штрихи (каждый 5-й) - высота 20px, каждые 32.5px */
         .top-ruler .ticks-medium {
             position: absolute;
-            top: 0; /* ← Убран отступ 2px */
+            top: 0;
             left: 0;
             width: 100%;
             height: 20px;
@@ -152,7 +151,7 @@
         /* Большие штрихи (каждый 10-й) - высота 26px, каждые 65px */
         .top-ruler .ticks-large {
             position: absolute;
-            top: 0; /* ← Убран отступ 2px */
+            top: 0;
             left: 0;
             width: 100%;
             height: 26px;
@@ -415,7 +414,7 @@
 </head>
 <body>
 
-    <!-- ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА (НОВЫЙ ЭТАЛОН) -->
+    <!-- ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА (ФИНАЛЬНЫЙ ЭТАЛОН) -->
     <div class="top-ruler">
         <div class="ticks-small"></div>
         <div class="ticks-medium"></div>
