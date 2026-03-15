@@ -38,7 +38,7 @@
             --icon-phone: rgba(52, 199, 89, 0.4);
             --icon-mail: rgba(255, 149, 0, 0.4);
             
-            /* Линейка — ТЁМНАЯ ТЕМА (чистый чёрный фон, белые штрихи) */
+            /* Линейка — ТЁМНАЯ ТЕМА (фон как у страницы, штрихи белые) */
             --ruler-bg: #000000;
             --ruler-tick: #ffffff;
         }
@@ -66,8 +66,8 @@
             --icon-phone: rgba(52, 199, 89, 0.5);
             --icon-mail: rgba(255, 149, 0, 0.5);
             
-            /* Линейка — СВЕТЛАЯ ТЕМА (чистый белый фон, чёрные штрихи) */
-            --ruler-bg: #ffffff;
+            /* Линейка — СВЕТЛАЯ ТЕМА (фон как у страницы, штрихи чёрные) */
+            --ruler-bg: #F2F2F7;
             --ruler-tick: #000000;
         }
 
@@ -76,7 +76,7 @@
             height: 100%;
             position: fixed;
             width: 100%;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            /* ← УБРАНА ПЛАВНОСТЬ: переходы удалены для мгновенного переключения */
         }
 
         body {
@@ -84,7 +84,7 @@
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: 0; /* ← Убран padding-top: 26px */
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -93,6 +93,7 @@
             touch-action: none;
             -webkit-user-select: none;
             user-select: none;
+            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён */
         }
 
         /* ===== ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА (ФИНАЛЬНЫЙ ЭТАЛОН) ===== */
@@ -102,7 +103,7 @@
             left: 0;
             width: 100%;
             height: 26px;
-            background: var(--ruler-bg); /* Чистый цвет без прозрачности */
+            background: var(--ruler-bg); /* Фон как у страницы, без прозрачности */
             z-index: 2000;
             pointer-events: none;
             /* Без теней, без градиентов, без границ — абсолютно плоский стиль */
@@ -180,7 +181,7 @@
             align-items: center;
             justify-content: center; 
             height: 100%;
-            transition: all 0.3s ease;
+            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён */
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
         }
@@ -190,7 +191,7 @@
             height: auto;
             margin: 0 auto 15px;
             pointer-events: none;
-            transition: filter 0.3s ease;
+            /* ← УБРАНА ПЛАВНОСТЬ: анимация breathe оставлена только для логотипа */
             animation: breathe 3s infinite ease-in-out;
         }
 
@@ -200,7 +201,7 @@
             display: block;
             fill: var(--text-main);
             filter: var(--logo-filter);
-            transition: fill 0.3s ease, filter 0.3s ease;
+            /* ← УБРАНА ПЛАВНОСТЬ: переходы удалены */
         }
 
         h1 {
@@ -210,7 +211,7 @@
             letter-spacing: 1.5px;
             text-transform: uppercase;
             line-height: 1.1;
-            transition: color 0.3s ease;
+            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён */
             color: var(--text-main);
         }
         p.subtitle {
@@ -220,7 +221,7 @@
             font-weight: 400;
             letter-spacing: 0.5px;
             line-height: 1.2;
-            transition: color 0.3s ease;
+            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён */
         }
 
         .btn-main {
@@ -242,6 +243,7 @@
             text-transform: uppercase;
             border: 1px solid var(--btn-border);
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            /* ← ПЛАВНОСТЬ ОСТАВЛЕНА ТОЛЬКО ДЛЯ ИНТЕРАКТИВА (ховер/актив), не для темы */
             transition: all 0.3s ease;
             box-sizing: border-box;
             position: relative;
@@ -266,17 +268,17 @@
         .contact-section { 
             margin-top: 0; 
             margin-bottom: 20px; 
-            transition: color 0.3s ease; 
+            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён */
         }
         .contact-title {
             font-size: 18px; font-weight: 400; margin: 0 0 15px 0;
             letter-spacing: 0.5px; color: var(--text-main); text-transform: none;
-            transition: color 0.3s ease;
+            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён */
         }
         .icons-row { display: flex; justify-content: center; gap: 25px; margin-bottom: 12px; }
         .contact-subtitle {
             font-size: 15px; color: var(--text-sec); margin: 0;
-            font-weight: 400; letter-spacing: 0.5px; transition: color 0.3s ease;
+            font-weight: 400; letter-spacing: 0.5px; /* ← УБРАНА ПЛАВНОСТЬ: transition удалён */
         }
 
         .icon-btn {
@@ -286,6 +288,7 @@
             border-radius: 20px; 
             text-decoration: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            /* ← ПЛАВНОСТЬ ОСТАВЛЕНА ТОЛЬКО ДЛЯ ИНТЕРАКТИВА (ховер/актив), не для темы */
             transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s;
             position: relative; overflow: hidden; z-index: 1; cursor: pointer;
             backdrop-filter: blur(5px);
@@ -324,6 +327,7 @@
             z-index: 1000; 
             margin-bottom: env(safe-area-inset-bottom);
             pointer-events: auto; 
+            /* ← ПЛАВНОСТЬ ОСТАВЛЕНА ТОЛЬКО ДЛЯ ИНТЕРАКТИВА, не для смены темы */
             transition: background-color 0.3s ease, border-color 0.3s ease;
             padding: 1px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
@@ -342,6 +346,7 @@
             text-transform: uppercase;
             text-decoration: none;
             border-radius: 10px; 
+            /* ← ПЛАВНОСТЬ ОСТАВЛЕНА ТОЛЬКО ДЛЯ ИНТЕРАКТИВА */
             transition: all 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
             pointer-events: auto;
             cursor: pointer;
@@ -379,7 +384,7 @@
             right: 20px;
             z-index: 1001;
             margin-top: env(safe-area-inset-top);
-            transition: top 0.3s ease;
+            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён */
         }
 
         .theme-toggle {
@@ -389,7 +394,7 @@
             background-color: var(--toggle-bg);
             border-radius: 30px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён для мгновенного переключения */
             border: 1px solid rgba(0,0,0,0.05);
         }
 
@@ -403,7 +408,7 @@
             background-color: var(--toggle-circle);
             border-radius: 50%;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            /* ← УБРАНА ПЛАВНОСТЬ: transition удалён для мгновенного переключения */
         }
 
         body.light-mode .theme-toggle::after {
