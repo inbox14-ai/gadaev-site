@@ -299,7 +299,7 @@
             box-sizing: border-box;
             position: relative;
             overflow: hidden;
-            z-index: 100;
+            z-index: 1000; /* ← ИЗМЕНЕНО: было 100, стало 1000 */
             cursor: pointer;
             white-space: nowrap;
             line-height: 1.2;
@@ -333,7 +333,7 @@
             animation: breathe 3s infinite ease-in-out;
             cursor: pointer;
             position: relative;
-            z-index: 100;
+            z-index: 1000; /* ← ИЗМЕНЕНО: было 100, стало 1000 */
         }
         .contact-card:hover {
             background: rgba(60, 60, 60, 0.98);
@@ -411,13 +411,13 @@
             position: fixed;
             left: 50%;
             transform: translateX(-50%);
-            bottom: 60px; /* Над панелью вкладок */
+            bottom: 60px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 8px;
-            z-index: 1; /* ← Как просил */
-            pointer-events: none; /* Чтобы клики проходили сквозь контейнер */
+            z-index: 1;
+            pointer-events: none;
             width: 90%;
             max-width: 340px;
         }
@@ -431,7 +431,7 @@
             cursor: pointer;
             user-select: none;
             transition: opacity 0.2s ease;
-            pointer-events: auto; /* Включаем клики для элементов */
+            pointer-events: auto;
             width: 100%;
         }
         .contact-info-item:hover {
