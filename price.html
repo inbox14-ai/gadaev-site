@@ -137,7 +137,7 @@
     <!-- ПАНЕЛЬ ВКЛАДОК -->
     <div class="tab-bar" id="tabBar">
         <a href="https://gadaev.pro" class="tab-link" id="link-home">Главная</a>
-        <a href="https://gadaev.pro/calculation" class="tab-link" id="link-calc">Цены</a>
+        <a href="https://gadaev.pro/price" class="tab-link" id="link-calc">Цены</a>
         <a href="https://gadaev.pro/contact" class="tab-link" id="link-contact">Контакты</a>
     </div>
 
@@ -167,8 +167,8 @@
 
             if (path.includes('/contact') || path.endsWith('contact.html') || path.endsWith('contact')) {
                 document.getElementById('link-contact').classList.add('active');
-            } else if (path.includes('/calculation')) {
-                document.getElementById('link-calc').classList.add('active');
+            } else if (path.includes('/price')) {
+                document.getElementById('link-price').classList.add('active');
             } else {
                 document.getElementById('link-home').classList.add('active');
             }
