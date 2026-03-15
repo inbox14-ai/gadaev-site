@@ -39,7 +39,6 @@
             --icon-mail: rgba(255, 149, 0, 0.4);
         }
         
-        /* СВЕТЛАЯ ТЕМА */
         body.light-mode {
             --bg-color: #F2F2F7;
             --text-main: #000000;
@@ -70,86 +69,183 @@
             color: var(--text-main);
             margin: 0;
             padding: 0;
+            padding-top: 30px; /* Отступ под линейку */
         }
 
-        /* ===== ВЕРХНЯЯ ГЛЯНЦЕВАЯ ПОЛОСА-ЛИНЕЙКА ===== */
+        /* ===== ВЕРХНЯЯ ГЛЯНЦЕВАЯ ПОЛОСА-ЛИНЕЙКА (30px высота) ===== */
         .top-ruler {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 10px; /* Тонкая полоса */
-            background: linear-gradient(180deg, #2a2a2a 0%, #000000 40%, #000000 60%, #1a1a1a 100%); /* Глянцевый чёрный */
-            border-bottom: 1px solid rgba(255,255,255,0.15);
-            z-index: 2000; /* Поверх всего */
-            pointer-events: none; /* Не мешает кликам */
-            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            height: 30px; /* В 3 раза шире */
+            background: linear-gradient(180deg, #3a3a3a 0%, #0a0a0a 30%, #000000 50%, #0a0a0a 70%, #1a1a1a 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            z-index: 2000;
+            pointer-events: none;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.5);
         }
 
-        /* Штрихи как на линейке (без цифр) */
+        /* Глянцевый блик */
         .top-ruler::before {
             content: '';
-            position: absolute;
-            top: 2px;
-            left: 0;
-            width: 100%;
-            height: 6px;
-            background-image: 
-                /* Короткие штрихи каждые 5px */
-                repeating-linear-gradient(
-                    90deg,
-                    transparent 0px,
-                    transparent 4px,
-                    rgba(255,255,255,0.4) 4px,
-                    rgba(255,255,255,0.4) 5px,
-                    transparent 5px,
-                    transparent 10px
-                );
-            opacity: 0.7;
-        }
-
-        /* Длинные штрихи каждые 20px для ритма */
-        .top-ruler::after {
-            content: '';
-            position: absolute;
-            top: 1px;
-            left: 0;
-            width: 100%;
-            height: 8px;
-            background-image: 
-                repeating-linear-gradient(
-                    90deg,
-                    transparent 0px,
-                    transparent 19px,
-                    rgba(255,255,255,0.7) 19px,
-                    rgba(255,255,255,0.7) 20px,
-                    transparent 20px,
-                    transparent 40px
-                );
-            opacity: 0.5;
-        }
-
-        /* Глянцевый блик сверху */
-        .top-ruler .gloss {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 50%;
-            background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+            height: 12px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.05) 40%, transparent 100%);
             pointer-events: none;
-            border-radius: 0 0 2px 2px;
+            border-radius: 0 0 3px 3px;
         }
 
-        /* НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК */
+        /* ШКАЛА ЛИНЕЙКИ - белые штрихи */
+        .top-ruler::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 0;
+            width: 100%;
+            height: 26px;
+            /* 
+               Реальные штрихи линейки:
+               - Маленький (1мм): каждые 4px, высота 6px, прозрачность 0.5
+               - Средний (5мм): каждые 20px, высота 12px, прозрачность 0.8  
+               - Большой (10мм): каждые 40px, высота 20px, прозрачность 1.0
+            */
+            background-image: 
+                /* Маленькие штрихи 1мм - белые, каждые 4px */
+                repeating-linear-gradient(
+                    90deg,
+                    transparent 0px,
+                    transparent 3px,
+                    rgba(255,255,255,0.5) 3px,
+                    rgba(255,255,255,0.5) 4px,
+                    transparent 4px,
+                    transparent 8px
+                ),
+                /* Средние штрихи 5мм - белые, каждые 20px, выше и ярче */
+                repeating-linear-gradient(
+                    90deg,
+                    transparent 0px,
+                    transparent 18px,
+                    rgba(255,255,255,0.85) 18px,
+                    rgba(255,255,255,0.85) 20px,
+                    transparent 20px,
+                    transparent 40px
+                ),
+                /* Большие штрихи 10мм - белые, каждые 40px, самые высокие и яркие */
+                repeating-linear-gradient(
+                    90deg,
+                    transparent 0px,
+                    transparent 38px,
+                    rgba(255,255,255,1) 38px,
+                    rgba(255,255,255,1) 40px,
+                    transparent 40px,
+                    transparent 80px
+                );
+            /* Маска для разной высоты штрихов */
+            -webkit-mask-image: 
+                linear-gradient(90deg, 
+                    transparent 0%, transparent 3px,
+                    black 3px, black 4px,
+                    transparent 4px, transparent 8px,
+                    transparent 18px, transparent 18px,
+                    black 18px, black 20px,
+                    transparent 20px, transparent 38px,
+                    black 38px, black 40px,
+                    transparent 40px
+                );
+            mask-image: 
+                linear-gradient(90deg, 
+                    transparent 0%, transparent 3px,
+                    black 3px, black 4px,
+                    transparent 4px, transparent 8px,
+                    transparent 18px, transparent 18px,
+                    black 18px, black 20px,
+                    transparent 20px, transparent 38px,
+                    black 38px, black 40px,
+                    transparent 40px
+                );
+            opacity: 0.9;
+        }
+
+        /* Альтернативный способ: отдельные слои для штрихов разной высоты */
+        .ruler-ticks {
+            position: absolute;
+            bottom: 2px;
+            left: 0;
+            width: 100%;
+            height: 26px;
+            pointer-events: none;
+        }
+
+        /* Маленькие штрихи (1мм) */
+        .ruler-ticks::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 6px; /* Высота маленького штриха */
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 3px,
+                rgba(255,255,255,0.5) 3px,
+                rgba(255,255,255,0.5) 4px,
+                transparent 4px,
+                transparent 8px
+            );
+        }
+
+        /* Средние штрихи (5мм) */
+        .ruler-ticks::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 12px; /* Высота среднего штриха */
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 18px,
+                rgba(255,255,255,0.85) 18px,
+                rgba(255,255,255,0.85) 20px,
+                transparent 20px,
+                transparent 40px
+            );
+        }
+
+        /* Большие штрихи (10мм) - отдельный элемент */
+        .ruler-ticks-large {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20px; /* Высота большого штриха */
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 38px,
+                rgba(255,255,255,1) 38px,
+                rgba(255,255,255,1) 40px,
+                transparent 40px,
+                transparent 80px
+            );
+            pointer-events: none;
+        }
+
+        /* НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК - ВОЗВРАЩЕНЫ СТАРЫЕ ПАРАМЕТРЫ */
         .tab-bar { 
             position: fixed; 
             bottom: 10px; 
             left: 50%; 
             transform: translateX(-50%); 
-            height: 44px; /* Увеличено для удобства */
+            height: 35px; /* ← Вернули 35px */
             max-width: 340px; 
-            width: 90%; 
+            width: 100%; 
             background: var(--tab-bg); 
             backdrop-filter: blur(20px); 
             -webkit-backdrop-filter: blur(20px);
@@ -162,9 +258,9 @@
             margin-bottom: env(safe-area-inset-bottom);
             pointer-events: auto; 
             transition: background-color 0.3s ease, border-color 0.3s ease;
-            padding: 0 8px;
+            padding: 1px; /* ← Вернули 1px */
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            gap: 2px;
+            gap: 0px; /* ← Вернули 0px */
         }
 
         .tab-link {
@@ -209,7 +305,8 @@
 
     <!-- ВЕРХНЯЯ ГЛЯНЦЕВАЯ ПОЛОСА-ЛИНЕЙКА -->
     <div class="top-ruler">
-        <div class="gloss"></div>
+        <div class="ruler-ticks"></div>
+        <div class="ruler-ticks-large"></div>
     </div>
 
     <!-- ПАНЕЛЬ ВКЛАДОК -->
