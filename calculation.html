@@ -16,8 +16,27 @@
 
     <style>
         :root {
-    --tab-text-active: white;
-    --tab-bg-active: black;
+            /* ТЕМНАЯ ТЕМА */
+            --bg-color: #000000;
+            --text-main: #ffffff;
+            --text-sec: #666666;
+            --btn-bg: rgba(40, 40, 40, 0.6);
+            --btn-border: rgba(255,255,255,0.1);
+            --btn-text: #e0e0e0;
+            --logo-filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+            --toggle-bg: #333;
+            --toggle-circle: #fff;
+            
+            --tab-bg: rgba(30, 30, 30, 0.85);
+            --tab-border: rgba(255,255,255,0.08);
+            --tab-text: #888888;
+            --tab-text-active: #ffffff;
+            --tab-bg-active: rgba(255,255,255,0.15);
+            --tab-hover: rgba(255,255,255,0.05);
+            
+            --icon-tg: rgba(42, 171, 238, 0.4); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
+            --icon-phone: rgba(52, 199, 89, 0.4); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
+            --icon-mail: rgba(255, 149, 0, 0.4); /* БОЛЕЕ ПРОЗРАЧНЫЙ */
 }
         body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -38,7 +57,7 @@
             backdrop-filter: blur(20px); 
             -webkit-backdrop-filter: blur(20px);
             border-radius: 12px; 
-            border: 1px solid black; 
+            border: 1px solid var(--tab-border); 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
