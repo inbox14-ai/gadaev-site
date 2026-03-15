@@ -87,7 +87,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start; /* ← ИЗМЕНЕНО: было center */
             text-align: center;
             touch-action: none;
             -webkit-user-select: none;
@@ -222,23 +222,23 @@
         .container {
             width: 100%;
             max-width: 480px;
-            padding: 0 20px; 
+            padding: 40px 20px 0 20px; /* ← ИЗМЕНЕНО: фиксированный padding-top вместо центрирования */
             position: relative;
             z-index: 1;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; 
+            justify-content: flex-start; /* ← ИЗМЕНЕНО: было center */
             height: 100%;
-            padding-top: env(safe-area-inset-top);
+            padding-top: calc(env(safe-area-inset-top) + 40px);
             padding-bottom: env(safe-area-inset-bottom);
         }
         
         .logo-container {
             width: 135px;
             height: auto;
-            margin: 0 auto 15px;
+            margin: 0 auto 10px; /* ← Уменьшено с 15px */
             pointer-events: none;
             animation: breathe 3s infinite ease-in-out;
         }
@@ -263,7 +263,7 @@
         p.subtitle {
             font-size: 18px;
             color: var(--text-sec);
-            margin: 0 0 35px 0; /* ← Уменьшено с 45px до 35px */
+            margin: 0 0 25px 0; /* ← Уменьшено с 35px до 25px */
             font-weight: 400;
             letter-spacing: 0.5px;
             line-height: 1.2;
@@ -274,8 +274,8 @@
             align-items: center;
             justify-content: center;
             padding: 20px 32px;
-            margin-bottom: 20px; /* ← Уменьшено с 30px до 20px (поднять кнопку) */
-            margin-top: 5px;
+            margin-bottom: 15px; /* ← Уменьшено с 20px до 15px */
+            margin-top: 0;
             background: var(--btn-bg);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -313,8 +313,8 @@
         .contact-card {
             width: 90%;
             max-width: 340px;
-            margin-bottom: 20px; /* ← Уменьшено с 30px до 20px */
-            margin-top: 5px; /* ← Добавлен отступ сверху (компактнее) */
+            margin-bottom: 0; /* ← Убран отступ снизу */
+            margin-top: 0; /* ← Убран отступ сверху */
             background: var(--btn-bg);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
