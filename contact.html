@@ -90,7 +90,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            display: block; /* ← Убрали flex, центрируем через fixed */
+            display: block;
             text-align: center;
             touch-action: none;
             -webkit-user-select: none;
@@ -223,19 +223,19 @@
             transform: translateX(14px);
         }
 
-        /* ===== ЦЕНТРАЛЬНЫЙ КОНТЕЙНЕР (ЖЁСТКО ПО ЦЕНТРУ) ===== */
+        /* ===== ЦЕНТРАЛЬНЫЙ КОНТЕЙНЕР (140px ВВЕРХ ОТ ЦЕНТРА) ===== */
         .container {
             position: fixed;
-            top: 35%;
+            top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%); /* ← Центрирование по центру экрана */
+            transform: translate(-50%, calc(-50% - 140px)); /* ← 140px выше центра */
             width: 90%;
             max-width: 340px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            z-index: 2; /* ← Выше контактов, ниже кнопок */
-            pointer-events: none; /* ← Пропускаем клики сквозь контейнер */
+            z-index: 2;
+            pointer-events: none;
         }
         
         .logo-container {
@@ -302,7 +302,7 @@
             width: 100%;
             max-width: 340px;
             animation: breathe 3s infinite ease-in-out;
-            pointer-events: auto; /* ← Включаем клики для кнопки */
+            pointer-events: auto;
         }
         .btn-main:hover { 
             background: rgba(60, 60, 60, 0.98); 
@@ -331,7 +331,7 @@
             cursor: pointer;
             position: relative;
             z-index: 2500;
-            pointer-events: auto; /* ← Включаем клики для карточки */
+            pointer-events: auto;
         }
         .contact-card:hover {
             background: rgba(60, 60, 60, 0.98);
@@ -404,12 +404,12 @@
         .icon-btn:active { transform: scale(0.95); filter: brightness(0.9); }
         .icon-btn svg { width: 36px; height: 36px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
 
-        /* ===== КОНТАКТЫ (ЖЁСТКО ФИКСИРОВАННЫЕ ПО ЦЕНТРУ ЭКРАНА) ===== */
+        /* ===== КОНТАКТЫ (100px ВНИЗ ОТ ЦЕНТРА) ===== */
         .contact-info {
             position: fixed;
-            top: 75%;
+            top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, calc(-50% + 100px)); /* ← 100px ниже центра */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -580,7 +580,7 @@
         <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
     </div>
 
-    <!-- ЦЕНТРАЛЬНЫЙ КОНТЕЙНЕР (ЖЁСТКО ПО ЦЕНТРУ) -->
+    <!-- ЦЕНТРАЛЬНЫЙ КОНТЕЙНЕР -->
     <div class="container">
         <div class="logo-container">
             <svg class="logo-svg" viewBox="0 0 291.11 243.46" xmlns="http://www.w3.org/2000/svg">
@@ -624,7 +624,7 @@
         <a href="https://gadaev.pro/contact" class="tab-link" id="link-contact">Контакты</a>
     </div>
 
-    <!-- КОНТАКТЫ (ЖЁСТКО ФИКСИРОВАННЫЕ ПО ЦЕНТРУ) -->
+    <!-- КОНТАКТЫ -->
     <div class="contact-info">
         <div class="contact-info-item" onclick="copyToClipboard('+7 (977) 707-57-55')">
             <svg class="contact-info-icon phone" viewBox="0 0 24 24">
