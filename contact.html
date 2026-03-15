@@ -263,7 +263,7 @@
         p.subtitle {
             font-size: 18px;
             color: var(--text-sec);
-            margin: 0 0 45px 0;
+            margin: 0 0 35px 0; /* ← Уменьшено с 45px до 35px */
             font-weight: 400;
             letter-spacing: 0.5px;
             line-height: 1.2;
@@ -274,7 +274,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px 32px;
-            margin-bottom: 30px; 
+            margin-bottom: 20px; /* ← Уменьшено с 30px до 20px (поднять кнопку) */
             margin-top: 5px;
             background: var(--btn-bg);
             backdrop-filter: blur(10px);
@@ -309,11 +309,12 @@
         }
         .btn-main:active { transform: scale(0.96); opacity: 0.8; }
 
-        /* ===== КНОПКА "СВЯЗАТЬСЯ СЕЙЧАС" — ЕДИНАЯ РАСШИРЯЮЩАЯСЯ КАРТОЧКА ===== */
+        /* ===== КНОПКА "СВЯЗАТЬСЯ СЕЙЧАС" — ЕДИНАЯ КАРТОЧКА ===== */
         .contact-card {
             width: 90%;
             max-width: 340px;
-            margin-bottom: 30px;
+            margin-bottom: 20px; /* ← Уменьшено с 30px до 20px */
+            margin-top: 5px; /* ← Добавлен отступ сверху (компактнее) */
             background: var(--btn-bg);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
