@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="format-detection" content="telephone=no">
     <title>Руслан Гадаев | КОНТАКТЫ</title>
 
     <!-- ФАВИКОНЫ -->
@@ -21,26 +20,25 @@
             --bg-color: #000000;
             --text-main: #ffffff;
             --text-sec: #666666;
-            --btn-bg: rgba(40, 40, 40, 0.95);
-            --btn-border: rgba(255,255,255,0.15);
+            --btn-bg: rgba(40, 40, 40, 0.9);
+            --btn-border: rgba(255,255,255,0.2);
             --btn-text: #e0e0e0;
             --logo-filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
             --toggle-bg: #333;
             --toggle-circle: #fff;
             
-            --tab-bg: rgba(30, 30, 30, 0.98);
+            --tab-bg: rgba(30, 30, 30, 0.95);
             --tab-border: rgba(255,255,255,0.15);
             --tab-text: #888888;
             --tab-text-active: #ffffff;
             --tab-bg-active: rgba(255,255,255,0.25);
             --tab-hover: rgba(255,255,255,0.1);
             
-            /* Цвета иконок для контактов */
-            --icon-phone-color: #34C759;
-            --icon-mail-color: #FF9500;
-            --icon-tg-color: #2AABEE;
+            --icon-tg: rgba(42, 171, 238, 0.7);
+            --icon-phone: rgba(52, 199, 89, 0.7);
+            --icon-mail: rgba(255, 149, 0, 0.7);
             
-            /* Линейка */
+            /* Линейка — ТЁМНАЯ ТЕМА */
             --ruler-bg: #000000;
             --ruler-tick: #ffffff;
         }
@@ -51,7 +49,7 @@
             --text-main: #000000;
             --text-sec: #8E8E93;
             --btn-bg: rgba(255, 255, 255, 0.95);
-            --btn-border: rgba(0,0,0,0.1);
+            --btn-border: rgba(0,0,0,0.15);
             --btn-text: #000000;
             --logo-filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
             --toggle-bg: #e5e5ea;
@@ -64,7 +62,11 @@
             --tab-bg-active: rgba(0,0,0,0.12);
             --tab-hover: rgba(0,0,0,0.06);
             
-            /* Линейка */
+            --icon-tg: rgba(42, 171, 238, 0.8);
+            --icon-phone: rgba(52, 199, 89, 0.8);
+            --icon-mail: rgba(255, 149, 0, 0.8);
+            
+            /* Линейка — СВЕТЛАЯ ТЕМА */
             --ruler-bg: #F2F2F7;
             --ruler-tick: #000000;
         }
@@ -90,7 +92,6 @@
             touch-action: none;
             -webkit-user-select: none;
             user-select: none;
-            -webkit-touch-callout: none;
         }
 
         /* ===== ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА ===== */
@@ -230,7 +231,7 @@
             align-items: center;
             justify-content: flex-start;
             height: 100%;
-            padding-top: calc(env(safe-area-inset-top) + 70px);
+            padding-top: calc(env(safe-area-inset-top) + 70px); /* ← УВЕЛИЧЕНО с 40px до 70px */
             padding-bottom: env(safe-area-inset-bottom);
         }
         
@@ -276,8 +277,8 @@
             margin-bottom: 15px;
             margin-top: 0;
             background: var(--btn-bg);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             color: var(--btn-text);
             text-decoration: none;
             border-radius: 16px;
@@ -300,45 +301,37 @@
             animation: breathe 3s infinite ease-in-out;
         }
         .btn-main:hover { 
-            background: rgba(60, 60, 60, 0.98); 
+            background: rgba(60, 60, 60, 0.95); 
             box-shadow: 0 6px 20px rgba(0,0,0,0.2); 
         }
         body.light-mode .btn-main:hover {
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(255, 255, 255, 1);
         }
         .btn-main:active { transform: scale(0.96); opacity: 0.8; }
 
-        /* ===== ОБЁРТКА ДЛЯ КАРТОЧКИ И КОНТАКТОВ ===== */
-        .contact-section-wrapper {
-            position: relative;
+        /* ===== КНОПКА "СВЯЗАТЬСЯ СЕЙЧАС" — ЕДИНАЯ КАРТОЧКА ===== */
+        .contact-card {
             width: 90%;
             max-width: 340px;
-            margin-top: 15px;
             margin-bottom: 0;
-        }
-
-        /* ===== ЕДИНОЕ ОКНО "СВЯЗАТЬСЯ СЕЙЧАС" ===== */
-        .contact-card {
-            width: 100%;
+            margin-top: 0;
             background: var(--btn-bg);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--btn-border);
             border-radius: 16px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
             transition: all 0.3s ease;
             animation: breathe 3s infinite ease-in-out;
             cursor: pointer;
-            position: relative;
-            z-index: 10; /* ← Поверх контактов */
-            overflow: hidden;
         }
         .contact-card:hover {
-            background: rgba(60, 60, 60, 0.98);
+            background: rgba(60, 60, 60, 0.95);
             box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
         body.light-mode .contact-card:hover {
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(255, 255, 255, 1);
         }
 
         .contact-card-header {
@@ -352,34 +345,28 @@
             text-transform: uppercase;
             color: var(--btn-text);
             user-select: none;
-            position: relative;
-            z-index: 2;
+            transition: all 0.3s ease;
         }
 
-        /* Раскрывающийся контент */
         .contact-card-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease;
-            background: var(--btn-bg);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            position: relative;
-            z-index: 1;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            opacity: 0;
         }
         .contact-card.open .contact-card-content {
             max-height: 200px;
+            padding: 0 20px 20px 20px;
+            opacity: 1;
         }
 
         .contact-card-content-inner {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 15px 20px 20px 20px;
-            border-top: 1px solid var(--btn-border);
         }
 
-        .icons-row { display: flex; justify-content: center; gap: 25px; margin-bottom: 15px; }
+        .icons-row { display: flex; justify-content: center; gap: 25px; margin-bottom: 12px; }
         .contact-subtitle {
             font-size: 15px; color: var(--text-sec); margin: 0;
             font-weight: 400; letter-spacing: 0.5px;
@@ -388,17 +375,19 @@
         .icon-btn {
             display: flex; align-items: center; justify-content: center;
             width: 70px; height: 70px;
+            background: var(--icon-tg); 
             border-radius: 20px; 
             text-decoration: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s;
             position: relative; overflow: hidden; z-index: 1; cursor: pointer;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             animation: breathe 3s infinite ease-in-out;
             animation-delay: 0.5s;
         }
-        .icon-btn.phone { background: var(--icon-phone-color); }
-        .icon-btn.mail { background: var(--icon-mail-color); }
-        .icon-btn.tg { background: var(--icon-tg-color); }
+        .icon-btn.phone { background: var(--icon-phone); }
+        .icon-btn.mail { background: var(--icon-mail); }
         
         .icon-btn:hover { 
             transform: scale(1.05); 
@@ -406,93 +395,7 @@
             filter: brightness(1.1); 
         }
         .icon-btn:active { transform: scale(0.95); filter: brightness(0.9); }
-        .icon-btn svg { width: 36px; height: 36px; fill: #ffffff !important; position: relative; z-index: 2; pointer-events: none; }
-
-        /* ===== КОНТАКТЫ (ABSOLUTE, НЕ СДВИГАЮТСЯ) ===== */
-        .contact-info {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            margin-top: 8px; /* ← Отступ от карточки */
-            z-index: 1; /* ← Под карточкой */
-            pointer-events: none; /* ← Чтобы клики проходили сквозь */
-        }
-
-        .contact-info-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 16px;
-            cursor: pointer;
-            user-select: none;
-            transition: opacity 0.2s ease;
-            pointer-events: auto; /* ← Включаем клики для элементов */
-        }
-        .contact-info-item:hover {
-            opacity: 0.8;
-        }
-        .contact-info-item:active {
-            opacity: 0.6;
-        }
-
-        .contact-info-icon {
-            width: 24px;
-            height: 24px;
-            flex-shrink: 0;
-        }
-        
-        /* Цвета иконок */
-        .contact-info-icon.phone { fill: var(--icon-phone-color); }
-        .contact-info-icon.mail { fill: var(--icon-mail-color); }
-        .contact-info-icon.tg { fill: var(--icon-tg-color); }
-
-        .contact-info-text {
-            font-size: 17px;
-            color: var(--text-main);
-            font-weight: 400;
-            letter-spacing: 0.3px;
-            white-space: nowrap;
-            text-decoration: none !important;
-            color: var(--text-main) !important;
-            -webkit-text-fill-color: var(--text-main);
-        }
-
-        /* ===== TOAST УВЕДОМЛЕНИЕ ===== */
-        .toast {
-            position: fixed;
-            bottom: 60px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: rgba(40, 40, 40, 0.98);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            color: #ffffff;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 400;
-            letter-spacing: 0.3px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 3000;
-            white-space: nowrap;
-        }
-        .toast.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) translateY(0);
-        }
-        body.light-mode .toast {
-            background: rgba(255, 255, 255, 0.98);
-            color: #000000;
-        }
+        .icon-btn svg { width: 36px; height: 36px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
 
         /* НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК */
         .tab-bar { 
@@ -504,8 +407,8 @@
             max-width: 340px; 
             width: 100%; 
             background: var(--tab-bg); 
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
             border-radius: 12px; 
             border: 1px solid var(--tab-border); 
             display: flex; 
@@ -595,48 +498,23 @@
 
         <a href="contact.vcf" class="btn-main">СОХРАНИТЬ КОНТАКТЫ</a>
 
-        <!-- ОБЁРТКА ДЛЯ КАРТОЧКИ И КОНТАКТОВ -->
-        <div class="contact-section-wrapper">
-            <!-- ЕДИНОЕ ОКНО "СВЯЗАТЬСЯ СЕЙЧАС" -->
-            <div class="contact-card" id="contactCard" onclick="toggleContactCard()">
-                <div class="contact-card-header">СВЯЗАТЬСЯ СЕЙЧАС</div>
-                <div class="contact-card-content">
-                    <div class="contact-card-content-inner">
-                        <div class="icons-row">
-                            <a href="https://t.me/ruslan_gadaev" class="icon-btn tg" target="_blank" onclick="event.stopPropagation()">
-                                <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.116.033.378.018.58z"/></svg>
-                            </a>
-                            <a href="tel:+79777075755" class="icon-btn phone" onclick="event.stopPropagation()">
-                                <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
-                            </a>
-                            <a href="mailto:ruslan@gadaev.pro" class="icon-btn mail" onclick="event.stopPropagation()">
-                                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                            </a>
-                        </div>
-                        <p class="contact-subtitle">Выберите удобный способ связи</p>
+        <!-- ЕДИНАЯ РАСШИРЯЮЩАЯСЯ КНОПКА-КАРТОЧКА -->
+        <div class="contact-card" id="contactCard" onclick="toggleContactCard()">
+            <div class="contact-card-header">СВЯЗАТЬСЯ СЕЙЧАС</div>
+            <div class="contact-card-content">
+                <div class="contact-card-content-inner">
+                    <div class="icons-row">
+                        <a href="https://t.me/ruslan_gadaev" class="icon-btn" target="_blank" onclick="event.stopPropagation()">
+                            <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.116.033.378.018.58z"/></svg>
+                        </a>
+                        <a href="tel:+79777075755" class="icon-btn phone" onclick="event.stopPropagation()">
+                            <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+                        </a>
+                        <a href="mailto:ruslan@gadaev.pro" class="icon-btn mail" onclick="event.stopPropagation()">
+                            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                        </a>
                     </div>
-                </div>
-            </div>
-
-            <!-- КОНТАКТЫ (ABSOLUTE, НЕ СДВИГАЮТСЯ) -->
-            <div class="contact-info">
-                <div class="contact-info-item" onclick="copyToClipboard('+7 (977) 707-57-55')">
-                    <svg class="contact-info-icon phone" viewBox="0 0 24 24">
-                        <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
-                    </svg>
-                    <span class="contact-info-text">+7 (977) 707-57-55</span>
-                </div>
-                <div class="contact-info-item" onclick="copyToClipboard('ruslan@gadaev.pro')">
-                    <svg class="contact-info-icon mail" viewBox="0 0 24 24">
-                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                    </svg>
-                    <span class="contact-info-text">ruslan@gadaev.pro</span>
-                </div>
-                <div class="contact-info-item" onclick="copyToClipboard('@ruslan_gadaev')">
-                    <svg class="contact-info-icon tg" viewBox="0 0 24 24">
-                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.116.033.378.018.58z"/>
-                    </svg>
-                    <span class="contact-info-text">@ruslan_gadaev</span>
+                    <p class="contact-subtitle">Выберите удобный способ связи</p>
                 </div>
             </div>
         </div>
@@ -648,9 +526,6 @@
         <a href="https://gadaev.pro/price" class="tab-link" id="link-calc">Цены</a>
         <a href="https://gadaev.pro/contact" class="tab-link" id="link-contact">Контакты</a>
     </div>
-
-    <!-- TOAST УВЕДОМЛЕНИЕ -->
-    <div class="toast" id="toast">✓ Скопировано!</div>
 
     <script>
         // ===== ФУНКЦИЯ ОБНОВЛЕНИЯ ЦВЕТА ТЕМЫ =====
@@ -688,24 +563,6 @@
         function toggleContactCard() {
             const card = document.getElementById('contactCard');
             card.classList.toggle('open');
-        }
-
-        // ===== КОПИРОВАНИЕ В БУФЕР =====
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast();
-            }).catch(err => {
-                console.error('Ошибка копирования:', err);
-            });
-        }
-
-        // ===== ПОКАЗАТЬ TOAST УВЕДОМЛЕНИЕ =====
-        function showToast() {
-            const toast = document.getElementById('toast');
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2000);
         }
 
         // ===== ПРИ ЗАГРУЗКЕ СТРАНИЦЫ =====
