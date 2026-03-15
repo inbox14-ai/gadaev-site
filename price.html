@@ -38,7 +38,7 @@
             --icon-phone: rgba(52, 199, 89, 0.4);
             --icon-mail: rgba(255, 149, 0, 0.4);
             
-            /* Линейка — ТЁМНАЯ ТЕМА (чистый чёрный фон, белые штрихи) */
+            /* Линейка — ТЁМНАЯ ТЕМА (фон как у страницы, штрихи белые) */
             --ruler-bg: #000000;
             --ruler-tick: #ffffff;
         }
@@ -65,8 +65,8 @@
             --icon-phone: rgba(52, 199, 89, 0.5);
             --icon-mail: rgba(255, 149, 0, 0.5);
             
-            /* Линейка — СВЕТЛАЯ ТЕМА (чистый белый фон, чёрные штрихи) */
-            --ruler-bg: #ffffff;
+            /* Линейка — СВЕТЛАЯ ТЕМА (фон как у страницы, штрихи чёрные) */
+            --ruler-bg: #F2F2F7;
             --ruler-tick: #000000;
         }
 
@@ -76,7 +76,7 @@
             font-weight: 400;
             color: var(--text-main);
             margin: 0;
-            padding: 0; /* ← Убран padding-top: 30px */
+            padding: 0;
         }
 
         /* ===== ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА (ФИНАЛЬНЫЙ ЭТАЛОН) ===== */
@@ -86,7 +86,7 @@
             left: 0;
             width: 100%;
             height: 26px;
-            background: var(--ruler-bg);
+            background: var(--ruler-bg); /* Точно как фон страницы */
             z-index: 2000;
             pointer-events: none;
         }
