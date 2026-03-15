@@ -37,6 +37,10 @@
             --icon-tg: rgba(42, 171, 238, 0.4);
             --icon-phone: rgba(52, 199, 89, 0.4);
             --icon-mail: rgba(255, 149, 0, 0.4);
+            
+            /* Линейка — ТЁМНАЯ ТЕМА (стиль iOS) */
+            --ruler-bg: #1c1c1e;
+            --ruler-tick: #ffffff;
         }
 
         /* СВЕТЛАЯ ТЕМА */
@@ -61,6 +65,10 @@
             --icon-tg: rgba(42, 171, 238, 0.5);
             --icon-phone: rgba(52, 199, 89, 0.5);
             --icon-mail: rgba(255, 149, 0, 0.5);
+            
+            /* Линейка — СВЕТЛАЯ ТЕМА (стиль iOS) */
+            --ruler-bg: #f2f2f7;
+            --ruler-tick: #000000;
         }
 
         html, body {
@@ -77,7 +85,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            padding-top: 30px;
+            padding-top: 26px; /* ← Под новую высоту линейки */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -88,35 +96,23 @@
             user-select: none;
         }
 
-        /* ===== ВЕРХНЯЯ ГЛЯНЦЕВАЯ ПОЛОСА-ЛИНЕЙКА (ЭТАЛОН) ===== */
+        /* ===== ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА (НОВЫЙ ЭТАЛОН — iOS стиль) ===== */
         .top-ruler {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 30px;
-            background: linear-gradient(180deg, #3a3a3a 0%, #0a0a0a 30%, #000000 50%, #0a0a0a 70%, #1a1a1a 100%);
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            height: 26px;
+            background: var(--ruler-bg);
             z-index: 2000;
             pointer-events: none;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.5);
+            /* Без теней, без градиентов, без границ — чистый плоский стиль */
         }
 
-        .top-ruler::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 12px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.05) 40%, transparent 100%);
-            pointer-events: none;
-            border-radius: 0 0 3px 3px;
-        }
-
+        /* Маленькие штрихи - высота 13px, каждые 6.5px */
         .top-ruler .ticks-small {
             position: absolute;
-            top: 2px;
+            top: 0; /* ← Убран отступ 2px */
             left: 0;
             width: 100%;
             height: 13px;
@@ -124,8 +120,8 @@
                 90deg,
                 transparent 0px,
                 transparent 5.5px,
-                #ffffff 5.5px,
-                #ffffff 6.5px,
+                var(--ruler-tick) 5.5px,
+                var(--ruler-tick) 6.5px,
                 transparent 6.5px
             );
             pointer-events: none;
@@ -133,9 +129,10 @@
             image-rendering: crisp-edges;
         }
 
+        /* Средние штрихи (каждый 5-й) - высота 20px, каждые 32.5px */
         .top-ruler .ticks-medium {
             position: absolute;
-            top: 2px;
+            top: 0; /* ← Убран отступ 2px */
             left: 0;
             width: 100%;
             height: 20px;
@@ -143,8 +140,8 @@
                 90deg,
                 transparent 0px,
                 transparent 31.5px,
-                #ffffff 31.5px,
-                #ffffff 32.5px,
+                var(--ruler-tick) 31.5px,
+                var(--ruler-tick) 32.5px,
                 transparent 32.5px
             );
             pointer-events: none;
@@ -152,9 +149,10 @@
             image-rendering: crisp-edges;
         }
 
+        /* Большие штрихи (каждый 10-й) - высота 26px, каждые 65px */
         .top-ruler .ticks-large {
             position: absolute;
-            top: 2px;
+            top: 0; /* ← Убран отступ 2px */
             left: 0;
             width: 100%;
             height: 26px;
@@ -162,8 +160,8 @@
                 90deg,
                 transparent 0px,
                 transparent 64px,
-                #ffffff 64px,
-                #ffffff 65px,
+                var(--ruler-tick) 64px,
+                var(--ruler-tick) 65px,
                 transparent 65px
             );
             pointer-events: none;
@@ -417,7 +415,7 @@
 </head>
 <body>
 
-    <!-- ВЕРХНЯЯ ГЛЯНЦЕВАЯ ПОЛОСА-ЛИНЕЙКА (ЭТАЛОН) -->
+    <!-- ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА (НОВЫЙ ЭТАЛОН) -->
     <div class="top-ruler">
         <div class="ticks-small"></div>
         <div class="ticks-medium"></div>
