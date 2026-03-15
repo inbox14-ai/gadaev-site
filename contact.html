@@ -20,23 +20,23 @@
             --bg-color: #000000;
             --text-main: #ffffff;
             --text-sec: #666666;
-            --btn-bg: rgba(40, 40, 40, 0.9);
-            --btn-border: rgba(255,255,255,0.2);
+            --btn-bg: rgba(40, 40, 40, 0.95); /* ← Одинаковая прозрачность */
+            --btn-border: rgba(255,255,255,0.15);
             --btn-text: #e0e0e0;
             --logo-filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
             --toggle-bg: #333;
             --toggle-circle: #fff;
             
-            --tab-bg: rgba(30, 30, 30, 0.95);
+            --tab-bg: rgba(30, 30, 30, 0.95); /* ← Одинаковая прозрачность */
             --tab-border: rgba(255,255,255,0.15);
             --tab-text: #888888;
             --tab-text-active: #ffffff;
             --tab-bg-active: rgba(255,255,255,0.25);
             --tab-hover: rgba(255,255,255,0.1);
             
-            --icon-tg: rgba(42, 171, 238, 0.7);
-            --icon-phone: rgba(52, 199, 89, 0.7);
-            --icon-mail: rgba(255, 149, 0, 0.7);
+            --icon-tg: rgba(42, 171, 238, 0.95); /* ← Одинаковая прозрачность */
+            --icon-phone: rgba(52, 199, 89, 0.95);
+            --icon-mail: rgba(255, 149, 0, 0.95);
             
             /* Линейка — ТЁМНАЯ ТЕМА */
             --ruler-bg: #000000;
@@ -48,23 +48,23 @@
             --bg-color: #F2F2F7;
             --text-main: #000000;
             --text-sec: #8E8E93;
-            --btn-bg: rgba(255, 255, 255, 0.95);
-            --btn-border: rgba(0,0,0,0.15);
+            --btn-bg: rgba(255, 255, 255, 0.95); /* ← Одинаковая прозрачность */
+            --btn-border: rgba(0,0,0,0.1);
             --btn-text: #000000;
             --logo-filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
             --toggle-bg: #e5e5ea;
             --toggle-circle: #ffffff;
 
-            --tab-bg: rgba(255, 255, 255, 0.98);
+            --tab-bg: rgba(255, 255, 255, 0.95); /* ← Одинаковая прозрачность */
             --tab-border: rgba(0,0,0,0.1);
             --tab-text: #888888;
             --tab-text-active: #000000;
             --tab-bg-active: rgba(0,0,0,0.12);
             --tab-hover: rgba(0,0,0,0.06);
             
-            --icon-tg: rgba(42, 171, 238, 0.8);
-            --icon-phone: rgba(52, 199, 89, 0.8);
-            --icon-mail: rgba(255, 149, 0, 0.8);
+            --icon-tg: rgba(42, 171, 238, 0.95); /* ← Одинаковая прозрачность */
+            --icon-phone: rgba(52, 199, 89, 0.95);
+            --icon-mail: rgba(255, 149, 0, 0.95);
             
             /* Линейка — СВЕТЛАЯ ТЕМА */
             --ruler-bg: #F2F2F7;
@@ -231,7 +231,7 @@
             align-items: center;
             justify-content: flex-start;
             height: 100%;
-            padding-top: calc(env(safe-area-inset-top) + 70px); /* ← УВЕЛИЧЕНО с 40px до 70px */
+            padding-top: calc(env(safe-area-inset-top) + 70px);
             padding-bottom: env(safe-area-inset-bottom);
         }
         
@@ -277,8 +277,8 @@
             margin-bottom: 15px;
             margin-top: 0;
             background: var(--btn-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(5px); /* ← Уменьшено с 10px до 5px */
+            -webkit-backdrop-filter: blur(5px);
             color: var(--btn-text);
             text-decoration: none;
             border-radius: 16px;
@@ -292,7 +292,7 @@
             box-sizing: border-box;
             position: relative;
             overflow: hidden;
-            z-index: 1;
+            z-index: 100; /* ← Поверх всего контента */
             cursor: pointer;
             white-space: nowrap;
             line-height: 1.2;
@@ -301,11 +301,11 @@
             animation: breathe 3s infinite ease-in-out;
         }
         .btn-main:hover { 
-            background: rgba(60, 60, 60, 0.95); 
+            background: rgba(60, 60, 60, 0.98); 
             box-shadow: 0 6px 20px rgba(0,0,0,0.2); 
         }
         body.light-mode .btn-main:hover {
-            background: rgba(255, 255, 255, 1);
+            background: rgba(255, 255, 255, 0.98);
         }
         .btn-main:active { transform: scale(0.96); opacity: 0.8; }
 
@@ -316,8 +316,8 @@
             margin-bottom: 0;
             margin-top: 0;
             background: var(--btn-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(5px); /* ← Уменьшено с 10px до 5px */
+            -webkit-backdrop-filter: blur(5px);
             border: 1px solid var(--btn-border);
             border-radius: 16px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -325,13 +325,15 @@
             transition: all 0.3s ease;
             animation: breathe 3s infinite ease-in-out;
             cursor: pointer;
+            position: relative;
+            z-index: 100; /* ← Поверх всего контента */
         }
         .contact-card:hover {
-            background: rgba(60, 60, 60, 0.95);
+            background: rgba(60, 60, 60, 0.98);
             box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
         body.light-mode .contact-card:hover {
-            background: rgba(255, 255, 255, 1);
+            background: rgba(255, 255, 255, 0.98);
         }
 
         .contact-card-header {
@@ -407,8 +409,8 @@
             max-width: 340px; 
             width: 100%; 
             background: var(--tab-bg); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(5px); /* ← Уменьшено с 20px до 5px */
+            -webkit-backdrop-filter: blur(5px);
             border-radius: 12px; 
             border: 1px solid var(--tab-border); 
             display: flex; 
