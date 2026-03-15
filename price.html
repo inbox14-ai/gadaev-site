@@ -99,7 +99,7 @@
             border-radius: 0 0 3px 3px;
         }
 
-        /* Маленькие штрихи - высота 13px, каждые 6.5px */
+        /* Маленькие штрихи - высота 13px, каждые 6.5px, сдвиг на 6.5px вправо */
         .top-ruler .ticks-small {
             position: absolute;
             top: 2px;
@@ -114,12 +114,13 @@
                 #ffffff 6.5px,
                 transparent 6.5px
             );
+            background-position-x: 6.5px; /* ← СДВИГ НА 1 ЛИНИЮ ВПРАВО */
             pointer-events: none;
             image-rendering: pixelated;
             image-rendering: crisp-edges;
         }
 
-        /* Средние штрихи (каждый 5-й) - высота 20px, каждые 32.5px */
+        /* Средние штрихи (каждый 5-й) - высота 20px, каждые 32.5px, сдвиг на 6.5px вправо */
         .top-ruler .ticks-medium {
             position: absolute;
             top: 2px;
@@ -134,12 +135,13 @@
                 #ffffff 32.5px,
                 transparent 32.5px
             );
+            background-position-x: 6.5px; /* ← СДВИГ НА 1 ЛИНИЮ ВПРАВО */
             pointer-events: none;
             image-rendering: pixelated;
             image-rendering: crisp-edges;
         }
 
-        /* Большие штрихи (каждый 10-й) - высота 26px, каждые 65px */
+        /* Большие штрихи (каждый 10-й) - высота 26px, каждые 65px, сдвиг на 6.5px вправо */
         .top-ruler .ticks-large {
             position: absolute;
             top: 2px;
@@ -154,6 +156,7 @@
                 #ffffff 65px,
                 transparent 65px
             );
+            background-position-x: 6.5px; /* ← СДВИГ НА 1 ЛИНИЮ ВПРАВО */
             pointer-events: none;
             image-rendering: pixelated;
             image-rendering: crisp-edges;
