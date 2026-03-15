@@ -228,7 +228,7 @@
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, calc(-50% - 140px)); /* ← 140px выше центра */
+            transform: translate(-50%, calc(-50% - 140px));
             width: 90%;
             max-width: 340px;
             display: flex;
@@ -277,7 +277,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px 32px;
-            margin-bottom: 15px;
+            margin-bottom: 0;
             margin-top: 0;
             background: var(--btn-bg);
             backdrop-filter: blur(5px);
@@ -313,12 +313,14 @@
         }
         .btn-main:active { transform: scale(0.96); opacity: 0.8; }
 
-        /* ===== КНОПКА "СВЯЗАТЬСЯ СЕЙЧАС" ===== */
+        /* ===== КНОПКА "СВЯЗАТЬСЯ СЕЙЧАС" (ОТДЕЛЬНО, -20px ОТ ЦЕНТРА) ===== */
         .contact-card {
-            width: 100%;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, calc(-50% - 20px)); /* ← 20px выше центра */
+            width: 90%;
             max-width: 340px;
-            margin-bottom: 0;
-            margin-top: 0;
             background: var(--btn-bg);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
@@ -329,7 +331,6 @@
             transition: all 0.3s ease;
             animation: breathe 3s infinite ease-in-out;
             cursor: pointer;
-            position: relative;
             z-index: 2500;
             pointer-events: auto;
         }
@@ -409,7 +410,7 @@
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, calc(-50% + 100px)); /* ← 100px ниже центра */
+            transform: translate(-50%, calc(-50% + 100px));
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -580,7 +581,7 @@
         <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
     </div>
 
-    <!-- ЦЕНТРАЛЬНЫЙ КОНТЕЙНЕР -->
+    <!-- ЦЕНТРАЛЬНЫЙ КОНТЕЙНЕР (ЛОГОТИП + ИМЯ + ПОДПИСЬ + СОХРАНИТЬ) -->
     <div class="container">
         <div class="logo-container">
             <svg class="logo-svg" viewBox="0 0 291.11 243.46" xmlns="http://www.w3.org/2000/svg">
@@ -594,25 +595,25 @@
         <p class="subtitle">ИНЖЕНЕР ПГС | ЭКСПЕРТ</p>
 
         <a href="contact.vcf" class="btn-main">СОХРАНИТЬ КОНТАКТЫ</a>
+    </div>
 
-        <!-- ЕДИНАЯ РАСШИРЯЮЩАЯСЯ КНОПКА-КАРТОЧКА -->
-        <div class="contact-card" id="contactCard" onclick="toggleContactCard()">
-            <div class="contact-card-header">СВЯЗАТЬСЯ СЕЙЧАС</div>
-            <div class="contact-card-content">
-                <div class="contact-card-content-inner">
-                    <div class="icons-row">
-                        <a href="https://t.me/ruslan_gadaev" class="icon-btn" target="_blank" onclick="event.stopPropagation()">
-                            <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.116.033.378.018.58z"/></svg>
-                        </a>
-                        <a href="tel:+79777075755" class="icon-btn phone" onclick="event.stopPropagation()">
-                            <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
-                        </a>
-                        <a href="mailto:ruslan@gadaev.pro" class="icon-btn mail" onclick="event.stopPropagation()">
-                            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                        </a>
-                    </div>
-                    <p class="contact-subtitle">Выберите удобный способ связи</p>
+    <!-- КНОПКА "СВЯЗАТЬСЯ СЕЙЧАС" (ОТДЕЛЬНО, НИЖЕ) -->
+    <div class="contact-card" id="contactCard" onclick="toggleContactCard()">
+        <div class="contact-card-header">СВЯЗАТЬСЯ СЕЙЧАС</div>
+        <div class="contact-card-content">
+            <div class="contact-card-content-inner">
+                <div class="icons-row">
+                    <a href="https://t.me/ruslan_gadaev" class="icon-btn" target="_blank" onclick="event.stopPropagation()">
+                        <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.116.033.378.018.58z"/></svg>
+                    </a>
+                    <a href="tel:+79777075755" class="icon-btn phone" onclick="event.stopPropagation()">
+                        <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+                    </a>
+                    <a href="mailto:ruslan@gadaev.pro" class="icon-btn mail" onclick="event.stopPropagation()">
+                        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    </a>
                 </div>
+                <p class="contact-subtitle">Выберите удобный способ связи</p>
             </div>
         </div>
     </div>
