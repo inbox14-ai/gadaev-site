@@ -21,8 +21,8 @@
             --bg-color: #000000;
             --text-main: #ffffff;
             --text-sec: #666666;
-            --btn-bg: rgba(40, 40, 40, 0.98);
-            --btn-border: rgba(255,255,255,0.2);
+            --btn-bg: rgba(40, 40, 40, 0.85); /* ← Более прозрачный */
+            --btn-border: rgba(255,255,255,0.15);
             --btn-text: #e0e0e0;
             --logo-filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
             --toggle-bg: #333;
@@ -34,10 +34,6 @@
             --tab-text-active: #ffffff;
             --tab-bg-active: rgba(255,255,255,0.25);
             --tab-hover: rgba(255,255,255,0.1);
-            
-            --icon-tg: rgba(42, 171, 238, 0.9);
-            --icon-phone: rgba(52, 199, 89, 0.9);
-            --icon-mail: rgba(255, 149, 0, 0.9);
             
             /* Цвета иконок для контактов */
             --icon-phone-color: #34C759;
@@ -54,8 +50,8 @@
             --bg-color: #F2F2F7;
             --text-main: #000000;
             --text-sec: #8E8E93;
-            --btn-bg: rgba(255, 255, 255, 0.98);
-            --btn-border: rgba(0,0,0,0.15);
+            --btn-bg: rgba(255, 255, 255, 0.85); /* ← Более прозрачный */
+            --btn-border: rgba(0,0,0,0.1);
             --btn-text: #000000;
             --logo-filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
             --toggle-bg: #e5e5ea;
@@ -67,10 +63,6 @@
             --tab-text-active: #000000;
             --tab-bg-active: rgba(0,0,0,0.12);
             --tab-hover: rgba(0,0,0,0.06);
-            
-            --icon-tg: rgba(42, 171, 238, 0.95);
-            --icon-phone: rgba(52, 199, 89, 0.95);
-            --icon-mail: rgba(255, 149, 0, 0.95);
             
             /* Линейка */
             --ruler-bg: #F2F2F7;
@@ -308,11 +300,11 @@
             animation: breathe 3s infinite ease-in-out;
         }
         .btn-main:hover { 
-            background: rgba(60, 60, 60, 0.98); 
+            background: rgba(60, 60, 60, 0.95); 
             box-shadow: 0 6px 20px rgba(0,0,0,0.2); 
         }
         body.light-mode .btn-main:hover {
-            background: rgba(255, 255, 255, 1);
+            background: rgba(255, 255, 255, 0.95);
         }
         .btn-main:active { transform: scale(0.96); opacity: 0.8; }
 
@@ -320,7 +312,7 @@
         .contact-card {
             width: 90%;
             max-width: 340px;
-            margin-bottom: 0; /* ← Убран отступ */
+            margin-bottom: 0;
             margin-top: 0;
             background: var(--btn-bg);
             backdrop-filter: blur(5px);
@@ -328,19 +320,19 @@
             border: 1px solid var(--btn-border);
             border-radius: 16px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            overflow: hidden;
+            overflow: visible; /* ← Разрешить выход за границы для absolute */
             transition: all 0.3s ease;
             animation: breathe 3s infinite ease-in-out;
             cursor: pointer;
-            position: relative;
-            z-index: 10; /* ← Поверх контактов */
+            position: relative; /* ← Для absolute дочернего элемента */
+            z-index: 10;
         }
         .contact-card:hover {
-            background: rgba(60, 60, 60, 0.98);
+            background: rgba(60, 60, 60, 0.95);
             box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
         body.light-mode .contact-card:hover {
-            background: rgba(255, 255, 255, 1);
+            background: rgba(255, 255, 255, 0.95);
         }
 
         .contact-card-header {
@@ -358,14 +350,19 @@
         }
 
         .contact-card-content {
+            position: absolute; /* ← ВЫХОДИТ ИЗ ПОТОКА */
+            top: 100%; /* ← Начинается сразу под заголовком */
+            left: 0;
+            width: 100%;
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease, padding 0.3s ease;
             opacity: 0;
+            z-index: 10;
         }
         .contact-card.open .contact-card-content {
             max-height: 200px;
-            padding: 0 20px 20px 20px;
+            padding: 15px 20px 20px 20px;
             opacity: 1;
         }
 
@@ -373,18 +370,23 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            background: var(--btn-bg);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid var(--btn-border);
+            border-radius: 16px;
+            margin-top: 8px;
         }
 
-        .icons-row { display: flex; justify-content: center; gap: 25px; margin-bottom: 12px; }
+        .icons-row { display: flex; justify-content: center; gap: 25px; margin: 20px 0 15px 0; }
         .contact-subtitle {
-            font-size: 15px; color: var(--text-sec); margin: 0;
+            font-size: 15px; color: var(--text-sec); margin: 0 0 20px 0;
             font-weight: 400; letter-spacing: 0.5px;
         }
 
         .icon-btn {
             display: flex; align-items: center; justify-content: center;
             width: 70px; height: 70px;
-            background: var(--icon-tg); 
             border-radius: 20px; 
             text-decoration: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -395,8 +397,9 @@
             animation: breathe 3s infinite ease-in-out;
             animation-delay: 0.5s;
         }
-        .icon-btn.phone { background: var(--icon-phone); }
-        .icon-btn.mail { background: var(--icon-mail); }
+        .icon-btn.phone { background: var(--icon-phone-color); }
+        .icon-btn.mail { background: var(--icon-mail-color); }
+        .icon-btn.tg { background: var(--icon-tg-color); } /* ← Телеграм синий */
         
         .icon-btn:hover { 
             transform: scale(1.05); 
@@ -406,27 +409,27 @@
         .icon-btn:active { transform: scale(0.95); filter: brightness(0.9); }
         .icon-btn svg { width: 36px; height: 36px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
 
-        /* ===== КОНТАКТЫ ПОД КАРТОЧКОЙ (ТЕПЕРЬ ПРОСТО ТЕКСТ) ===== */
+        /* ===== КОНТАКТЫ ПОД КАРТОЧКОЙ ===== */
         .contact-info {
             width: 90%;
             max-width: 340px;
             display: flex;
             flex-direction: column;
-            align-items: center; /* ← Центрирование всего блока */
-            gap: 10px; /* ← Уменьшен отступ между строками */
-            margin-bottom: 0; /* ← Убран отступ снизу */
+            align-items: center;
+            gap: 8px; /* ← Уменьшен интервал между строками */
+            margin-bottom: 0;
             margin-top: 15px;
-            z-index: 1; /* ← Под карточкой */
+            z-index: 1;
         }
 
         .contact-info-item {
             display: flex;
             align-items: center;
+            justify-content: center; /* ← Центрирование иконки и текста */
             gap: 12px;
-            padding: 8px 0; /* ← Минимальный padding */
+            padding: 8px 0;
             cursor: pointer;
             user-select: none;
-            /* ← Убраны фон, рамки, тени */
             transition: opacity 0.2s ease;
         }
         .contact-info-item:hover {
@@ -437,8 +440,8 @@
         }
 
         .contact-info-icon {
-            width: 20px; /* ← Увеличено до 20px */
-            height: 20px;
+            width: 24px; /* ← Увеличено до 24px */
+            height: 24px;
             flex-shrink: 0;
         }
         
@@ -448,7 +451,7 @@
         .contact-info-icon.tg { fill: var(--icon-tg-color); }
 
         .contact-info-text {
-            font-size: 15px; /* ← Уменьшено до 15px */
+            font-size: 17px; /* ← Увеличено до 17px */
             color: var(--text-main);
             font-weight: 400;
             letter-spacing: 0.3px;
@@ -599,7 +602,7 @@
             <div class="contact-card-content">
                 <div class="contact-card-content-inner">
                     <div class="icons-row">
-                        <a href="https://t.me/ruslan_gadaev" class="icon-btn" target="_blank" onclick="event.stopPropagation()">
+                        <a href="https://t.me/ruslan_gadaev" class="icon-btn tg" target="_blank" onclick="event.stopPropagation()">
                             <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.116.033.378.018.58z"/></svg>
                         </a>
                         <a href="tel:+79777075755" class="icon-btn phone" onclick="event.stopPropagation()">
@@ -614,7 +617,7 @@
             </div>
         </div>
 
-        <!-- КОНТАКТЫ ПОД КАРТОЧКОЙ (ПРОСТОЙ ТЕКСТ С ИКОНКАМИ) -->
+        <!-- КОНТАКТЫ ПОД КАРТОЧКОЙ -->
         <div class="contact-info">
             <div class="contact-info-item" onclick="copyToClipboard('+7 (977) 707-57-55')">
                 <svg class="contact-info-icon phone" viewBox="0 0 24 24">
