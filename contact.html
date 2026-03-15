@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="format-detection" content="telephone=no"> <!-- ← Отключаем авто-ссылки на телефонах -->
+    <meta name="format-detection" content="telephone=no">
     <title>Руслан Гадаев | КОНТАКТЫ</title>
 
     <!-- ФАВИКОНЫ -->
@@ -40,9 +40,9 @@
             --icon-mail: rgba(255, 149, 0, 0.9);
             
             /* Цвета иконок для контактов */
-            --icon-phone-color: #34C759; /* Зелёный */
-            --icon-mail-color: #FF9500; /* Оранжевый */
-            --icon-tg-color: #2AABEE; /* Синий */
+            --icon-phone-color: #34C759;
+            --icon-mail-color: #FF9500;
+            --icon-tg-color: #2AABEE;
             
             /* Линейка */
             --ruler-bg: #000000;
@@ -320,7 +320,7 @@
         .contact-card {
             width: 90%;
             max-width: 340px;
-            margin-bottom: 15px;
+            margin-bottom: 0; /* ← Убран отступ */
             margin-top: 0;
             background: var(--btn-bg);
             backdrop-filter: blur(5px);
@@ -333,7 +333,7 @@
             animation: breathe 3s infinite ease-in-out;
             cursor: pointer;
             position: relative;
-            z-index: 10;
+            z-index: 10; /* ← Поверх контактов */
         }
         .contact-card:hover {
             background: rgba(60, 60, 60, 0.98);
@@ -406,46 +406,39 @@
         .icon-btn:active { transform: scale(0.95); filter: brightness(0.9); }
         .icon-btn svg { width: 36px; height: 36px; fill: #ffffff; position: relative; z-index: 2; pointer-events: none; }
 
-        /* ===== КОНТАКТЫ ПОД КАРТОЧКОЙ ===== */
+        /* ===== КОНТАКТЫ ПОД КАРТОЧКОЙ (ТЕПЕРЬ ПРОСТО ТЕКСТ) ===== */
         .contact-info {
             width: 90%;
             max-width: 340px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
-            margin-bottom: 20px;
-            z-index: 1;
+            align-items: center; /* ← Центрирование всего блока */
+            gap: 10px; /* ← Уменьшен отступ между строками */
+            margin-bottom: 0; /* ← Убран отступ снизу */
+            margin-top: 15px;
+            z-index: 1; /* ← Под карточкой */
         }
 
         .contact-info-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 14px 18px;
-            background: var(--btn-bg);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            border: none; /* ← УБРАНА РАМКА */
-            border-radius: 12px;
+            padding: 8px 0; /* ← Минимальный padding */
             cursor: pointer;
-            transition: all 0.2s ease;
             user-select: none;
+            /* ← Убраны фон, рамки, тени */
+            transition: opacity 0.2s ease;
         }
         .contact-info-item:hover {
-            background: rgba(60, 60, 60, 0.98);
-            transform: scale(1.02);
-        }
-        body.light-mode .contact-info-item:hover {
-            background: rgba(255, 255, 255, 1);
+            opacity: 0.8;
         }
         .contact-info-item:active {
-            transform: scale(0.98);
-            opacity: 0.8;
+            opacity: 0.6;
         }
 
         .contact-info-icon {
-            width: 18px;
-            height: 18px;
+            width: 20px; /* ← Увеличено до 20px */
+            height: 20px;
             flex-shrink: 0;
         }
         
@@ -455,15 +448,16 @@
         .contact-info-icon.tg { fill: var(--icon-tg-color); }
 
         .contact-info-text {
-            font-size: 18px;
+            font-size: 15px; /* ← Уменьшено до 15px */
             color: var(--text-main);
             font-weight: 400;
             letter-spacing: 0.3px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            text-decoration: none !important; /* ← УБРАНО ПОДЧЁРКИВАНИЕ */
-            color: var(--text-main) !important; /* ← ЗАПРЕТ СИНЕГО ЦВЕТА */
+            text-decoration: none !important;
+            color: var(--text-main) !important;
+            -webkit-text-fill-color: var(--text-main);
         }
 
         /* ===== TOAST УВЕДОМЛЕНИЕ ===== */
@@ -620,7 +614,7 @@
             </div>
         </div>
 
-        <!-- КОНТАКТЫ ПОД КАРТОЧКОЙ (всегда видны) -->
+        <!-- КОНТАКТЫ ПОД КАРТОЧКОЙ (ПРОСТОЙ ТЕКСТ С ИКОНКАМИ) -->
         <div class="contact-info">
             <div class="contact-info-item" onclick="copyToClipboard('+7 (977) 707-57-55')">
                 <svg class="contact-info-icon phone" viewBox="0 0 24 24">
