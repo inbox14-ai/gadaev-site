@@ -4,25 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#050505" id="theme-color-meta">
-    <title>Приемка квартир | ГЛАВНАЯ</title>
-    
+    <title>Приемка квартир | ЦЕНЫ</title>
+
     <!-- ФАВИКОНЫ -->
     <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
     <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
     <link rel="manifest" href="/favicon/site.webmanifest">
-    
+    <meta name="theme-color" content="#050505" id="theme-color-meta">
+
     <style>
         :root {
-            --bg-color: #050505;
+            /* ТЕМНАЯ ТЕМА */
+            --bg-color: #000000;
             --text-main: #ffffff;
-            --text-sec: #888888;
-            --btn-bg-start: #1a1a1a;
-            --btn-bg-end: #000000;
-            --btn-border: #333333;
+            --text-sec: #666666;
+            --btn-bg: rgba(40, 40, 40, 0.6);
+            --btn-border: rgba(255,255,255,0.1);
+            --btn-text: #e0e0e0;
+            --logo-filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+            --toggle-bg: #333;
+            --toggle-circle: #fff;
             
             --tab-bg: rgba(30, 30, 30, 0.85);
             --tab-border: rgba(255,255,255,0.08);
@@ -31,20 +34,26 @@
             --tab-bg-active: rgba(255,255,255,0.15);
             --tab-hover: rgba(255,255,255,0.05);
             
-            --toggle-bg: #333;
-            --toggle-circle: #fff;
+            --icon-tg: rgba(42, 171, 238, 0.4);
+            --icon-phone: rgba(52, 199, 89, 0.4);
+            --icon-mail: rgba(255, 149, 0, 0.4);
             
-            --header-height: 140px;
+            /* Линейка — ТЁМНАЯ ТЕМА */
+            --ruler-bg: #000000;
+            --ruler-tick: #ffffff;
         }
-
+        
         body.light-mode {
-            --bg-color: #f0f0f0;
+            --bg-color: #F2F2F7;
             --text-main: #000000;
-            --text-sec: #666666;
-            --btn-bg-start: #ffffff;
-            --btn-bg-end: #e0e0e0;
-            --btn-border: #cccccc;
-            
+            --text-sec: #8E8E93;
+            --btn-bg: rgba(255, 255, 255, 0.6);
+            --btn-border: rgba(0,0,0,0.1);
+            --btn-text: #000000;
+            --logo-filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
+            --toggle-bg: #e5e5ea;
+            --toggle-circle: #ffffff;
+
             --tab-bg: rgba(255, 255, 255, 0.9);
             --tab-border: rgba(0,0,0,0.05);
             --tab-text: #888888;
@@ -52,351 +61,146 @@
             --tab-bg-active: rgba(0,0,0,0.08);
             --tab-hover: rgba(0,0,0,0.03);
             
-            --toggle-bg: #e5e5ea;
-            --toggle-circle: #ffffff;
+            --icon-tg: rgba(42, 171, 238, 0.5);
+            --icon-phone: rgba(52, 199, 89, 0.5);
+            --icon-mail: rgba(255, 149, 0, 0.5);
+            
+            /* Линейка — СВЕТЛАЯ ТЕМА */
+            --ruler-bg: #F2F2F7;
+            --ruler-tick: #000000;
         }
 
         html, body {
-            overflow-x: hidden;
+            overflow: hidden;
             height: 100%;
+            position: fixed;
             width: 100%;
-            margin: 0;
-            padding: 0;
-            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .main-container {
-            width: 100%;
-            max-width: 640px;
-            padding: 20px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: calc(env(safe-area-inset-top) + var(--header-height) + 30px);
-            padding-bottom: 100px;
-        }
-
-        /* ФИКСИРОВАННАЯ ШАПКА */
-        .header-section {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: calc(100% - 40px);
-            max-width: 640px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            z-index: 1002;
-            padding: 0 20px;
-            box-sizing: border-box;
-            margin-top: env(safe-area-inset-top);
-        }
-
-        /* ЛОГОТИП СЛЕВА */
-        .header-logo {
-            width: 90px;
-            height: 90px;
-            flex-shrink: 0;
-        }
-
-        .header-logo svg {
-            width: 100%;
-            height: 100%;
-            fill: var(--text-main);
-            filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
-        }
-
-        /* ТЕКСТ СПРАВА */
-        .header-text {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 4px;
-            text-align: justify;
-        }
-
-        .header-text-line1 {
-            font-size: 20px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 16px;
+            font-weight: 400;
             color: var(--text-main);
-            line-height: 1.4;
-            text-align: justify;
-            text-justify: inter-word;
-        }
-
-        .header-text-line2 {
-            font-size: 12.5px;
-            font-weight: 300;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: var(--text-sec);
-            line-height: 1.4;
-            text-align: justify;
-            text-justify: inter-word;
-        }
-
-        .header-text-line3 {
-            font-size: 12.5px;
-            font-weight: 300;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: var(--text-sec);
-            line-height: 1.4;
-            text-align: justify;
-            text-justify: inter-word;
-        }
-
-        /* ЭЛЕГАНТНАЯ НАВИГАЦИЯ */
-        .photo-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 640px;
-            margin: 0 auto 0 auto;
+            margin: 0;
+            padding: 0;
             display: flex;
-            align-items: stretch;
-            gap: 4px;
-        }
-
-        .nav-btn {
-            width: 28px;
-            height: auto;
-            aspect-ratio: 16/9;
-            border-radius: 6px;
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.15);
-            color: var(--text-main);
-            cursor: pointer;
-            display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            flex-shrink: 0;
+            justify-content: flex-start;
+            text-align: center;
+            touch-action: none;
+            -webkit-user-select: none;
             user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            position: relative;
-            overflow: hidden;
+            -webkit-touch-callout: none;
         }
 
-        .nav-btn::before {
-            content: '';
+        /* ===== ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА (ФИНАЛЬНАЯ ВЕРСИЯ) ===== */
+        .top-ruler {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 26px;
+            background: var(--ruler-bg);
+            z-index: 2000;
+            pointer-events: none;
+        }
+
+        .top-ruler .ticks-small {
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .nav-btn:hover {
-            border-color: rgba(255,255,255,0.4);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        }
-
-        .nav-btn:hover::before {
-            opacity: 1;
-        }
-
-        .nav-btn:active {
-            transform: scale(0.98);
-        }
-
-        .nav-btn.disabled {
-            opacity: 0.2;
-            pointer-events: none;
-            border-color: rgba(255,255,255,0.05);
-        }
-
-        .nav-btn svg {
-            width: 14px;
-            height: 28px;
-            fill: currentColor;
-            position: relative;
-            z-index: 1;
-        }
-
-        body.light-mode .nav-btn {
-            border-color: rgba(0,0,0,0.15);
-        }
-
-        body.light-mode .nav-btn:hover {
-            border-color: rgba(0,0,0,0.4);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-
-        body.light-mode .nav-btn.disabled {
-            border-color: rgba(0,0,0,0.05);
-        }
-
-        /* КОНТЕЙНЕР ФОТО */
-        .photo-container {
-            flex: 1;
-            aspect-ratio: 16/9;
-            border-radius: 6px;
-            overflow: visible;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.1);
-            position: relative;
-            cursor: none;
-        }
-
-        .photo-container img {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            border-radius: 6px;
-            filter: grayscale(100%);
-            transition: filter 0.3s ease, opacity 0.4s ease;
+            height: 13px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 5.5px,
+                var(--ruler-tick) 5.5px,
+                var(--ruler-tick) 6.5px,
+                transparent 6.5px
+            );
             pointer-events: none;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
         }
 
-        .photo-container img.fade-out {
-            opacity: 0;
-        }
-
-        .photo-container:hover img {
-            filter: grayscale(0%);
-        }
-
-        /* ИНДИКАТОРЫ */
-        .photo-indicators {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 12px;
-            margin-bottom: 25px;
-            justify-content: center;
-        }
-
-        .indicator {
-            height: 3px;
-            background: rgba(255,255,255,0.3);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            border-radius: 2px;
-        }
-
-        .indicator.inactive {
-            width: 24px;
-        }
-
-        .indicator.active {
-            width: 40px;
-            background: rgba(255,255,255,0.9);
-        }
-
-        body.light-mode .indicator {
-            background: rgba(0,0,0,0.3);
-        }
-
-        body.light-mode .indicator.active {
-            background: rgba(0,0,0,0.9);
-        }
-
-        /* ЛУПА */
-        .lens {
+        .top-ruler .ticks-medium {
             position: absolute;
-            width: 150px;
-            height: 150px;
-            border: 1.5px solid rgba(255, 255, 255, 0.9);
-            border-radius: 50%;
-            display: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 31.5px,
+                var(--ruler-tick) 31.5px,
+                var(--ruler-tick) 32.5px,
+                transparent 32.5px
+            );
             pointer-events: none;
-            z-index: 10;
-            box-shadow: 0 0 25px rgba(0,0,0,0.7);
-            background-color: var(--bg-color);
-            background-repeat: no-repeat;
-            overflow: hidden;
-            transform: translate(-50%, -50%);
-            cursor: none;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
         }
 
-        /* СПИСОК УСЛУГ */
-        .service-list {
+        .top-ruler .ticks-large {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 500px;
-            text-align: center;
-            margin-bottom: 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 14px;
+            height: 26px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 64px,
+                var(--ruler-tick) 64px,
+                var(--ruler-tick) 65px,
+                transparent 65px
+            );
+            pointer-events: none;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
         }
 
-        .service-item {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            width: 100%;
-            max-width: 450px;
-            padding: 16px 20px;
-            background: linear-gradient(145deg, rgba(30,30,30,0.6), rgba(15,15,15,0.8));
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            font-size: 14px;
-            color: var(--text-sec);
-            line-height: 1.4;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        /* ===== ТУМБЛЕР ТЕМЫ (20px высота, выровнен) ===== */
+        .theme-toggle-container {
+            position: fixed;
+            top: 35px;
+            right: 16px;
+            z-index: 1001;
         }
 
-        .service-item:hover {
-            border-color: rgba(255,255,255,0.2);
-            background: linear-gradient(145deg, rgba(35,35,35,0.7), rgba(20,20,20,0.9));
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        .theme-toggle {
+            position: relative;
+            width: 34px;
+            height: 20px;
+            background-color: var(--toggle-bg);
+            border-radius: 20px;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: background-color 0.3s ease;
         }
 
-        .check-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 24px;
-            height: 24px;
-            background: rgba(52, 199, 89, 0.3);
-            border-radius: 4px;
-            margin-right: 16px;
-            flex-shrink: 0;
-        }
-
-        .check-icon svg {
+        .theme-toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
             width: 16px;
             height: 16px;
-            fill: #ffffff;
+            background-color: var(--toggle-circle);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
         }
 
-        body.light-mode .service-item {
-            background: linear-gradient(145deg, rgba(255,255,255,0.8), rgba(240,240,240,0.9));
-            border: 1px solid rgba(0,0,0,0.08);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        body.light-mode .theme-toggle::after {
+            transform: translateX(14px);
         }
 
-        body.light-mode .service-item:hover {
-            border-color: rgba(0,0,0,0.15);
-            background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(245,245,245,1));
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        }
-
-         /* НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК */
+        /* ===== НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК ===== */
         .tab-bar { 
             position: fixed; 
             bottom: 10px; 
@@ -421,7 +225,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             gap: 0px;
         }
-        
+
         .tab-link {
             flex: 1;
             height: 100%;
@@ -439,9 +243,9 @@
             cursor: pointer;
             padding: 0 6px;
             letter-spacing: 0.6px;
-            white-space: nowrap;
+            white-space: nowrap; 
         }
-        
+
         .tab-link.active {
             color: var(--tab-text-active);
             background: var(--tab-bg-active);
@@ -458,192 +262,20 @@
             transform: scale(0.95);
             background: var(--tab-bg-active);
         }
-
-        /* ТУМБЛЕР ТЕМЫ */
-        .theme-toggle-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1001;
-            margin-top: env(safe-area-inset-top);
-            transition: top 0.3s ease;
-        }
-
-        .theme-toggle {
-            position: relative;
-            width: 44px;
-            height: 26px;
-            background-color: var(--toggle-bg);
-            border-radius: 30px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .theme-toggle::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background-color: var(--toggle-circle);
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-        }
-
-        body.light-mode .theme-toggle::after {
-            transform: translateX(18px);
-        }
-
-        @media (max-width: 768px) {
-            .header-section {
-                gap: 15px;
-                padding: 0 15px;
-                width: calc(100% - 30px);
-            }
-            .header-logo {
-                width: 70px;
-                height: 70px;
-            }
-            .header-text {
-                gap: 3px;
-            }
-            .header-text-line1 {
-                font-size: 16px;
-            }
-            .header-text-line2,
-            .header-text-line3 {
-                font-size: 10px;
-            }
-            .page-title { font-size: 18px; }
-            .page-subtitle { font-size: 14px; }
-            .service-item { 
-                font-size: 13px;
-                padding: 14px 18px;
-            }
-            .lens {
-                width: 120px;
-                height: 120px;
-            }
-            .nav-btn {
-                width: 24px;
-            }
-            .nav-btn svg {
-                width: 12px;
-                height: 24px;
-            }
-        }
-
-        @media (orientation: landscape) and (max-height: 500px) {
-            .header-section {
-                left: 50%;
-                transform: translateX(-50%);
-                max-width: 90vw;
-            }
-            .main-container {
-                padding-top: calc(env(safe-area-inset-top) + 100px + 20px);
-            }
-        }
     </style>
 </head>
 <body>
 
+    <!-- ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА -->
+    <div class="top-ruler">
+        <div class="ticks-small"></div>
+        <div class="ticks-medium"></div>
+        <div class="ticks-large"></div>
+    </div>
+
     <!-- ТУМБЛЕР ТЕМЫ -->
     <div class="theme-toggle-container">
         <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
-    </div>
-
-    <!-- ФИКСИРОВАННАЯ ШАПКА -->
-    <div class="header-section">
-        <!-- ЛОГОТИП СЛЕВА -->
-        <div class="header-logo">
-            <svg viewBox="0 0 291.11 243.46" xmlns="http://www.w3.org/2000/svg">
-                <path d="m 489.39,550.55 c 0.1,-0.36 14.6,-54.9 32.22,-121.21 17.62,-66.31 32.12,-120.84 32.22,-121.19 0.18,-0.6 4.74,-0.62 97.3,-0.52 l 97.11,0.1 2.79,0.79 c 7.36,2.08 13.02,5.24 17.85,9.98 5.31,5.21 9.05,11.9 10.72,19.2 1,4.34 1.07,11.52 0.15,15.81 -0.9,4.22 -13.51,51.49 -14.61,54.76 -1.08,3.21 -3.84,9.15 -5.65,12.18 -4.23,7.06 -11.63,15.11 -18.09,19.68 -6.17,4.36 -13.4,7.8 -20.49,9.74 -7.96,2.18 -9.48,2.28 -36.11,2.28 l -23.99,0 -28.42,16.4 c -15.63,9.02 -28.44,16.38 -28.47,16.35 -0.03,-0.03 4.75,-18.11 10.61,-40.18 l 10.67,-40.13 46.55,-0.09 c 43.95,-0.09 46.56,-0.12 46.73,-0.71 0.91,-3.13 12.59,-47.4 12.59,-47.73 0,-0.35 -14.68,-0.42 -70.94,-0.35 l -70.94,0.09 -21.5,80.96 c -11.82,44.53 -21.62,81.18 -21.78,81.44 -0.2,0.34 -49.75,29.18 -56.08,32.64 -0.54,0.3 -0.62,0.25 -0.46,-0.29 z" 
-                      transform="translate(-489.30485,-307.57555)"/>
-            </svg>
-        </div>
-        
-        <!-- ТЕКСТ СПРАВА -->
-        <div class="header-text">
-            <div class="header-text-line1">ЧАСТНЫЙ ЭКСПЕРТ</div>
-            <div class="header-text-line2">ПОМОЩЬ В ПРИЕМКЕ</div>
-            <div class="header-text-line3">КВАРТИРЫ ОТ ЗАСТРОЙЩИКА</div>
-        </div>
-    </div>
-
-    <div class="main-container">
-        <!-- НАВИГАЦИЯ -->
-        <div class="photo-wrapper">
-            <button class="nav-btn" id="prevBtn" onclick="changePhoto(-1)" aria-label="Предыдущее фото">
-                <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-            </button>
-            
-            <div class="photo-container" id="photoContainer">
-                <img src="room.jpg" alt="Интерьер после приемки" id="mainPhoto">
-                <div class="lens" id="lens"></div>
-            </div>
-            
-            <button class="nav-btn" id="nextBtn" onclick="changePhoto(1)" aria-label="Следующее фото">
-                <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-            </button>
-        </div>
-
-        <!-- ИНДИКАТОРЫ -->
-        <div class="photo-indicators" id="indicatorArea">
-            <div class="indicator inactive" id="indicator0" onclick="goToPhoto(0)"></div>
-            <div class="indicator inactive" id="indicator1" onclick="goToPhoto(1)"></div>
-            <div class="indicator inactive" id="indicator2" onclick="goToPhoto(2)"></div>
-            <div class="indicator inactive" id="indicator3" onclick="goToPhoto(3)"></div>
-            <div class="indicator inactive" id="indicator4" onclick="goToPhoto(4)"></div>
-        </div>
-
-        <!-- СПИСОК УСЛУГ -->
-        <div class="service-list">
-            <div class="service-item">
-                <span class="check-icon">
-                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                </span>
-                <span>Проверка качества отделки</span>
-            </div>
-            <div class="service-item">
-                <span class="check-icon">
-                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                </span>
-                <span>Проверка инженерных коммуникаций</span>
-            </div>
-            <div class="service-item">
-                <span class="check-icon">
-                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                </span>
-                <span>Замер отклонений от СНиП, СП, ГОСТ</span>
-            </div>
-            <div class="service-item">
-                <span class="check-icon">
-                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                </span>
-                <span>Проверка на соответствие СанПиН</span>
-            </div>
-            <div class="service-item">
-                <span class="check-icon">
-                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                </span>
-                <span>Выявление дефектов строительства</span>
-            </div>
-            <div class="service-item">
-                <span class="check-icon">
-                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                </span>
-                <span>Составление дефектной ведомости</span>
-            </div>
-            <div class="service-item">
-                <span class="check-icon">
-                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                </span>
-                <span>Помощь в получении компенсации</span>
-            </div>
-        </div>
     </div>
 
     <!-- ПАНЕЛЬ ВКЛАДОК -->
@@ -654,257 +286,52 @@
     </div>
 
     <script>
-        const photos = ['room.jpg', 'room2.jpg', 'room3.jpg', 'room4.jpg', 'room5.jpg'];
-        let currentPhotoIndex = 0;
-
-        const lens = document.getElementById('lens');
-        const photoContainer = document.getElementById('photoContainer');
-        const mainPhoto = document.getElementById('mainPhoto');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const indicatorArea = document.getElementById('indicatorArea');
-        
-        const zoomLevel = 2.5;
-        const lensOffsetY = 100;
-        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-
-        function changePhoto(direction) {
-            const newIndex = currentPhotoIndex + direction;
-            if (newIndex >= 0 && newIndex < photos.length) {
-                goToPhoto(newIndex);
+        // ===== ФУНКЦИЯ ОБНОВЛЕНИЯ ЦВЕТА ТЕМЫ =====
+        function updateThemeColor() {
+            const themeColorMeta = document.getElementById('theme-color-meta');
+            const isLight = document.body.classList.contains('light-mode');
+            if (themeColorMeta) {
+                themeColorMeta.content = isLight ? '#f0f0f0' : '#050505';
             }
         }
 
-        function goToPhoto(index) {
-            if (index === currentPhotoIndex) return;
-            
-            mainPhoto.classList.add('fade-out');
-            
-            setTimeout(() => {
-                currentPhotoIndex = index;
-                mainPhoto.src = photos[currentPhotoIndex];
-                mainPhoto.classList.remove('fade-out');
-                
-                updateIndicators();
-                updateButtons();
-                
-                vibrate(30);
-            }, 150);
-        }
-
-        function updateIndicators() {
-            for (let i = 0; i < photos.length; i++) {
-                const indicator = document.getElementById(`indicator${i}`);
-                if (i === currentPhotoIndex) {
-                    indicator.classList.remove('inactive');
-                    indicator.classList.add('active');
-                } else {
-                    indicator.classList.remove('active');
-                    indicator.classList.add('inactive');
-                }
-            }
-        }
-
-        function updateButtons() {
-            prevBtn.classList.toggle('disabled', currentPhotoIndex === 0);
-            nextBtn.classList.toggle('disabled', currentPhotoIndex === photos.length - 1);
-        }
-
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-        indicatorArea.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-
-        indicatorArea.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }, { passive: true });
-
-        function handleSwipe() {
-            const diff = touchStartX - touchEndX;
-            if (Math.abs(diff) < 30) return;
-            
-            if (diff > 0) {
-                if (currentPhotoIndex < photos.length - 1) {
-                    changePhoto(1);
-                }
-            } else {
-                if (currentPhotoIndex > 0) {
-                    changePhoto(-1);
-                }
-            }
-        }
-
-        function moveLens(e) {
-            e.preventDefault();
-            
-            let clientX, clientY;
-            if (e.touches && e.touches.length > 0) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
-
-            const rect = photoContainer.getBoundingClientRect();
-            
-            const touchX = clientX - rect.left;
-            const touchY = clientY - rect.top;
-
-            const lensCenterX = touchX;
-            const lensCenterY = isTouchDevice ? (touchY - lensOffsetY) : touchY;
-
-            let constrainedLensX = lensCenterX;
-            let constrainedLensY = lensCenterY;
-            
-            if (constrainedLensX < 0) constrainedLensX = 0;
-            if (constrainedLensX > rect.width) constrainedLensX = rect.width;
-            if (constrainedLensY < 0) constrainedLensY = 0;
-            if (constrainedLensY > rect.height) constrainedLensY = rect.height;
-
-            lens.style.display = 'block';
-            
-            lens.style.left = constrainedLensX + 'px';
-            lens.style.top = constrainedLensY + 'px';
-
-            const bgX = (constrainedLensX / rect.width) * 100;
-            const bgY = (constrainedLensY / rect.height) * 100;
-            
-            lens.style.backgroundImage = `url('${mainPhoto.src}')`;
-            lens.style.backgroundSize = `${rect.width * zoomLevel}px ${rect.height * zoomLevel}px`;
-            lens.style.backgroundPosition = `${bgX}% ${bgY}%`;
-        }
-
-        function hideLens() {
-            lens.style.display = 'none';
-        }
-
-        photoContainer.addEventListener('mouseenter', () => lens.style.display = 'block');
-        photoContainer.addEventListener('mouseleave', hideLens);
-        photoContainer.addEventListener('mousemove', moveLens);
-
-        photoContainer.addEventListener('touchstart', (e) => {
-            moveLens(e);
-        }, { passive: false });
-
-        photoContainer.addEventListener('touchmove', (e) => {
-            moveLens(e);
-        }, { passive: false });
-
-        photoContainer.addEventListener('touchend', hideLens);
-
-        const tabBar = document.getElementById('tabBar');
-        let tabTouchStartX = 0;
-        let tabTouchEndX = 0;
-
-        tabBar.addEventListener('touchstart', (e) => {
-            tabTouchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-
-        tabBar.addEventListener('touchend', (e) => {
-            tabTouchEndX = e.changedTouches[0].screenX;
-            handleTabSwipe();
-        }, { passive: true });
-
-        function handleTabSwipe() {
-            const diff = tabTouchStartX - tabTouchEndX;
-            if (Math.abs(diff) < 30) return;
-
-            const links = document.querySelectorAll('.tab-link');
-            let currentIndex = 0;
-            links.forEach((link, index) => {
-                if (link.classList.contains('active')) currentIndex = index;
-            });
-
-            if (diff > 0) {
-                if (currentIndex < links.length - 1) {
-                    links[currentIndex + 1].click();
-                }
-            } else {
-                if (currentIndex > 0) {
-                    links[currentIndex - 1].click();
-                }
-            }
-        }
-
-        window.addEventListener('load', () => {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) {
-                if (savedTheme === 'light') {
-                    document.body.classList.add('light-mode');
-                }
-            } else {
-                const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-                if (prefersLight) {
-                    document.body.classList.add('light-mode');
-                }
-            }
-            updateIndicators();
-            updateButtons();
-            updateTabActive();
-        });
-
-        // ПОДСВЕТКА АКТИВНОЙ ВКЛАДКИ
-        document.addEventListener('DOMContentLoaded', () => {
+        // ===== ПОДСВЕТКА АКТИВНОЙ ВКЛАДКИ =====
+        function updateTabActive() {
             const path = window.location.pathname;
             const links = document.querySelectorAll('.tab-link');
             links.forEach(el => el.classList.remove('active'));
 
             if (path.includes('/contact') || path.endsWith('contact.html') || path.endsWith('contact')) {
-                document.getElementById('link-contact').classList.add('active');
+                document.getElementById('link-contact')?.classList.add('active');
             } else if (path.includes('/price')) {
-                document.getElementById('link-calc').classList.add('active');
+                document.getElementById('link-calc')?.classList.add('active');
             } else {
-                document.getElementById('link-home').classList.add('active');
+                document.getElementById('link-home')?.classList.add('active');
             }
-        });
+        }
 
+        // ===== ПЕРЕКЛЮЧЕНИЕ ТЕМЫ =====
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateThemeColor();
+            if (navigator.vibrate) navigator.vibrate(20);
         }
-        
-// ===== ФУНКЦИЯ ОБНОВЛЕНИЯ ЦВЕТА ТЕМЫ =====
-function updateThemeColor() {
-    const themeColorMeta = document.getElementById('theme-color-meta');
-    const isLight = document.body.classList.contains('light-mode');
-    
-    if (themeColorMeta) {
-        themeColorMeta.content = isLight ? '#f0f0f0' : '#050505';
-    }
-}
 
-// ===== ПРИ ЗАГРУЗКЕ СТРАНИЦЫ =====
-window.addEventListener('load', () => {
-    const savedTheme = localStorage.getItem('theme');
-    
-    if (savedTheme === 'light') {
-        document.body.classList.add('light-mode');
-    } else if (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches) {
-        document.body.classList.add('light-mode');
-    }
-    
-    updateThemeColor();  // ← Применяем цвет сразу при загрузке!
-    
-    updateIndicators();
-    updateButtons();
-    updateTabActive();
-});
-
-// ===== ПРИ ПЕРЕКЛЮЧЕНИИ ТЕМЫ =====
-function toggleTheme() {
-    document.body.classList.toggle('light-mode');
-    const isLight = document.body.classList.contains('light-mode');
-    
-    localStorage.setItem('theme', isLight ? 'light' : 'dark');
-    
-    updateThemeColor();  // ← Обновляем цвет при переключении
-    vibrate(20);
-}
+        // ===== ПРИ ЗАГРУЗКЕ СТРАНИЦЫ =====
+        window.addEventListener('load', () => {
+            const savedTheme = localStorage.getItem('theme');
+            
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            } else if (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                document.body.classList.add('light-mode');
+            }
+            
+            updateThemeColor();
+            updateTabActive();
+        });
     </script>
 </body>
 </html>
