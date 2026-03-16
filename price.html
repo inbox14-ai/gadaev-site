@@ -38,7 +38,7 @@
             --icon-phone: rgba(52, 199, 89, 0.4);
             --icon-mail: rgba(255, 149, 0, 0.4);
             
-            /* Линейка — ТЁМНАЯ ТЕМА (фон как у страницы, штрихи белые) */
+            /* Линейка — ТЁМНАЯ ТЕМА */
             --ruler-bg: #000000;
             --ruler-tick: #ffffff;
         }
@@ -65,7 +65,7 @@
             --icon-phone: rgba(52, 199, 89, 0.5);
             --icon-mail: rgba(255, 149, 0, 0.5);
             
-            /* Линейка — СВЕТЛАЯ ТЕМА (фон как у страницы, штрихи чёрные) */
+            /* Линейка — СВЕТЛАЯ ТЕМА */
             --ruler-bg: #F2F2F7;
             --ruler-tick: #000000;
         }
@@ -79,19 +79,18 @@
             padding: 0;
         }
 
-        /* ===== ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА (ФИНАЛЬНЫЙ ЭТАЛОН) ===== */
+        /* ===== ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА ===== */
         .top-ruler {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 26px;
-            background: var(--ruler-bg); /* Точно как фон страницы */
+            background: var(--ruler-bg);
             z-index: 2000;
             pointer-events: none;
         }
 
-        /* Маленькие штрихи - высота 13px, каждые 6.5px */
         .top-ruler .ticks-small {
             position: absolute;
             top: 0;
@@ -111,7 +110,6 @@
             image-rendering: crisp-edges;
         }
 
-        /* Средние штрихи (каждый 5-й) - высота 20px, каждые 32.5px */
         .top-ruler .ticks-medium {
             position: absolute;
             top: 0;
@@ -131,7 +129,6 @@
             image-rendering: crisp-edges;
         }
 
-        /* Большие штрихи (каждый 10-й) - высота 26px, каждые 65px */
         .top-ruler .ticks-large {
             position: absolute;
             top: 0;
@@ -149,6 +146,42 @@
             pointer-events: none;
             image-rendering: pixelated;
             image-rendering: crisp-edges;
+        }
+
+        /* ===== ТУМБЛЕР ТЕМЫ (20px высота, выровнен) ===== */
+        .theme-toggle-container {
+            position: fixed;
+            top: 35px;
+            right: 16px;
+            z-index: 1001;
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 34px;
+            height: 20px;
+            background-color: var(--toggle-bg);
+            border-radius: 20px;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: background-color 0.3s ease;
+        }
+
+        .theme-toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background-color: var(--toggle-circle);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        body.light-mode .theme-toggle::after {
+            transform: translateX(14px);
         }
 
         /* ===== НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК ===== */
@@ -217,11 +250,16 @@
 </head>
 <body>
 
-    <!-- ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА (ФИНАЛЬНЫЙ ЭТАЛОН) -->
+    <!-- ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА -->
     <div class="top-ruler">
         <div class="ticks-small"></div>
         <div class="ticks-medium"></div>
         <div class="ticks-large"></div>
+    </div>
+
+    <!-- ТУМБЛЕР ТЕМЫ (верхний правый угол) -->
+    <div class="theme-toggle-container">
+        <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
     </div>
 
     <!-- ПАНЕЛЬ ВКЛАДОК -->
