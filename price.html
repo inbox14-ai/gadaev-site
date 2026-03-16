@@ -38,6 +38,9 @@
             --icon-phone: rgba(52, 199, 89, 0.4);
             --icon-mail: rgba(255, 149, 0, 0.4);
             
+            /* Яркий зелёный для консультации */
+            --consult-green: #34C759;
+            
             /* Линейка — ТЁМНАЯ ТЕМА */
             --ruler-bg: #000000;
             --ruler-tick: #ffffff;
@@ -77,6 +80,7 @@
             color: var(--text-main);
             margin: 0;
             padding: 0;
+            background-color: var(--bg-color);
         }
 
         /* ===== ВЕРХНЯЯ ПОЛОСА-ЛИНЕЙКА ===== */
@@ -148,7 +152,7 @@
             image-rendering: crisp-edges;
         }
 
-        /* ===== ТУМБЛЕР ТЕМЫ (20px высота, выровнен) ===== */
+        /* ===== ТУМБЛЕР ТЕМЫ ===== */
         .theme-toggle-container {
             position: fixed;
             top: 35px;
@@ -182,6 +186,91 @@
 
         body.light-mode .theme-toggle::after {
             transform: translateX(14px);
+        }
+
+        /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
+        .main-content {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 80px 20px 100px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* ===== БЛОК "КОНСУЛЬТАЦИЯ БЕСПЛАТНО" ===== */
+        .consultation-note {
+            color: var(--consult-green); /* ← Яркий зелёный #34C759 */
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            margin: 0 0 30px 0;
+            padding: 14px 20px;
+            background: rgba(52, 199, 89, 0.08);
+            border-radius: 12px;
+            border: 1px solid rgba(52, 199, 89, 0.25);
+            line-height: 1.4;
+            letter-spacing: 0.3px;
+            animation: pulse-green 3s infinite ease-in-out;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+
+        body.light-mode .consultation-note {
+            background: rgba(52, 199, 89, 0.12);
+            border-color: rgba(52, 199, 89, 0.35);
+        }
+
+        /* ===== СПИСОК ЦЕН ===== */
+        .price-list {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .price-item {
+            background: var(--btn-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--btn-border);
+            border-radius: 16px;
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .price-item:hover {
+            background: rgba(60, 60, 60, 0.8);
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        body.light-mode .price-item:hover {
+            background: rgba(240, 240, 240, 0.95);
+            border-color: rgba(0,0,0,0.15);
+        }
+
+        .price-item .service-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-main);
+            text-align: left;
+        }
+
+        .price-item .service-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            white-space: nowrap;
+            margin-left: 15px;
         }
 
         /* ===== НИЖНЯЯ ПАНЕЛЬ ВКЛАДОК ===== */
@@ -257,15 +346,49 @@
         <div class="ticks-large"></div>
     </div>
 
-    <!-- ТУМБЛЕР ТЕМЫ (верхний правый угол) -->
+    <!-- ТУМБЛЕР ТЕМЫ -->
     <div class="theme-toggle-container">
         <div class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему"></div>
+    </div>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <div class="main-content">
+        
+        <!-- БЛОК "КОНСУЛЬТАЦИЯ БЕСПЛАТНО" -->
+        <div class="consultation-note">
+            Консультация бесплатно — ответы на вопросы по телефону и в мессенджерах
+        </div>
+
+        <!-- СПИСОК ЦЕН -->
+        <div class="price-list">
+            <div class="price-item">
+                <span class="service-name">Приемка 1-комн. квартиры</span>
+                <span class="service-price">от 3 500 ₽</span>
+            </div>
+            <div class="price-item">
+                <span class="service-name">Приемка 2-комн. квартиры</span>
+                <span class="service-price">от 4 500 ₽</span>
+            </div>
+            <div class="price-item">
+                <span class="service-name">Приемка 3-комн. квартиры</span>
+                <span class="service-price">от 5 500 ₽</span>
+            </div>
+            <div class="price-item">
+                <span class="service-name">Технический надзор</span>
+                <span class="service-price">от 2 000 ₽/выезд</span>
+            </div>
+            <div class="price-item">
+                <span class="service-name">Выезд за МКАД</span>
+                <span class="service-price">+50 ₽/км</span>
+            </div>
+        </div>
+
     </div>
 
     <!-- ПАНЕЛЬ ВКЛАДОК -->
     <div class="tab-bar" id="tabBar">
         <a href="https://gadaev.pro" class="tab-link" id="link-home">Главная</a>
-        <a href="https://gadaev.pro/price" class="tab-link" id="link-calc">Цены</a>
+        <a href="https://gadaev.pro/price" class="tab-link active" id="link-calc">Цены</a>
         <a href="https://gadaev.pro/contact" class="tab-link" id="link-contact">Контакты</a>
     </div>
 
