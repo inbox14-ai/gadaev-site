@@ -5,22 +5,170 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ya Online — Видеозвонки</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: #0f172a;
             color: #e2e8f0;
             min-height: 100vh;
-            padding: 16px;
+            display: flex;
+            flex-direction: column;
         }
-        .container { max-width: 800px; margin: 0 auto; }
-        h1 { text-align: center; margin-bottom: 20px; font-size: 24px; }
+        .top-bar {
+            background: rgba(30, 41, 59, 0.95);
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        .room-info { font-size: 11px; color: #94a3b8; }
+        .room-info strong { color: #60a5fa; }
+        .controls { display: flex; gap: 6px; }
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn.off { background: #dc2626; }
         
-        .card {
-            background: rgba(30, 41, 59, 0.7);
+        .room-details {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 8px;
+            font-size: 12px;
+        }
+        .room-details .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 4px 0;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .room-details .label { color: #94a3b8; }
+        .room-details .value { color: #60a5fa; font-family: monospace; font-weight: bold; word-break: break-all; }
+        .copy-btn {
+            background: rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+        
+        .status-bar {
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            margin: 0 8px;
+            border-radius: 6px;
+        }
+        .status-bar.ok { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .status-bar.err { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .status-bar.warn { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        
+        .video-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 8px;
+            gap: 8px;
+        }
+        .main-video {
+            flex: 2;
+            background: #000;
             border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+            min-height: 0;
+        }
+        .main-video video { width: 100%; height: 100%; object-fit: cover; }
+        .main-video .label {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .main-video .speaking-indicator {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .main-video.manual-mode .label::after { content: '📌'; margin-left: 4px; }
+        
+        .video-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 6px;
+            overflow-y: auto;
+            min-height: 100px;
+        }
+        .video-item {
+            position: relative;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            aspect-ratio: 4/3;
+        }
+        .video-item:hover { transform: scale(1.05); box-shadow: 0 0 0 2px #3b82f6; }
+        .video-item.selected { box-shadow: 0 0 0 3px #10b981; }
+        .video-item.speaking { box-shadow: 0 0 0 2px #10b981; }
+        .video-item video { width: 100%; height: 100%; object-fit: cover; }
+        .video-item .label {
+            position: absolute;
+            bottom: 4px;
+            left: 4px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .video-item .speaking-indicator {
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+            display: none;
+        }
+        .video-item.speaking .speaking-indicator { display: block; }
+        .volume-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: #10b981;
+            transition: width 0.1s;
         }
         
         .modal {
@@ -60,163 +208,118 @@
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            margin-bottom: 8px;
         }
-        .modal .secondary-btn { background: #475569; }
-        .modal .test-btn { background: #3b82f6; }
-        
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-        }
-        .info-row:last-child { border-bottom: none; }
-        .label { color: #94a3b8; font-size: 13px; }
-        .value { font-family: monospace; color: #60a5fa; font-weight: bold; word-break: break-all; }
-        
-        .btn {
-            padding: 10px 16px;
-            border: none;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            margin: 4px;
-        }
-        .btn-primary { background: #3b82f6; color: white; }
-        .btn-success { background: #10b981; color: white; }
-        .btn-danger { background: #ef4444; color: white; }
-        .btn-warning { background: #f59e0b; color: white; }
-        
-        .status {
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            font-size: 13px;
-            text-align: center;
-        }
-        .status.ok { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-        .status.warn { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-        .status.err { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-        .status.info { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
-        
-        video {
-            width: 100%;
-            border-radius: 10px;
-            background: #000;
-            margin: 8px 0;
-            aspect-ratio: 4/3;
-            object-fit: cover;
-        }
-        
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 8px;
-        }
-        
-        .log {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 12px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 11px;
-            max-height: 200px;
-            overflow-y: auto;
-            margin-top: 12px;
-        }
-        .log-entry { margin: 4px 0; color: #94a3b8; }
-        .log-entry.error { color: #ef4444; }
-        .log-entry.success { color: #10b981; }
-        .log-entry.info { color: #60a5fa; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
     <div class="modal" id="joinModal">
         <div class="modal-content">
-            <h2> Ya Online</h2>
+            <h2>🎥 Ya Online</h2>
             <input type="text" id="joinRoomId" placeholder="ID комнаты (пусто = создать)">
             <input type="password" id="joinPassword" placeholder="Пароль">
             <button onclick="startCall()">Войти</button>
-            <button class="test-btn" onclick="testPeerJS()">🔍 Тест PeerJS сервера</button>
-            <button class="secondary-btn" onclick="showManual()">📖 Инструкция</button>
         </div>
     </div>
 
-    <div class="container" id="mainContainer" style="display:none;">
-        <h1>🎥 Ya Online</h1>
-        
-        <div id="status" class="status info">Инициализация...</div>
-
-        <div class="card">
-            <div class="info-row">
-                <span class="label">ID комнаты:</span>
-                <span class="value" id="displayRoomId">—</span>
-                <button class="btn btn-primary" onclick="copyText('displayRoomId')"></button>
-            </div>
-            <div class="info-row">
-                <span class="label">Пароль:</span>
-                <span class="value" id="displayPassword">—</span>
-                <button class="btn btn-primary" onclick="copyText('displayPassword')">📋</button>
-            </div>
-            <div class="info-row">
-                <span class="label">Ваш ID:</span>
-                <span class="value" id="displayPeerId">—</span>
-            </div>
-            <button class="btn btn-success" onclick="copyLink()" style="width:100%; margin-top:8px;"> Копировать ссылку-приглашение</button>
+    <div class="top-bar">
+        <div class="room-info">
+            Комната: <strong id="roomIdDisplay">—</strong> | 
+            Участников: <strong id="peerCount">1</strong>
         </div>
-
-        <div class="card">
-            <h3 style="margin-bottom:12px;">Управление</h3>
-            <button class="btn btn-primary" id="toggleVideo" onclick="toggleVideo()">📹 Камера</button>
-            <button class="btn btn-primary" id="toggleAudio" onclick="toggleAudio()">🎤 Микрофон</button>
-            <button class="btn btn-warning" onclick="retryConnection()"> Переподключиться</button>
-            <button class="btn btn-danger" onclick="leaveRoom()">🚪 Выйти</button>
+        <div class="controls">
+            <button class="btn btn-primary" id="toggleVideo" onclick="toggleVideo()"></button>
+            <button class="btn btn-primary" id="toggleAudio" onclick="toggleAudio()">🎤</button>
+            <button class="btn btn-danger" onclick="leaveRoom()"></button>
         </div>
-
-        <h3 style="margin:16px 0 8px;">Вы:</h3>
-        <video id="localVideo" autoplay muted playsinline></video>
-
-        <h3 style="margin:16px 0 8px;">Собеседники:</h3>
-        <div class="video-grid" id="remoteVideos"></div>
-
-        <div class="log" id="log"></div>
     </div>
 
-    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-    <script>
-        let peer;
-        let localStream;
+    <div class="room-details">
+        <div class="row">
+            <span class="label">ID комнаты:</span>
+            <span class="value" id="displayRoomId">—</span>
+            <button class="copy-btn" onclick="copyField('displayRoomId')">📋</button>
+        </div>
+        <div class="row">
+            <span class="label">Пароль:</span>
+            <span class="value" id="displayPassword">—</span>
+            <button class="copy-btn" onclick="copyField('displayPassword')"></button>
+        </div>
+        <div class="row">
+            <span class="label">Ссылка:</span>
+            <button class="copy-btn" onclick="copyLink()" style="flex:1; margin-left:8px;"> Копировать ссылку</button>
+        </div>
+    </div>
+
+    <div class="status-bar" id="statusBar">Загрузка...</div>
+
+    <div class="video-container">
+        <div class="main-video" id="mainVideo">
+            <video id="mainVideoElement" autoplay playsinline></video>
+            <div class="label">
+                <span class="speaking-indicator"></span>
+                <span id="mainVideoLabel">Ожидание...</span>
+            </div>
+        </div>
+
+        <div class="video-grid" id="videoGrid"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, set, onValue, onDisconnect, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        // Firebase конфигурация
+        const firebaseConfig = {
+            apiKey: "AIzaSyCgN79lHGEri4txKJ6WXJkvkUYY_LRPny4",
+            authDomain: "ya-online-video.firebaseapp.com",
+            databaseURL: "https://ya-online-video-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "ya-online-video",
+            storageBucket: "ya-online-video.firebasestorage.app",
+            messagingSenderId: "614548563069",
+            appId: "1:614548563069:web:b440e8c5ab56e97dbafd14",
+            measurementId: "G-6HHDSKH64E"
+        };
+
+        // Инициализация Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let localStream = null;
+        let peerConnection = null;
         let currentRoomId = '';
         let roomPassword = '';
-        let myPeerId = '';
         let isCreator = false;
-        let connections = {};
+        let participants = {};
+        let selectedPeerId = null;
+        let activeSpeakerPeerId = null;
+        let isManualMode = false;
 
-        function log(msg, type = 'info') {
-            const logEl = document.getElementById('log');
-            const entry = document.createElement('div');
-            entry.className = 'log-entry ' + type;
-            const time = new Date().toLocaleTimeString();
-            entry.textContent = `[${time}] ${msg}`;
-            logEl.appendChild(entry);
-            logEl.scrollTop = logEl.scrollHeight;
-            console.log(`[${type}] ${msg}`);
+        // Конфигурация WebRTC
+        const rtcConfig = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' }
+            ]
+        };
+
+        function log(msg) {
+            console.log('[YaOnline]', msg);
         }
 
-        function setStatus(msg, type = 'info') {
-            const statusEl = document.getElementById('status');
-            statusEl.textContent = msg;
-            statusEl.className = 'status ' + type;
+        function setStatus(msg, type = '') {
+            const el = document.getElementById('statusBar');
+            el.textContent = msg;
+            el.className = 'status-bar ' + type;
         }
 
         function generateId() {
             return Math.random().toString(36).substring(2, 8);
         }
 
-        async function startCall() {
+        window.startCall = async function() {
             const roomId = document.getElementById('joinRoomId').value.trim();
             const password = document.getElementById('joinPassword').value.trim();
             
@@ -229,303 +332,293 @@
             currentRoomId = roomId || generateId();
             roomPassword = password;
             
+            document.getElementById('roomIdDisplay').textContent = currentRoomId;
             document.getElementById('displayRoomId').textContent = currentRoomId;
             document.getElementById('displayPassword').textContent = roomPassword;
-            document.getElementById('joinModal').style.display = 'none';
-            document.getElementById('mainContainer').style.display = 'block';
+            document.getElementById('joinModal').classList.add('hidden');
             
-            log('Начинаем подключение...', 'info');
+            setStatus('📹 Получаю доступ к камере...', 'warn');
             
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({
                     video: { width: { ideal: 640 }, height: { ideal: 480 }, frameRate: { ideal: 15 } },
                     audio: { echoCancellation: true, noiseSuppression: true }
                 });
-                document.getElementById('localVideo').srcObject = localStream;
-                log('Камера и микрофон получены', 'success');
                 
-                myPeerId = 'yo_' + currentRoomId + (isCreator ? '' : '_' + generateId());
-                log('Мой Peer ID: ' + myPeerId, 'info');
-                document.getElementById('displayPeerId').textContent = myPeerId;
-                
-                initPeer();
+                addParticipant('me', localStream, true);
+                updateMainVideo();
                 
                 if (isCreator) {
-                    setStatus('✅ Комната создана! Ожидаю подключения...', 'ok');
-                    log('Создатель комнаты готов к приёму звонков', 'success');
+                    await createRoom();
                 } else {
-                    setStatus('🔗 Подключаюсь к комнате...', 'info');
-                    setTimeout(() => connectToCreator(), 2000);
+                    await joinRoom();
                 }
+                
             } catch (err) {
-                log('Ошибка доступа к медиа: ' + err.message, 'error');
-                setStatus('❌ Нет доступа к камере/микрофону', 'err');
+                log('Ошибка: ' + err.message);
+                setStatus('❌ Ошибка: ' + err.message, 'err');
+                alert('Нет доступа к камере: ' + err.message);
             }
-        }
+        };
 
-        function initPeer() {
-            log('Инициализация PeerJS...', 'info');
+        async function createRoom() {
+            setStatus('🔧 Создаю комнату...', 'warn');
+            log('Создаю комнату: ' + currentRoomId);
             
-            // Пробуем несколько серверов
-            const servers = [
-                { host: '0.peerjs.com', port: 443, path: '/', secure: true },
-                { host: 'peerjs-server.herokuapp.com', port: 443, path: '/', secure: true }
-            ];
+            // Создаю peer connection
+            peerConnection = new RTCPeerConnection(rtcConfig);
             
-            let serverIndex = 0;
+            // Добавляю локальный поток
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
             
-            function tryConnect() {
-                if (serverIndex >= servers.length) {
-                    log('Все серверы недоступны', 'error');
-                    setStatus('❌ Серверы PeerJS недоступны. Попробуйте позже.', 'err');
-                    return;
+            // Обработка ICE кандидатов
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    set(ref(db, `rooms/${currentRoomId}/creator/ice`), event.candidate.toJSON());
                 }
-                
-                const server = servers[serverIndex];
-                log(`Подключаюсь к серверу ${server.host}...`, 'info');
-                
-                peer = new Peer(myPeerId, {
-                    host: server.host,
-                    port: server.port,
-                    path: server.path,
-                    secure: server.secure,
-                    debug: 2,
-                    config: {
-                        iceServers: [
-                            { urls: 'stun:stun.l.google.com:19302' },
-                            { urls: 'stun:stun1.l.google.com:19302' },
-                            { urls: 'stun:stun2.l.google.com:19302' }
-                        ]
-                    }
-                });
-
-                peer.on('open', (id) => {
-                    log('✅ PeerJS подключён! ID: ' + id, 'success');
-                    setStatus('✅ Готов к звонкам', 'ok');
-                });
-
-                peer.on('call', (call) => {
-                    log('📞 Входящий звонок от: ' + call.peer, 'info');
-                    
-                    const pwd = prompt('Входящий звонок!\nВведите пароль комнаты:');
-                    
-                    if (pwd === roomPassword) {
-                        log('Пароль верный, принимаю звонок', 'success');
-                        call.answer(localStream);
-                        handleCall(call);
-                    } else {
-                        log('Неверный пароль, отклоняю звонок', 'error');
-                        call.close();
-                        setStatus('❌ Неверный пароль!', 'err');
-                    }
-                });
-
-                peer.on('error', (err) => {
-                    log('Ошибка PeerJS: ' + err.type + ' - ' + err.message, 'error');
-                    
-                    if (err.type === 'unavailable-id') {
-                        setStatus('❌ ID уже занят. Попробуйте другой код комнаты', 'err');
-                    } else if (err.type === 'peer-unavailable') {
-                        setStatus('❌ Собеседник не найден. Проверьте ID комнаты', 'err');
-                    } else if (err.type === 'network' || err.type === 'server-error') {
-                        log('Пробую следующий сервер...', 'warn');
-                        serverIndex++;
-                        if (peer) peer.destroy();
-                        setTimeout(tryConnect, 1000);
-                    } else {
-                        setStatus(' Ошибка: ' + err.type, 'err');
-                    }
-                });
-
-                peer.on('disconnected', () => {
-                    log('PeerJS отключён, пытаюсь переподключиться...', 'warn');
-                    setStatus('⚠️ Соединение потеряно, переподключение...', 'warn');
-                    if (!peer.destroyed) {
-                        peer.reconnect();
-                    }
-                });
-            }
+            };
             
-            tryConnect();
-        }
-
-        function connectToCreator() {
-            const creatorId = 'yo_' + currentRoomId;
-            log('Звоню создателю: ' + creatorId, 'info');
-            setStatus('📞 Звоню создателю...', 'info');
-            
-            const call = peer.call(creatorId, localStream);
-            
-            if (call) {
-                log('Звонок инициирован', 'info');
-                handleCall(call);
-                
-                setTimeout(() => {
-                    if (!connections[creatorId]) {
-                        log('Звонок не принят за 10 секунд', 'warn');
-                        setStatus('⚠️ Создатель не отвечает. Проверьте, что он онлайн', 'warn');
-                    }
-                }, 10000);
-            } else {
-                log('Не удалось инициировать звонок', 'error');
-                setStatus(' Не удалось позвонить', 'err');
-            }
-        }
-
-        function handleCall(call) {
-            log('Обработка звонка с: ' + call.peer, 'info');
-            
-            call.on('stream', (remoteStream) => {
-                log('✅ Получен видеопоток от: ' + call.peer, 'success');
-                addRemoteVideo(call.peer, remoteStream);
+            // Обработка удалённого потока
+            peerConnection.ontrack = (event) => {
+                log('Получен поток от собеседника');
+                addParticipant('peer', event.streams[0], false);
                 setStatus('✅ Связь установлена!', 'ok');
-            });
-
-            call.on('close', () => {
-                log('Звонок закрыт: ' + call.peer, 'warn');
-                removeRemoteVideo(call.peer);
-                setStatus('⚠️ Собеседник отключился', 'warn');
+            };
+            
+            // Создаю offer
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            
+            // Сохраняю offer в Firebase
+            await set(ref(db, `rooms/${currentRoomId}`), {
+                creator: {
+                    offer: offer,
+                    password: roomPassword
+                },
+                timestamp: Date.now()
             });
             
-            call.on('error', (err) => {
-                log('Ошибка звонка: ' + err, 'error');
-                setStatus('❌ Ошибка звонка', 'err');
+            // Слушаю ответ от участника
+            onValue(ref(db, `rooms/${currentRoomId}/participant/answer`), async (snapshot) => {
+                const answer = snapshot.val();
+                if (answer && !peerConnection.currentRemoteDescription) {
+                    log('Получен ответ от участника');
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+                    setStatus('✅ Участник подключился!', 'ok');
+                }
             });
             
-            connections[call.peer] = call;
+            // Слушаю ICE кандидаты от участника
+            onValue(ref(db, `rooms/${currentRoomId}/participant/ice`), async (snapshot) => {
+                const candidate = snapshot.val();
+                if (candidate) {
+                    try {
+                        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+                    } catch (e) {
+                        log('Ошибка добавления ICE: ' + e);
+                    }
+                }
+            });
+            
+            setStatus('✅ Комната создана! Ожидаю участника...', 'ok');
+            log('Комната готова, жду участника...');
         }
 
-        function addRemoteVideo(peerId, stream) {
-            const grid = document.getElementById('remoteVideos');
-            const container = document.createElement('div');
-            container.id = 'remote_' + peerId;
+        async function joinRoom() {
+            setStatus('🔗 Подключаюсь к комнате...', 'warn');
+            log('Присоединяюсь к комнате: ' + currentRoomId);
+            
+            // Проверяю существование комнаты
+            const roomRef = ref(db, `rooms/${currentRoomId}`);
+            const snapshot = await snapshotRef(roomRef);
+            
+            if (!snapshot.exists()) {
+                setStatus('❌ Комната не найдена', 'err');
+                alert('Комната не найдена. Проверьте ID.');
+                return;
+            }
+            
+            const roomData = snapshot.val();
+            if (roomData.creator.password !== roomPassword) {
+                setStatus('❌ Неверный пароль', 'err');
+                alert('Неверный пароль!');
+                return;
+            }
+            
+            // Создаю peer connection
+            peerConnection = new RTCPeerConnection(rtcConfig);
+            
+            // Добавляю локальный поток
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
+            
+            // Обработка ICE кандидатов
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    set(ref(db, `rooms/${currentRoomId}/participant/ice`), event.candidate.toJSON());
+                }
+            };
+            
+            // Обработка удалённого потока
+            peerConnection.ontrack = (event) => {
+                log('Получен поток от создателя');
+                addParticipant('creator', event.streams[0], false);
+                setStatus('✅ Связь установлена!', 'ok');
+            };
+            
+            // Устанавливаю remote description (offer от создателя)
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(roomData.creator.offer));
+            
+            // Создаю answer
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+            
+            // Отправляю answer создателю
+            await set(ref(db, `rooms/${currentRoomId}/participant/answer`), answer);
+            
+            // Слушаю ICE кандидаты от создателя
+            onValue(ref(db, `rooms/${currentRoomId}/creator/ice`), async (snapshot) => {
+                const candidate = snapshot.val();
+                if (candidate) {
+                    try {
+                        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+                    } catch (e) {
+                        log('Ошибка добавления ICE: ' + e);
+                    }
+                }
+            });
+            
+            setStatus('✅ Подключено к создателю!', 'ok');
+        }
+
+        function addParticipant(peerId, stream, isLocal) {
+            if (participants[peerId]) return;
+            
+            participants[peerId] = { stream, isLocal };
+            
+            const grid = document.getElementById('videoGrid');
+            const div = document.createElement('div');
+            div.className = 'video-item';
+            div.id = 'video_' + peerId;
+            div.onclick = () => selectPeer(peerId);
             
             const video = document.createElement('video');
             video.srcObject = stream;
             video.autoplay = true;
             video.playsinline = true;
+            if (isLocal) video.muted = true;
             
             const label = document.createElement('div');
-            label.style.cssText = 'position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.7);padding:4px 8px;border-radius:4px;font-size:12px;';
-            label.textContent = peerId.slice(-6);
+            label.className = 'label';
+            label.innerHTML = `<span class="speaking-indicator"></span>${isLocal ? 'Вы' : peerId}`;
             
-            container.style.position = 'relative';
-            container.appendChild(video);
-            container.appendChild(label);
-            grid.appendChild(container);
+            const volumeBar = document.createElement('div');
+            volumeBar.className = 'volume-bar';
             
-            log('Добавлено видео от: ' + peerId, 'success');
+            div.appendChild(video);
+            div.appendChild(label);
+            div.appendChild(volumeBar);
+            grid.appendChild(div);
+            
+            participants[peerId].videoElement = div;
+            participants[peerId].volumeBar = volumeBar;
+            
+            updatePeerCount();
         }
 
-        function removeRemoteVideo(peerId) {
-            const el = document.getElementById('remote_' + peerId);
-            if (el) {
-                el.remove();
-                delete connections[peerId];
-                log('Удалено видео: ' + peerId, 'info');
-            }
-        }
-
-        function retryConnection() {
-            log('Переподключение...', 'info');
-            setStatus('🔄 Переподключение...', 'info');
-            
-            if (!isCreator) {
-                connectToCreator();
+        function selectPeer(peerId) {
+            if (isManualMode && selectedPeerId === peerId) {
+                isManualMode = false;
+                selectedPeerId = null;
+                document.getElementById('mainVideo').classList.remove('manual-mode');
             } else {
-                setStatus('✅ Вы создатель, ожидание подключений...', 'ok');
+                isManualMode = true;
+                selectedPeerId = peerId;
+                document.getElementById('mainVideo').classList.add('manual-mode');
+            }
+            updateMainVideo();
+        }
+
+        function updateMainVideo() {
+            const targetPeerId = isManualMode ? selectedPeerId : activeSpeakerPeerId;
+            const mainVideo = document.getElementById('mainVideoElement');
+            const mainLabel = document.getElementById('mainVideoLabel');
+            
+            if (targetPeerId && participants[targetPeerId]) {
+                mainVideo.srcObject = participants[targetPeerId].stream;
+                mainLabel.textContent = participants[targetPeerId].isLocal ? 'Вы' : targetPeerId;
+            } else {
+                mainVideo.srcObject = null;
+                mainLabel.textContent = 'Ожидание...';
+            }
+            
+            document.querySelectorAll('.video-item').forEach(el => el.classList.remove('selected'));
+            if (targetPeerId) {
+                const el = document.getElementById('video_' + targetPeerId);
+                if (el) el.classList.add('selected');
             }
         }
 
-        function copyText(elementId) {
+        function updatePeerCount() {
+            document.getElementById('peerCount').textContent = Object.keys(participants).length;
+        }
+
+        window.copyField = function(elementId) {
             const text = document.getElementById(elementId).textContent;
             navigator.clipboard.writeText(text).then(() => {
                 setStatus('📋 Скопировано: ' + text, 'ok');
-                log('Скопировано: ' + text, 'info');
             }).catch(() => {
                 prompt('Скопируйте:', text);
             });
-        }
+        };
 
-        function copyLink() {
+        window.copyLink = function() {
             const link = location.origin + location.pathname + '?room=' + currentRoomId + '&pass=' + roomPassword;
             navigator.clipboard.writeText(link).then(() => {
-                setStatus(' Ссылка скопирована!', 'ok');
-                log('Ссылка скопирована', 'success');
+                setStatus('📋 Ссылка скопирована!', 'ok');
             }).catch(() => {
                 prompt('Скопируйте ссылку:', link);
             });
-        }
+        };
 
-        function toggleVideo() {
+        window.toggleVideo = function() {
             if (!localStream) return;
             const track = localStream.getVideoTracks()[0];
             track.enabled = !track.enabled;
             const btn = document.getElementById('toggleVideo');
-            btn.textContent = track.enabled ? '📹 Камера' : '📹 Выкл';
-            log('Видео: ' + (track.enabled ? 'вкл' : 'выкл'), 'info');
-        }
+            btn.textContent = track.enabled ? '📹' : '📹';
+            btn.classList.toggle('off');
+        };
 
-        function toggleAudio() {
+        window.toggleAudio = function() {
             if (!localStream) return;
             const track = localStream.getAudioTracks()[0];
             track.enabled = !track.enabled;
             const btn = document.getElementById('toggleAudio');
-            btn.textContent = track.enabled ? '🎤 Микрофон' : '🎤 Выкл';
-            log('Аудио: ' + (track.enabled ? 'вкл' : 'выкл'), 'info');
-        }
+            btn.textContent = track.enabled ? '🎤' : '🎤';
+            btn.classList.toggle('off');
+        };
 
-        function leaveRoom() {
-            log('Выход из комнаты', 'info');
-            Object.values(connections).forEach(call => call.close());
-            if (peer) peer.destroy();
-            location.reload();
-        }
-
-        async function testPeerJS() {
-            log('Тест соединения с PeerJS сервером...', 'info');
-            setStatus('🔍 Тестирование...', 'info');
-            
-            try {
-                const testPeer = new Peer('test_' + generateId(), {
-                    host: '0.peerjs.com',
-                    port: 443,
-                    path: '/',
-                    secure: true,
-                    debug: 2
-                });
-                
-                testPeer.on('open', (id) => {
-                    log('✅ PeerJS сервер доступен! Тестовый ID: ' + id, 'success');
-                    setStatus('✅ PeerJS работает корректно', 'ok');
-                    testPeer.destroy();
-                });
-                
-                testPeer.on('error', (err) => {
-                    log('❌ PeerJS сервер недоступен: ' + err.type + ' - ' + err.message, 'error');
-                    setStatus('❌ PeerJS недоступен. Проблема с сервером', 'err');
-                });
-                
-                setTimeout(() => {
-                    if (!testPeer.destroyed) {
-                        testPeer.destroy();
-                    }
-                }, 5000);
-            } catch (err) {
-                log('Ошибка теста: ' + err.message, 'error');
+        window.leaveRoom = async function() {
+            if (currentRoomId) {
+                await remove(ref(db, `rooms/${currentRoomId}`));
             }
-        }
-
-        function showManual() {
-            alert('Как использовать:\n\n1. На первом устройстве: оставьте ID пустым, введите пароль, нажмите "Войти"\n2. Скопируйте ссылку-приглашение\n3. Откройте ссылку на втором устройстве\n4. На втором устройстве: нажмите "Войти"\n5. На первом устройстве появится запрос пароля — введите тот же пароль\n\nЕсли не работает — нажмите "Тест PeerJS сервера" и пришлите скриншот логов.');
-        }
+            if (peerConnection) {
+                peerConnection.close();
+            }
+            location.reload();
+        };
 
         // Автозаполнение из URL
         const params = new URLSearchParams(location.search);
         if (params.get('room')) document.getElementById('joinRoomId').value = params.get('room');
         if (params.get('pass')) document.getElementById('joinPassword').value = params.get('pass');
         
-        log('Страница загружена', 'info');
+        setStatus('Готов к работе', 'ok');
+        log('Приложение загружено');
     </script>
 </body>
 </html>
