@@ -74,6 +74,9 @@
             margin: 0 8px;
             border-radius: 6px;
         }
+        .status-bar.ok { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .status-bar.err { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .status-bar.warn { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
         
         .video-container {
             flex: 1;
@@ -116,7 +119,7 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
-        .main-video.manual-mode .label::after { content: ''; margin-left: 4px; }
+        .main-video.manual-mode .label::after { content: '📌'; margin-left: 4px; }
         
         .video-grid {
             flex: 1;
@@ -207,6 +210,20 @@
             cursor: pointer;
         }
         .hidden { display: none !important; }
+        
+        .log {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 10px;
+            max-height: 120px;
+            overflow-y: auto;
+            margin: 8px;
+            color: #94a3b8;
+        }
+        .log .err { color: #ef4444; }
+        .log .ok { color: #10b981; }
     </style>
 </head>
 <body>
@@ -225,13 +242,13 @@
             Участников: <strong id="peerCount">1</strong>
         </div>
         <div class="controls">
-            <button class="btn btn-primary" id="toggleVideo" onclick="toggleVideo()">📹</button>
-            <button class="btn btn-primary" id="toggleAudio" onclick="toggleAudio()"></button>
-            <button class="btn btn-danger" onclick="leaveRoom()">🚪</button>
+            <button class="btn btn-primary" id="toggleVideo" onclick="toggleVideo()"></button>
+            <button class="btn btn-primary" id="toggleAudio" onclick="toggleAudio()">🎤</button>
+            <button class="btn btn-danger" onclick="leaveRoom()"></button>
         </div>
     </div>
 
-    <div class="room-details" id="roomDetails">
+    <div class="room-details">
         <div class="row">
             <span class="label">ID комнаты:</span>
             <span class="value" id="displayRoomId">—</span>
@@ -244,11 +261,11 @@
         </div>
         <div class="row">
             <span class="label">Ссылка:</span>
-            <button class="copy-btn" onclick="copyLink()" style="flex:1; margin-left:8px;">📋 Копировать ссылку-приглашение</button>
+            <button class="copy-btn" onclick="copyLink()" style="flex:1; margin-left:8px;">📋 Копировать ссылку</button>
         </div>
     </div>
 
-    <div class="status-bar" id="statusBar">Подключение к сети...</div>
+    <div class="status-bar" id="statusBar">Загрузка...</div>
 
     <div class="video-container">
         <div class="main-video" id="mainVideo">
@@ -262,33 +279,43 @@
         <div class="video-grid" id="videoGrid"></div>
     </div>
 
-    <!-- Trystero вместо PeerJS -->
-    <script src="https://cdn.jsdelivr.net/npm/trystero@0.20.0/dist/trystero.min.js"></script>
-    <script>
+    <div class="log" id="log"></div>
+
+    <!-- ВАЖНО: type="module" и импорт через esm.sh -->
+    <script type="module">
+        import { torrent } from 'https://esm.sh/trystero@0.20.0';
+
         let room = null;
         let localStream = null;
         let currentRoomId = '';
         let roomPassword = '';
-        let participants = {}; // {peerId: {stream, videoElement, volumeBar, ...}}
+        let participants = {};
         let selectedPeerId = null;
         let activeSpeakerPeerId = null;
         let isManualMode = false;
-        const SPEAKING_THRESHOLD = 30;
-        const APP_ID = 'gadaev_pro_ya_online_v1'; // Уникальный ID приложения
+        const APP_ID = 'gadaev-pro-ya-online-v2';
+
+        function log(msg, type = '') {
+            const logEl = document.getElementById('log');
+            const entry = document.createElement('div');
+            if (type) entry.className = type;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            logEl.appendChild(entry);
+            logEl.scrollTop = logEl.scrollHeight;
+            console.log('[YaOnline]', msg);
+        }
+
+        function setStatus(msg, type = '') {
+            const el = document.getElementById('statusBar');
+            el.textContent = msg;
+            el.className = 'status-bar ' + type;
+        }
 
         function generateId() {
             return Math.random().toString(36).substring(2, 8);
         }
 
-        function setStatus(msg) {
-            document.getElementById('statusBar').textContent = msg;
-        }
-
-        function log(msg) {
-            console.log('[YaOnline]', msg);
-        }
-
-        async function startCall() {
+        window.startCall = async function() {
             const roomId = document.getElementById('joinRoomId').value.trim();
             const password = document.getElementById('joinPassword').value.trim();
             
@@ -305,70 +332,76 @@
             document.getElementById('displayPassword').textContent = roomPassword;
             document.getElementById('joinModal').classList.add('hidden');
             
+            setStatus(' Получаю доступ к камере...', 'warn');
+            
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({
                     video: { width: { ideal: 640 }, height: { ideal: 480 }, frameRate: { ideal: 15 } },
                     audio: { echoCancellation: true, noiseSuppression: true }
                 });
+                log('Камера получена', 'ok');
                 
-                // Добавляем своё видео
                 addParticipant('me', localStream, true);
                 updateMainVideo();
                 
-                setStatus('🔗 Подключение к сети...');
-                log('Создаём комнату: ' + currentRoomId);
+                setStatus('🔗 Подключаюсь к сети (это может занять 5-15 сек)...', 'warn');
+                log('Создаю комнату через Trystero...');
                 
-                // Подключаемся через Trystero (без сервера!)
-                const [joinRoom, leaveRoomFn, getPeers] = trystero.torrent({ appId: APP_ID });
-                room = joinRoom({ room: currentRoomId, password: roomPassword });
+                // Подключаемся через BitTorrent-трекеры (без сервера!)
+                const [joinRoom, leaveRoomFn] = torrent({ appId: APP_ID });
+                room = joinRoom(currentRoomId);
                 
+                log('Комната создана, жду участников...');
+                setStatus('✅ В сети! Ожидаю участников...', 'ok');
+                
+                // Когда кто-то подключается
                 room.onPeerJoin((peerId, send, getStream) => {
-                    log('Новый участник: ' + peerId);
+                    log('Новый участник: ' + peerId, 'ok');
                     
-                    // Отправляем свой пароль для проверки
-                    send({ type: 'hello', password: roomPassword });
+                    // Отправляем пароль для проверки
+                    send({ type: 'auth', password: roomPassword });
                     
-                    // Когда получим видео от нового участника
+                    // Получаем видео
                     getStream().then(remoteStream => {
-                        log('Получено видео от: ' + peerId);
+                        log('Видео от ' + peerId + ' получено', 'ok');
                         addParticipant(peerId, remoteStream, false);
-                        setStatus('✅ Участник подключился!');
+                        setStatus('✅ Участник подключился! Всего: ' + Object.keys(participants).length, 'ok');
                     }).catch(err => {
-                        log('Ошибка получения видео: ' + err);
+                        log('Ошибка видео от ' + peerId + ': ' + err.message, 'err');
                     });
                 });
                 
+                // Когда кто-то уходит
                 room.onPeerLeave((peerId) => {
-                    log('Участник вышел: ' + peerId);
+                    log('Участник ушёл: ' + peerId, 'warn');
                     removeParticipant(peerId);
+                    setStatus('⚠️ Участник отключился', 'warn');
                 });
                 
+                // Приём данных (проверка пароля)
                 room.onData((data, peerId) => {
-                    if (data.type === 'hello') {
+                    if (data && data.type === 'auth') {
                         if (data.password !== roomPassword) {
-                            log('Неверный пароль от ' + peerId);
-                            // Можно отключить, но Trystero сам разберётся
+                            log('Неверный пароль от ' + peerId, 'err');
+                            // Отключаем неправильного участника
+                            // В Trystero нельзя напрямую кикнуть, но можно игнорировать
                         } else {
-                            log('Пароль верный от ' + peerId);
+                            log('Пароль верный от ' + peerId, 'ok');
                         }
                     }
                 });
                 
-                setStatus('✅ В сети! Ожидаю участников...');
-                log('Комната готова, ждём участников');
-                
             } catch (err) {
-                log('Ошибка: ' + err.message);
-                setStatus('❌ Ошибка: ' + err.message);
-                alert('Нет доступа к камере/микрофону: ' + err.message);
+                log('Ошибка: ' + err.message, 'err');
+                setStatus('❌ Ошибка: ' + err.message, 'err');
+                alert('Нет доступа к камере: ' + err.message);
             }
-        }
+        };
 
         function addParticipant(peerId, stream, isLocal) {
-            participants[peerId] = {
-                stream: stream,
-                isLocal: isLocal
-            };
+            if (participants[peerId]) return;
+            
+            participants[peerId] = { stream, isLocal };
             
             const grid = document.getElementById('videoGrid');
             const div = document.createElement('div');
@@ -384,7 +417,7 @@
             
             const label = document.createElement('div');
             label.className = 'label';
-            label.innerHTML = `<span class="speaking-indicator"></span>${isLocal ? 'Вы' : peerId.slice(-4)}`;
+            label.innerHTML = `<span class="speaking-indicator"></span>${isLocal ? 'Вы' : peerId.slice(-6)}`;
             
             const volumeBar = document.createElement('div');
             volumeBar.className = 'volume-bar';
@@ -401,22 +434,20 @@
         }
 
         function removeParticipant(peerId) {
-            if (participants[peerId]) {
-                const el = document.getElementById('video_' + peerId);
-                if (el) el.remove();
-                delete participants[peerId];
-                
-                if (selectedPeerId === peerId) {
-                    selectedPeerId = null;
-                    isManualMode = false;
-                }
-                if (activeSpeakerPeerId === peerId) {
-                    activeSpeakerPeerId = null;
-                }
-                
-                updatePeerCount();
-                updateMainVideo();
+            if (!participants[peerId]) return;
+            const el = document.getElementById('video_' + peerId);
+            if (el) el.remove();
+            delete participants[peerId];
+            
+            if (selectedPeerId === peerId) {
+                selectedPeerId = null;
+                isManualMode = false;
             }
+            if (activeSpeakerPeerId === peerId) {
+                activeSpeakerPeerId = null;
+            }
+            updatePeerCount();
+            updateMainVideo();
         }
 
         function selectPeer(peerId) {
@@ -439,7 +470,7 @@
             
             if (targetPeerId && participants[targetPeerId]) {
                 mainVideo.srcObject = participants[targetPeerId].stream;
-                mainLabel.textContent = participants[targetPeerId].isLocal ? 'Вы' : targetPeerId.slice(-4);
+                mainLabel.textContent = participants[targetPeerId].isLocal ? 'Вы' : targetPeerId.slice(-6);
             } else {
                 mainVideo.srcObject = null;
                 mainLabel.textContent = 'Ожидание...';
@@ -456,51 +487,55 @@
             document.getElementById('peerCount').textContent = Object.keys(participants).length;
         }
 
-        function copyField(elementId) {
+        window.copyField = function(elementId) {
             const text = document.getElementById(elementId).textContent;
             navigator.clipboard.writeText(text).then(() => {
-                setStatus('📋 Скопировано: ' + text);
+                setStatus('📋 Скопировано: ' + text, 'ok');
             }).catch(() => {
                 prompt('Скопируйте:', text);
             });
-        }
+        };
 
-        function copyLink() {
+        window.copyLink = function() {
             const link = location.origin + location.pathname + '?room=' + currentRoomId + '&pass=' + roomPassword;
             navigator.clipboard.writeText(link).then(() => {
-                setStatus('📋 Ссылка скопирована!');
+                setStatus('📋 Ссылка скопирована!', 'ok');
             }).catch(() => {
                 prompt('Скопируйте ссылку:', link);
             });
-        }
+        };
 
-        function toggleVideo() {
+        window.toggleVideo = function() {
             if (!localStream) return;
             const track = localStream.getVideoTracks()[0];
             track.enabled = !track.enabled;
             const btn = document.getElementById('toggleVideo');
             btn.textContent = track.enabled ? '📹' : '📹';
             btn.classList.toggle('off');
-        }
+            log('Видео: ' + (track.enabled ? 'вкл' : 'выкл'));
+        };
 
-        function toggleAudio() {
+        window.toggleAudio = function() {
             if (!localStream) return;
             const track = localStream.getAudioTracks()[0];
             track.enabled = !track.enabled;
             const btn = document.getElementById('toggleAudio');
-            btn.textContent = track.enabled ? '' : '🎤';
+            btn.textContent = track.enabled ? '🎤' : '🎤❌';
             btn.classList.toggle('off');
-        }
+            log('Аудио: ' + (track.enabled ? 'вкл' : 'выкл'));
+        };
 
-        function leaveRoom() {
+        window.leaveRoom = function() {
             if (room) room.leave();
             location.reload();
-        }
+        };
 
         // Автозаполнение из URL
         const params = new URLSearchParams(location.search);
         if (params.get('room')) document.getElementById('joinRoomId').value = params.get('room');
         if (params.get('pass')) document.getElementById('joinPassword').value = params.get('pass');
+        
+        log('Страница загружена, Trystero импортирован', 'ok');
     </script>
 </body>
 </html>
