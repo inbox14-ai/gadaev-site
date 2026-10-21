@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ya Online — Видеозвонки</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .top-bar {
+            background: rgba(30, 41, 59, 0.95);
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            flex-shrink: 0;
+        }
+        .room-info { font-size: 12px; color: #94a3b8; }
+        .room-info strong { color: #60a5fa; }
+        .controls { display: flex; gap: 8px; }
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn.off { background: #dc2626; }
+        .btn:hover { opacity: 0.9; }
+        
+        .video-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 8px;
+            gap: 8px;
+        }
+        
+        .main-video {
+            flex: 2;
+            background: #000;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            min-height: 0;
+            transition: all 0.3s ease;
+        }
+        .main-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .main-video .label {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .main-video .speaking-indicator {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .main-video.manual-mode .label::after {
+            content: '📌';
+            margin-left: 4px;
+        }
+        
+        .video-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 6px;
+            overflow-y: auto;
+            min-height: 100px;
+        }
+        .video-item {
+            position: relative;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+            aspect-ratio: 4/3;
+        }
+        .video-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        .video-item.selected {
+            box-shadow: 0 0 0 3px #10b981;
+        }
+        .video-item.speaking {
+            box-shadow: 0 0 0 2px #10b981;
+        }
+        .video-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .video-item .label {
+            position: absolute;
+            bottom: 4px;
+            left: 4px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .video-item .speaking-indicator {
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+            display: none;
+        }
+        .video-item.speaking .speaking-indicator {
+            display: block;
+        }
+        .volume-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: #10b981;
+            transition: width 0.1s;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #1e293b;
+            padding: 24px;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+        }
+        .modal h2 {
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .modal input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        .modal button {
+            width: 100%;
+            padding: 12px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .hidden { display: none !important; }
+        
+        @media (max-width: 600px) {
+            .video-grid { grid-template-columns: repeat(2, 1fr); }
+            .main-video .label { font-size: 12px; padding: 4px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="modal" id="joinModal">
+        <div class="modal-content">
+            <h2>🎥 Ya Online</h2>
+            <input type="text" id="joinRoomId" placeholder="ID комнаты (пусто = создать)">
+            <input type="password" id="joinPassword" placeholder="Пароль">
+            <button onclick="startCall()">Войти</button>
+        </div>
+    </div>
+
+    <div class="top-bar">
+        <div class="room-info">
+            Комната: <strong id="roomIdDisplay">—</strong> | 
+            Участников: <strong id="peerCount">1</strong>
+        </div>
+        <div class="controls">
+            <button class="btn btn-primary" id="toggleVideo" onclick="toggleVideo()">📹</button>
+            <button class="btn btn-primary" id="toggleAudio" onclick="toggleAudio()">🎤</button>
+            <button class="btn btn-danger" onclick="leaveRoom()"></button>
+        </div>
+    </div>
+
+    <div class="video-container">
+        <div class="main-video" id="mainVideo">
+            <video id="mainVideoElement" autoplay playsinline></video>
+            <div class="label">
+                <span class="speaking-indicator"></span>
+                <span id="mainVideoLabel">Ожидание...</span>
+            </div>
+        </div>
+
+        <div class="video-grid" id="videoGrid"></div>
+    </div>
+
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <script>
+        let peer;
+        let localStream;
+        let myPeerId = '';
+        let currentRoomId = '';
+        let roomPassword = '';
+        let participants = {};
+        let selectedPeerId = null;
+        let activeSpeakerPeerId = null;
+        let isManualMode = false;
+        const SPEAKING_THRESHOLD = 30;
+
+        function generateId() {
+            return Math.random().toString(36).substring(2, 10);
+        }
+
+        async function startCall() {
+            const roomId = document.getElementById('joinRoomId').value.trim();
+            const password = document.getElementById('joinPassword').value.trim();
+            
+            if (!password) {
+                alert('Введите пароль');
+                return;
+            }
+            
+            currentRoomId = roomId || generateId();
+            roomPassword = password;
+            
+            document.getElementById('roomIdDisplay').textContent = currentRoomId;
+            document.getElementById('joinModal').classList.add('hidden');
+            
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: { ideal: 640 }, height: { ideal: 480 }, frameRate: { ideal: 15 } },
+                    audio: { echoCancellation: true, noiseSuppression: true }
+                });
+                
+                myPeerId = 'yo_' + currentRoomId + '_' + generateId();
+                initPeer();
+            } catch (err) {
+                alert('Нет доступа к камере/микрофону: ' + err.message);
+                console.error(err);
+            }
+        }
+
+        function initPeer() {
+            peer = new Peer(myPeerId, {
+                debug: 1,
+                config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] }
+            });
+
+            peer.on('open', () => {
+                addParticipant('me', localStream, true);
+                updateMainVideo();
+            });
+
+            peer.on('call', (call) => {
+                const pwd = prompt('📞 Входящий звонок! Пароль:');
+                if (pwd !== roomPassword) {
+                    call.close();
+                    return;
+                }
+                call.answer(localStream);
+                handleCall(call);
+            });
+
+            peer.on('error', (err) => {
+                console.error(err);
+                if (err.type === 'unavailable-id') {
+                    myPeerId = 'yo_' + currentRoomId + '_' + generateId();
+                    initPeer();
+                }
+            });
+        }
+
+        function handleCall(call) {
+            call.on('stream', (remoteStream) => {
+                addParticipant(call.peer, remoteStream, false);
+            });
+
+            call.on('close', () => {
+                removeParticipant(call.peer);
+            });
+        }
+
+        function addParticipant(peerId, stream, isLocal) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioContext.createMediaStreamSource(stream);
+            const analyser = audioContext.createAnalyser();
+            analyser.fftSize = 256;
+            source.connect(analyser);
+            
+            participants[peerId] = {
+                stream: stream,
+                audioContext: audioContext,
+                analyser: analyser,
+                volume: 0,
+                isLocal: isLocal
+            };
+            
+            const grid = document.getElementById('videoGrid');
+            const div = document.createElement('div');
+            div.className = 'video-item';
+            div.id = 'video_' + peerId;
+            div.onclick = () => selectPeer(peerId);
+            
+            const video = document.createElement('video');
+            video.srcObject = stream;
+            video.autoplay = true;
+            video.playsinline = true;
+            if (isLocal) video.muted = true;
+            
+            const label = document.createElement('div');
+            label.className = 'label';
+            label.innerHTML = `<span class="speaking-indicator"></span>${isLocal ? 'Вы' : peerId.slice(-4)}`;
+            
+            const volumeBar = document.createElement('div');
+            volumeBar.className = 'volume-bar';
+            
+            div.appendChild(video);
+            div.appendChild(label);
+            div.appendChild(volumeBar);
+            grid.appendChild(div);
+            
+            participants[peerId].videoElement = div;
+            participants[peerId].volumeBar = volumeBar;
+            
+            updatePeerCount();
+            startVolumeAnalysis(peerId);
+        }
+
+        function removeParticipant(peerId) {
+            if (participants[peerId]) {
+                participants[peerId].audioContext.close();
+                const el = document.getElementById('video_' + peerId);
+                if (el) el.remove();
+                delete participants[peerId];
+                
+                if (selectedPeerId === peerId) {
+                    selectedPeerId = null;
+                    isManualMode = false;
+                }
+                if (activeSpeakerPeerId === peerId) {
+                    activeSpeakerPeerId = null;
+                }
+                
+                updatePeerCount();
+                updateMainVideo();
+            }
+        }
+
+        function startVolumeAnalysis(peerId) {
+            const participant = participants[peerId];
+            const dataArray = new Uint8Array(participant.analyser.frequencyBinCount);
+            
+            function analyze() {
+                if (!participants[peerId]) return;
+                
+                participant.analyser.getByteFrequencyData(dataArray);
+                let sum = 0;
+                for (let i = 0; i < dataArray.length; i++) {
+                    sum += dataArray[i];
+                }
+                const average = sum / dataArray.length;
+                participant.volume = average;
+                
+                const volumePercent = Math.min(100, (average / 128) * 100);
+                participant.volumeBar.style.width = volumePercent + '%';
+                
+                if (average > SPEAKING_THRESHOLD) {
+                    participant.videoElement.classList.add('speaking');
+                    
+                    if (!isManualMode && average > (participants[activeSpeakerPeerId]?.volume || 0)) {
+                        activeSpeakerPeerId = peerId;
+                        updateMainVideo();
+                    }
+                } else {
+                    participant.videoElement.classList.remove('speaking');
+                }
+                
+                requestAnimationFrame(analyze);
+            }
+            
+            analyze();
+        }
+
+        function selectPeer(peerId) {
+            if (isManualMode && selectedPeerId === peerId) {
+                isManualMode = false;
+                selectedPeerId = null;
+                document.getElementById('mainVideo').classList.remove('manual-mode');
+            } else {
+                isManualMode = true;
+                selectedPeerId = peerId;
+                document.getElementById('mainVideo').classList.add('manual-mode');
+            }
+            updateMainVideo();
+        }
+
+        function updateMainVideo() {
+            const targetPeerId = isManualMode ? selectedPeerId : activeSpeakerPeerId;
+            const mainVideo = document.getElementById('mainVideoElement');
+            const mainLabel = document.getElementById('mainVideoLabel');
+            
+            if (targetPeerId && participants[targetPeerId]) {
+                mainVideo.srcObject = participants[targetPeerId].stream;
+                mainLabel.textContent = participants[targetPeerId].isLocal ? 'Вы' : targetPeerId.slice(-4);
+            } else {
+                mainVideo.srcObject = null;
+                mainLabel.textContent = 'Ожидание...';
+            }
+            
+            document.querySelectorAll('.video-item').forEach(el => el.classList.remove('selected'));
+            if (targetPeerId) {
+                const el = document.getElementById('video_' + targetPeerId);
+                if (el) el.classList.add('selected');
+            }
+        }
+
+        function updatePeerCount() {
+            document.getElementById('peerCount').textContent = Object.keys(participants).length;
+        }
+
+        function toggleVideo() {
+            if (!localStream) return;
+            const track = localStream.getVideoTracks()[0];
+            track.enabled = !track.enabled;
+            const btn = document.getElementById('toggleVideo');
+            btn.textContent = track.enabled ? '📹' : '📹❌';
+            btn.classList.toggle('off');
+        }
+
+        function toggleAudio() {
+            if (!localStream) return;
+            const track = localStream.getAudioTracks()[0];
+            track.enabled = !track.enabled;
+            const btn = document.getElementById('toggleAudio');
+            btn.textContent = track.enabled ? '🎤' : '🎤❌';
+            btn.classList.toggle('off');
+        }
+
+        function leaveRoom() {
+            Object.keys(participants).forEach(peerId => {
+                if (peerId !== 'me') {
+                    participants[peerId].audioContext.close();
+                }
+            });
+            if (peer) peer.destroy();
+            location.reload();
+        }
+    </script>
+</body>
+</html>
