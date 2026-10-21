@@ -24,20 +24,46 @@
             border-bottom: 1px solid rgba(148, 163, 184, 0.1);
             flex-shrink: 0;
         }
-        .room-info { font-size: 12px; color: #94a3b8; }
+        .room-info { font-size: 11px; color: #94a3b8; }
         .room-info strong { color: #60a5fa; }
-        .controls { display: flex; gap: 8px; }
+        .controls { display: flex; gap: 6px; }
         .btn {
-            padding: 8px 14px;
+            padding: 6px 12px;
             border: none;
-            border-radius: 8px;
-            font-size: 13px;
+            border-radius: 6px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
         }
         .btn-primary { background: #3b82f6; color: white; }
         .btn-danger { background: #ef4444; color: white; }
         .btn.off { background: #dc2626; }
+        
+        .room-details {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 8px;
+            font-size: 12px;
+        }
+        .room-details .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 4px 0;
+        }
+        .room-details .label { color: #94a3b8; }
+        .room-details .value { color: #60a5fa; font-family: monospace; font-weight: bold; }
+        .copy-btn {
+            background: rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            cursor: pointer;
+        }
         
         .video-container {
             flex: 1;
@@ -80,7 +106,7 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
-        .main-video.manual-mode .label::after { content: '📌'; margin-left: 4px; }
+        .main-video.manual-mode .label::after { content: ''; margin-left: 4px; }
         
         .video-grid {
             flex: 1;
@@ -179,28 +205,15 @@
             background: rgba(59, 130, 246, 0.2);
             color: #60a5fa;
         }
-        
-        .copy-link {
-            margin-top: 12px;
-            padding: 10px;
-            background: rgba(59, 130, 246, 0.2);
-            border-radius: 8px;
-            font-size: 12px;
-            word-break: break-all;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
     <div class="modal" id="joinModal">
         <div class="modal-content">
-            <h2> Ya Online</h2>
+            <h2>🎥 Ya Online</h2>
             <input type="text" id="joinRoomId" placeholder="ID комнаты (пусто = создать)">
             <input type="password" id="joinPassword" placeholder="Пароль">
             <button onclick="startCall()">Войти</button>
-            <div class="copy-link hidden" id="shareLink" onclick="copyLink()">
-                📋 Нажмите, чтобы скопировать ссылку-приглашение
-            </div>
         </div>
     </div>
 
@@ -213,6 +226,23 @@
             <button class="btn btn-primary" id="toggleVideo" onclick="toggleVideo()">📹</button>
             <button class="btn btn-primary" id="toggleAudio" onclick="toggleAudio()"></button>
             <button class="btn btn-danger" onclick="leaveRoom()">🚪</button>
+        </div>
+    </div>
+
+    <div class="room-details" id="roomDetails">
+        <div class="row">
+            <span class="label">ID комнаты:</span>
+            <span class="value" id="displayRoomId">—</span>
+            <button class="copy-btn" onclick="copyField('displayRoomId')"></button>
+        </div>
+        <div class="row">
+            <span class="label">Пароль:</span>
+            <span class="value" id="displayPassword">—</span>
+            <button class="copy-btn" onclick="copyField('displayPassword')">📋</button>
+        </div>
+        <div class="row">
+            <span class="label">Ссылка:</span>
+            <button class="copy-btn" onclick="copyLink()" style="flex:1; margin-left:8px;">📋 Копировать ссылку-приглашение</button>
         </div>
     </div>
 
@@ -261,6 +291,8 @@
             roomPassword = password;
             
             document.getElementById('roomIdDisplay').textContent = currentRoomId;
+            document.getElementById('displayRoomId').textContent = currentRoomId;
+            document.getElementById('displayPassword').textContent = roomPassword;
             document.getElementById('joinModal').classList.add('hidden');
             
             try {
@@ -269,15 +301,13 @@
                     audio: { echoCancellation: true, noiseSuppression: true }
                 });
                 
-                // Фиксированный ID для создателя комнаты
                 const myPeerId = 'yo_' + currentRoomId + (isCreator ? '' : '_' + generateId());
                 initPeer(myPeerId);
                 
                 if (isCreator) {
-                    document.getElementById('shareLink').classList.remove('hidden');
-                    setStatus('Комната создана. Ожидание участников...');
+                    setStatus('✅ Комната создана! Отправьте ссылку или ID+пароль другу.');
                 } else {
-                    setStatus('Подключение к комнате ' + currentRoomId + '...');
+                    setStatus('🔗 Подключение к комнате ' + currentRoomId + '...');
                     setTimeout(() => connectToCreator(), 1000);
                 }
             } catch (err) {
@@ -305,23 +335,23 @@
                     handleCall(call);
                 } else {
                     call.close();
-                    setStatus('Неверный пароль!');
+                    setStatus('❌ Неверный пароль!');
                 }
             });
 
             peer.on('error', (err) => {
                 console.error('Ошибка:', err);
                 if (err.type === 'unavailable-id') {
-                    setStatus('ID занят, попробуйте другой код комнаты');
+                    setStatus('❌ ID занят, попробуйте другой код комнаты');
                 } else if (err.type === 'peer-unavailable') {
-                    setStatus('Комната не найдена или создатель вышел');
+                    setStatus('❌ Комната не найдена или создатель вышел');
                 }
             });
         }
 
         function connectToCreator() {
             const creatorId = 'yo_' + currentRoomId;
-            setStatus('Звоню создателю...');
+            setStatus('📞 Звоню создателю...');
             
             const call = peer.call(creatorId, localStream, {
                 metadata: { password: roomPassword }
@@ -330,7 +360,7 @@
             if (call) {
                 handleCall(call);
             } else {
-                setStatus('Не удалось подключиться. Проверьте ID комнаты.');
+                setStatus('❌ Не удалось подключиться. Проверьте ID комнаты.');
             }
         }
 
@@ -493,11 +523,19 @@
             document.getElementById('statusBar').textContent = msg;
         }
 
+        function copyField(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                setStatus('📋 Скопировано: ' + text);
+            }).catch(() => {
+                prompt('Скопируйте:', text);
+            });
+        }
+
         function copyLink() {
             const link = location.origin + location.pathname + '?room=' + currentRoomId + '&pass=' + roomPassword;
             navigator.clipboard.writeText(link).then(() => {
-                setStatus('Ссылка скопирована!');
-                setTimeout(() => setStatus('Ожидание участников...'), 2000);
+                setStatus('📋 Ссылка скопирована!');
             }).catch(() => {
                 prompt('Скопируйте ссылку:', link);
             });
