@@ -1,624 +1,279 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ya Online — Видеозвонки</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #0f172a;
-            color: #e2e8f0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .top-bar {
-            background: rgba(30, 41, 59, 0.95);
-            padding: 10px 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-        }
-        .room-info { font-size: 11px; color: #94a3b8; }
-        .room-info strong { color: #60a5fa; }
-        .controls { display: flex; gap: 6px; }
-        .btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .btn-primary { background: #3b82f6; color: white; }
-        .btn-danger { background: #ef4444; color: white; }
-        .btn.off { background: #dc2626; }
-        
-        .room-details {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            padding: 10px;
-            border-radius: 8px;
-            margin: 8px;
-            font-size: 12px;
-        }
-        .room-details .row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 4px 0;
-            flex-wrap: wrap;
-            gap: 4px;
-        }
-        .room-details .label { color: #94a3b8; }
-        .room-details .value { color: #60a5fa; font-family: monospace; font-weight: bold; word-break: break-all; }
-        .copy-btn {
-            background: rgba(59, 130, 246, 0.3);
-            color: #60a5fa;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            cursor: pointer;
-        }
-        
-        .status-bar {
-            padding: 8px;
-            text-align: center;
-            font-size: 12px;
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            margin: 0 8px;
-            border-radius: 6px;
-        }
-        .status-bar.ok { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-        .status-bar.err { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-        .status-bar.warn { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-        
-        .video-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            padding: 8px;
-            gap: 8px;
-        }
-        .main-video {
-            flex: 2;
-            background: #000;
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
-            min-height: 0;
-        }
-        .main-video video { width: 100%; height: 100%; object-fit: cover; }
-        .main-video .label {
-            position: absolute;
-            bottom: 12px;
-            left: 12px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .main-video .speaking-indicator {
-            width: 8px;
-            height: 8px;
-            background: #10b981;
-            border-radius: 50%;
-            animation: pulse 1s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        .main-video.manual-mode .label::after { content: '📌'; margin-left: 4px; }
-        
-        .video-grid {
-            flex: 1;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 6px;
-            overflow-y: auto;
-            min-height: 100px;
-        }
-        .video-item {
-            position: relative;
-            background: #000;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            aspect-ratio: 4/3;
-        }
-        .video-item:hover { transform: scale(1.05); box-shadow: 0 0 0 2px #3b82f6; }
-        .video-item.selected { box-shadow: 0 0 0 3px #10b981; }
-        .video-item.speaking { box-shadow: 0 0 0 2px #10b981; }
-        .video-item video { width: 100%; height: 100%; object-fit: cover; }
-        .video-item .label {
-            position: absolute;
-            bottom: 4px;
-            left: 4px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 10px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .video-item .speaking-indicator {
-            width: 6px;
-            height: 6px;
-            background: #10b981;
-            border-radius: 50%;
-            animation: pulse 1s infinite;
-            display: none;
-        }
-        .video-item.speaking .speaking-indicator { display: block; }
-        .volume-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 3px;
-            background: #10b981;
-            transition: width 0.1s;
-        }
-        
-        .modal {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: #1e293b;
-            padding: 24px;
-            border-radius: 16px;
-            max-width: 400px;
-            width: 90%;
-        }
-        .modal h2 { margin-bottom: 16px; text-align: center; }
-        .modal input {
-            width: 100%;
-            padding: 12px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 8px;
-            color: white;
-            font-size: 14px;
-            margin-bottom: 12px;
-        }
-        .modal button {
-            width: 100%;
-            padding: 12px;
-            background: #10b981;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .hidden { display: none !important; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ya Online — видеокомнаты</title>
+<style>
+*{box-sizing:border-box;margin:0}
+body{font:15px -apple-system,Segoe UI,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100dvh}
+.scr{display:none;padding:16px;max-width:760px;margin:0 auto}.scr.on{display:block}
+#room.on{display:flex;flex-direction:column;height:100dvh;max-width:none;padding:8px}
+h1{font-size:30px;text-align:center;margin:48px 0 6px}.sub{text-align:center;color:#94a3b8;margin-bottom:28px}
+button,input,select,textarea{font:inherit}
+.btn{border:0;border-radius:10px;padding:12px 16px;background:#3b82f6;color:#fff;font-weight:600;cursor:pointer}
+.btn.g{background:#1e293b;color:#cbd5e1}.btn.r{background:#ef4444}.btn.off{background:#64748b}
+.big{display:block;width:100%;padding:18px;margin:10px 0;font-size:17px}
+input,select,textarea{width:100%;padding:12px;margin:6px 0;background:#1e293b;border:1px solid #334155;border-radius:10px;color:#fff}
+.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}
+.card{background:#1e293b;border-radius:12px;padding:12px 14px;margin:8px 0;cursor:pointer}
+.card small{color:#94a3b8}.card div{margin:2px 0;color:#cbd5e1}
+.modal{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;z-index:9}.modal.on{display:flex}
+.mc{background:#0f172a;border:1px solid #334155;border-radius:16px;padding:20px;width:92%;max-width:400px}
+.mc h3{margin-bottom:8px}.mc .btn{width:100%;margin-top:8px}
+#grid{flex:1;display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));grid-auto-rows:1fr;min-height:0;padding:8px 0}
+.tile{position:relative;background:#000;border-radius:12px;overflow:hidden;min-height:0}
+.tile video{width:100%;height:100%;object-fit:cover}
+.tile span{position:absolute;left:8px;bottom:8px;background:#000a;padding:3px 8px;border-radius:6px;font-size:12px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1e293b;border:1px solid #334155;padding:10px 16px;border-radius:10px;display:none;z-index:99;text-align:center}
+</style>
 </head>
 <body>
-    <div class="modal" id="joinModal">
-        <div class="modal-content">
-            <h2>🎥 Ya Online</h2>
-            <input type="text" id="joinRoomId" placeholder="ID комнаты (пусто = создать)">
-            <input type="password" id="joinPassword" placeholder="Пароль">
-            <button onclick="startCall()">Войти</button>
-        </div>
-    </div>
 
-    <div class="top-bar">
-        <div class="room-info">
-            Комната: <strong id="roomIdDisplay">—</strong> | 
-            Участников: <strong id="peerCount">1</strong>
-        </div>
-        <div class="controls">
-            <button class="btn btn-primary" id="toggleVideo" onclick="toggleVideo()"></button>
-            <button class="btn btn-primary" id="toggleAudio" onclick="toggleAudio()">🎤</button>
-            <button class="btn btn-danger" onclick="leaveRoom()"></button>
-        </div>
-    </div>
+<section class="scr on" id="home">
+  <h1>🎥 Ya Online</h1>
+  <p class="sub">Видеокомнаты по интересам</p>
+  <button class="btn big" id="bCreate">Создать комнату</button>
+  <button class="btn big g" id="bFind">Найти комнату</button>
+  <button class="btn big g" id="bSet">Настройки</button>
+</section>
 
-    <div class="room-details">
-        <div class="row">
-            <span class="label">ID комнаты:</span>
-            <span class="value" id="displayRoomId">—</span>
-            <button class="copy-btn" onclick="copyField('displayRoomId')">📋</button>
-        </div>
-        <div class="row">
-            <span class="label">Пароль:</span>
-            <span class="value" id="displayPassword">—</span>
-            <button class="copy-btn" onclick="copyField('displayPassword')"></button>
-        </div>
-        <div class="row">
-            <span class="label">Ссылка:</span>
-            <button class="copy-btn" onclick="copyLink()" style="flex:1; margin-left:8px;"> Копировать ссылку</button>
-        </div>
-    </div>
+<section class="scr" id="find">
+  <button class="btn g" id="bBack">← Назад</button>
+  <input id="fQ" placeholder="Поиск: авто, кошки, знакомства…">
+  <div class="row">
+    <select id="fT"><option value="all">Все</option><option value="open">Открытые</option><option value="closed">Закрытые</option></select>
+    <input id="fCity" placeholder="Город"><input id="fCo" placeholder="Страна">
+  </div>
+  <div id="list"></div>
+</section>
 
-    <div class="status-bar" id="statusBar">Загрузка...</div>
+<section class="scr" id="room">
+  <div class="row" style="flex:none">
+    <b id="rT" style="flex:2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></b>
+    <button class="btn g" id="bLink">🔗</button>
+    <button class="btn" id="bMic">🎤</button>
+    <button class="btn" id="bCam">📹</button>
+    <button class="btn r" id="bLeave">Выйти</button>
+  </div>
+  <div id="grid"></div>
+</section>
 
-    <div class="video-container">
-        <div class="main-video" id="mainVideo">
-            <video id="mainVideoElement" autoplay playsinline></video>
-            <div class="label">
-                <span class="speaking-indicator"></span>
-                <span id="mainVideoLabel">Ожидание...</span>
-            </div>
-        </div>
+<div class="modal" id="cm"><div class="mc">
+  <h3>Новая комната</h3>
+  <input id="cName" placeholder="Название" maxlength="60">
+  <textarea id="cDesc" rows="3" placeholder="О чём будете говорить?" maxlength="200"></textarea>
+  <input id="cPass" type="password" placeholder="Пароль (пусто = открытая комната)">
+  <button class="btn" id="cOk">Создать</button>
+  <button class="btn g" data-close>Отмена</button>
+</div></div>
 
-        <div class="video-grid" id="videoGrid"></div>
-    </div>
+<div class="modal" id="pm"><div class="mc">
+  <h3 id="pT">Войти в комнату</h3>
+  <input id="pPass" type="password" placeholder="Пароль">
+  <button class="btn" id="pOk">Войти</button>
+  <button class="btn g" data-close>Отмена</button>
+</div></div>
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getDatabase, ref, set, onValue, onDisconnect, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+<div class="modal" id="sm"><div class="mc">
+  <h3>Настройки</h3>
+  <input id="sName" placeholder="Ваше имя" maxlength="30">
+  <input id="sCity" placeholder="Город" maxlength="40">
+  <input id="sCo" placeholder="Страна" maxlength="40">
+  <button class="btn" id="sOk">Сохранить</button>
+  <button class="btn g" data-close>Закрыть</button>
+</div></div>
 
-        // Firebase конфигурация
-        const firebaseConfig = {
-            apiKey: "AIzaSyCgN79lHGEri4txKJ6WXJkvkUYY_LRPny4",
-            authDomain: "ya-online-video.firebaseapp.com",
-            databaseURL: "https://ya-online-video-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "ya-online-video",
-            storageBucket: "ya-online-video.firebasestorage.app",
-            messagingSenderId: "614548563069",
-            appId: "1:614548563069:web:b440e8c5ab56e97dbafd14",
-            measurementId: "G-6HHDSKH64E"
-        };
+<div id="toast"></div>
 
-        // Инициализация Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getDatabase, ref, set, get, push, remove, onValue, onChildAdded, onChildRemoved, onDisconnect } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
-        let localStream = null;
-        let peerConnection = null;
-        let currentRoomId = '';
-        let roomPassword = '';
-        let isCreator = false;
-        let participants = {};
-        let selectedPeerId = null;
-        let activeSpeakerPeerId = null;
-        let isManualMode = false;
+const app = initializeApp({
+  apiKey: "AIzaSyCgN79lHGEri4txKJ6WXJkvkUYY_LRPny4",
+  authDomain: "ya-online-video.firebaseapp.com",
+  databaseURL: "https://ya-online-video-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "ya-online-video",
+  appId: "1:614548563069:web:b440e8c5ab56e97dbafd14"
+});
+const db = getDatabase(app), auth = getAuth(app);
 
-        // Конфигурация WebRTC
-        const rtcConfig = {
-            iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:stun1.l.google.com:19302' },
-                { urls: 'stun:stun2.l.google.com:19302' }
-            ]
-        };
+// ===== ВСТАВЬТЕ СЮДА TURN (см. инструкцию). Без него часть пар не соединится =====
+const ICE = [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun1.l.google.com:19302' }
+  // , { urls: 'turn:ХОСТ:443?transport=tcp', username: 'ЛОГИН', credential: 'ПАРОЛЬ' }
+];
+const MAX = 4;
 
-        function log(msg) {
-            console.log('[YaOnline]', msg);
-        }
+const $ = id => document.getElementById(id);
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x) e.textContent = x; return e; };
+const show = id => document.querySelectorAll('.scr').forEach(e => e.classList.toggle('on', e.id === id));
+const modal = (id, on) => $(id).classList.toggle('on', on);
+let tt; const toast = m => { const t = $('toast'); t.textContent = m; t.style.display = 'block'; clearTimeout(tt); tt = setTimeout(() => t.style.display = 'none', 3500); };
+const sha = async s => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)))].map(x => x.toString(16).padStart(2, '0')).join('');
+const members = r => Object.keys((r && r.members) || {}).length;
 
-        function setStatus(msg, type = '') {
-            const el = document.getElementById('statusBar');
-            el.textContent = msg;
-            el.className = 'status-bar ' + type;
-        }
+let uid, stream, key, roomId, rooms = {}, peers = {}, names = {}, unsubs = [], pend = null, listOn = false;
+const prof = JSON.parse(localStorage.yaProf || '{}');
 
-        function generateId() {
-            return Math.random().toString(36).substring(2, 8);
-        }
+// ---------- вход и главный экран ----------
+signInAnonymously(auth).then(c => {
+  uid = c.user.uid;
+  const id = new URLSearchParams(location.search).get('room');
+  if (id) join(id, null, true);
+}).catch(() => toast('Включите Anonymous в Firebase → Authentication'));
 
-        window.startCall = async function() {
-            const roomId = document.getElementById('joinRoomId').value.trim();
-            const password = document.getElementById('joinPassword').value.trim();
-            
-            if (!password) {
-                alert('Введите пароль');
-                return;
-            }
-            
-            isCreator = !roomId;
-            currentRoomId = roomId || generateId();
-            roomPassword = password;
-            
-            document.getElementById('roomIdDisplay').textContent = currentRoomId;
-            document.getElementById('displayRoomId').textContent = currentRoomId;
-            document.getElementById('displayPassword').textContent = roomPassword;
-            document.getElementById('joinModal').classList.add('hidden');
-            
-            setStatus('📹 Получаю доступ к камере...', 'warn');
-            
-            try {
-                localStream = await navigator.mediaDevices.getUserMedia({
-                    video: { width: { ideal: 640 }, height: { ideal: 480 }, frameRate: { ideal: 15 } },
-                    audio: { echoCancellation: true, noiseSuppression: true }
-                });
-                
-                addParticipant('me', localStream, true);
-                updateMainVideo();
-                
-                if (isCreator) {
-                    await createRoom();
-                } else {
-                    await joinRoom();
-                }
-                
-            } catch (err) {
-                log('Ошибка: ' + err.message);
-                setStatus('❌ Ошибка: ' + err.message, 'err');
-                alert('Нет доступа к камере: ' + err.message);
-            }
-        };
+document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => document.querySelectorAll('.modal').forEach(m => m.classList.remove('on')));
+$('bCreate').onclick = () => modal('cm', true);
+$('bSet').onclick = () => { $('sName').value = prof.name || ''; $('sCity').value = prof.city || ''; $('sCo').value = prof.country || ''; modal('sm', true); };
+$('sOk').onclick = () => { prof.name = $('sName').value.trim(); prof.city = $('sCity').value.trim(); prof.country = $('sCo').value.trim(); localStorage.yaProf = JSON.stringify(prof); modal('sm', false); toast('Сохранено'); };
+$('bBack').onclick = () => show('home');
+$('bFind').onclick = () => {
+  show('find');
+  if (!listOn) { listOn = true; onValue(ref(db, 'rooms'), s => { rooms = s.val() || {}; render(); }); }
+};
+['fQ', 'fT', 'fCity', 'fCo'].forEach(i => $(i).oninput = render);
 
-        async function createRoom() {
-            setStatus('🔧 Создаю комнату...', 'warn');
-            log('Создаю комнату: ' + currentRoomId);
-            
-            // Создаю peer connection
-            peerConnection = new RTCPeerConnection(rtcConfig);
-            
-            // Добавляю локальный поток
-            localStream.getTracks().forEach(track => {
-                peerConnection.addTrack(track, localStream);
-            });
-            
-            // Обработка ICE кандидатов
-            peerConnection.onicecandidate = (event) => {
-                if (event.candidate) {
-                    set(ref(db, `rooms/${currentRoomId}/creator/ice`), event.candidate.toJSON());
-                }
-            };
-            
-            // Обработка удалённого потока
-            peerConnection.ontrack = (event) => {
-                log('Получен поток от собеседника');
-                addParticipant('peer', event.streams[0], false);
-                setStatus('✅ Связь установлена!', 'ok');
-            };
-            
-            // Создаю offer
-            const offer = await peerConnection.createOffer();
-            await peerConnection.setLocalDescription(offer);
-            
-            // Сохраняю offer в Firebase
-            await set(ref(db, `rooms/${currentRoomId}`), {
-                creator: {
-                    offer: offer,
-                    password: roomPassword
-                },
-                timestamp: Date.now()
-            });
-            
-            // Слушаю ответ от участника
-            onValue(ref(db, `rooms/${currentRoomId}/participant/answer`), async (snapshot) => {
-                const answer = snapshot.val();
-                if (answer && !peerConnection.currentRemoteDescription) {
-                    log('Получен ответ от участника');
-                    await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-                    setStatus('✅ Участник подключился!', 'ok');
-                }
-            });
-            
-            // Слушаю ICE кандидаты от участника
-            onValue(ref(db, `rooms/${currentRoomId}/participant/ice`), async (snapshot) => {
-                const candidate = snapshot.val();
-                if (candidate) {
-                    try {
-                        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-                    } catch (e) {
-                        log('Ошибка добавления ICE: ' + e);
-                    }
-                }
-            });
-            
-            setStatus('✅ Комната создана! Ожидаю участника...', 'ok');
-            log('Комната готова, жду участника...');
-        }
+// ---------- список комнат ----------
+function render() {
+  const q = $('fQ').value.toLowerCase(), t = $('fT').value, ci = $('fCity').value.toLowerCase(), co = $('fCo').value.toLowerCase();
+  const box = $('list'); box.textContent = '';
+  const arr = Object.entries(rooms).map(([id, r]) => ({ id, ...r, n: members(r) }))
+    .filter(r => (r.n || Date.now() - r.created < 12e4)
+      && (t === 'all' || (t === 'open') === !r.locked)
+      && ((r.name || '') + ' ' + (r.desc || '') + ' ' + (r.city || '')).toLowerCase().includes(q)
+      && (r.city || '').toLowerCase().includes(ci)
+      && (r.country || '').toLowerCase().includes(co))
+    .sort((a, b) => b.n - a.n || b.created - a.created);
+  if (!arr.length) { box.append(el('p', 'sub', 'Комнат нет — создайте свою')); return; }
+  arr.forEach(r => {
+    const c = el('div', 'card');
+    c.append(el('b', '', (r.locked ? '🔒 ' : '🌐 ') + r.name), el('div', '', r.desc || ''),
+      el('small', '', [r.city, r.country].filter(Boolean).join(', ') + (r.city || r.country ? ' · ' : '') + r.n + '/' + MAX));
+    c.onclick = () => join(r.id, r, false);
+    box.append(c);
+  });
+}
 
-        async function joinRoom() {
-            setStatus('🔗 Подключаюсь к комнате...', 'warn');
-            log('Присоединяюсь к комнате: ' + currentRoomId);
-            
-            // Проверяю существование комнаты
-            const roomRef = ref(db, `rooms/${currentRoomId}`);
-            const snapshot = await snapshotRef(roomRef);
-            
-            if (!snapshot.exists()) {
-                setStatus('❌ Комната не найдена', 'err');
-                alert('Комната не найдена. Проверьте ID.');
-                return;
-            }
-            
-            const roomData = snapshot.val();
-            if (roomData.creator.password !== roomPassword) {
-                setStatus('❌ Неверный пароль', 'err');
-                alert('Неверный пароль!');
-                return;
-            }
-            
-            // Создаю peer connection
-            peerConnection = new RTCPeerConnection(rtcConfig);
-            
-            // Добавляю локальный поток
-            localStream.getTracks().forEach(track => {
-                peerConnection.addTrack(track, localStream);
-            });
-            
-            // Обработка ICE кандидатов
-            peerConnection.onicecandidate = (event) => {
-                if (event.candidate) {
-                    set(ref(db, `rooms/${currentRoomId}/participant/ice`), event.candidate.toJSON());
-                }
-            };
-            
-            // Обработка удалённого потока
-            peerConnection.ontrack = (event) => {
-                log('Получен поток от создателя');
-                addParticipant('creator', event.streams[0], false);
-                setStatus('✅ Связь установлена!', 'ok');
-            };
-            
-            // Устанавливаю remote description (offer от создателя)
-            await peerConnection.setRemoteDescription(new RTCSessionDescription(roomData.creator.offer));
-            
-            // Создаю answer
-            const answer = await peerConnection.createAnswer();
-            await peerConnection.setLocalDescription(answer);
-            
-            // Отправляю answer создателю
-            await set(ref(db, `rooms/${currentRoomId}/participant/answer`), answer);
-            
-            // Слушаю ICE кандидаты от создателя
-            onValue(ref(db, `rooms/${currentRoomId}/creator/ice`), async (snapshot) => {
-                const candidate = snapshot.val();
-                if (candidate) {
-                    try {
-                        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-                    } catch (e) {
-                        log('Ошибка добавления ICE: ' + e);
-                    }
-                }
-            });
-            
-            setStatus('✅ Подключено к создателю!', 'ok');
-        }
+// ---------- создание и вход ----------
+$('cOk').onclick = async () => {
+  const name = $('cName').value.trim(), pass = $('cPass').value;
+  if (!name) return toast('Введите название');
+  const id = Math.random().toString(36).slice(2, 8);
+  const meta = { name, desc: $('cDesc').value.trim(), city: prof.city || '', country: prof.country || '', locked: !!pass, owner: uid, created: Date.now() };
+  if (pass) meta.chk = await sha('chk' + id + pass);
+  try { await set(ref(db, 'rooms/' + id), meta); } catch (e) { return toast('Нет доступа к базе — проверьте правила'); }
+  modal('cm', false);
+  enter(id, meta, pass);
+};
 
-        function addParticipant(peerId, stream, isLocal) {
-            if (participants[peerId]) return;
-            
-            participants[peerId] = { stream, isLocal };
-            
-            const grid = document.getElementById('videoGrid');
-            const div = document.createElement('div');
-            div.className = 'video-item';
-            div.id = 'video_' + peerId;
-            div.onclick = () => selectPeer(peerId);
-            
-            const video = document.createElement('video');
-            video.srcObject = stream;
-            video.autoplay = true;
-            video.playsinline = true;
-            if (isLocal) video.muted = true;
-            
-            const label = document.createElement('div');
-            label.className = 'label';
-            label.innerHTML = `<span class="speaking-indicator"></span>${isLocal ? 'Вы' : peerId}`;
-            
-            const volumeBar = document.createElement('div');
-            volumeBar.className = 'volume-bar';
-            
-            div.appendChild(video);
-            div.appendChild(label);
-            div.appendChild(volumeBar);
-            grid.appendChild(div);
-            
-            participants[peerId].videoElement = div;
-            participants[peerId].volumeBar = volumeBar;
-            
-            updatePeerCount();
-        }
+async function join(id, r, viaLink) {
+  if (!r) { r = (await get(ref(db, 'rooms/' + id))).val(); if (!r) return toast('Комната не найдена'); }
+  if (members(r) >= MAX) return toast('Комната заполнена (максимум ' + MAX + ')');
+  if (!r.locked && !viaLink) return enter(id, r, '');
+  pend = { id, r };
+  $('pT').textContent = r.name;
+  $('pPass').value = ''; $('pPass').style.display = r.locked ? '' : 'none';
+  modal('pm', true);
+}
+$('pOk').onclick = async () => {
+  const { id, r } = pend, p = $('pPass').value;
+  if (r.locked && await sha('chk' + id + p) !== r.chk) return toast('Неверный пароль');
+  modal('pm', false); enter(id, r, p);
+};
 
-        function selectPeer(peerId) {
-            if (isManualMode && selectedPeerId === peerId) {
-                isManualMode = false;
-                selectedPeerId = null;
-                document.getElementById('mainVideo').classList.remove('manual-mode');
-            } else {
-                isManualMode = true;
-                selectedPeerId = peerId;
-                document.getElementById('mainVideo').classList.add('manual-mode');
-            }
-            updateMainVideo();
-        }
+// ---------- комната и WebRTC (mesh) ----------
+async function enter(id, r, pass) {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480, frameRate: 15 }, audio: { echoCancellation: true, noiseSuppression: true } });
+  } catch (e) { return toast('Нет доступа к камере или микрофону'); }
+  roomId = id;
+  key = r.locked ? id + '_' + (await sha('k' + id + pass)).slice(0, 24) : id;
+  $('rT').textContent = r.name;
+  show('room');
+  tile('me', stream, 'Вы');
 
-        function updateMainVideo() {
-            const targetPeerId = isManualMode ? selectedPeerId : activeSpeakerPeerId;
-            const mainVideo = document.getElementById('mainVideoElement');
-            const mainLabel = document.getElementById('mainVideoLabel');
-            
-            if (targetPeerId && participants[targetPeerId]) {
-                mainVideo.srcObject = participants[targetPeerId].stream;
-                mainLabel.textContent = participants[targetPeerId].isLocal ? 'Вы' : targetPeerId;
-            } else {
-                mainVideo.srcObject = null;
-                mainLabel.textContent = 'Ожидание...';
-            }
-            
-            document.querySelectorAll('.video-item').forEach(el => el.classList.remove('selected'));
-            if (targetPeerId) {
-                const el = document.getElementById('video_' + targetPeerId);
-                if (el) el.classList.add('selected');
-            }
-        }
+  const base = 'signals/' + key;
+  // сначала слушаем входящие, потом объявляем себя
+  unsubs.push(onChildAdded(ref(db, base + '/msg/' + uid), onMsg));
+  unsubs.push(onChildAdded(ref(db, base + '/peers'), s => {
+    if (s.key === uid) return;
+    names[s.key] = s.val().n;
+    if (uid > s.key) call(s.key);           // звонит тот, у кого uid больше — исключает встречные offer
+  }));
+  unsubs.push(onChildRemoved(ref(db, base + '/peers'), s => closePeer(s.key)));
 
-        function updatePeerCount() {
-            document.getElementById('peerCount').textContent = Object.keys(participants).length;
-        }
+  const mref = ref(db, 'rooms/' + id + '/members/' + uid), pref = ref(db, base + '/peers/' + uid);
+  await set(mref, true); onDisconnect(mref).remove();
+  await set(pref, { n: prof.name || 'Гость' }); onDisconnect(pref).remove();
+}
 
-        window.copyField = function(elementId) {
-            const text = document.getElementById(elementId).textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                setStatus('📋 Скопировано: ' + text, 'ok');
-            }).catch(() => {
-                prompt('Скопируйте:', text);
-            });
-        };
+const send = (to, type, data) => push(ref(db, `signals/${key}/msg/${to}`), { from: uid, type, data: JSON.stringify(data) });
 
-        window.copyLink = function() {
-            const link = location.origin + location.pathname + '?room=' + currentRoomId + '&pass=' + roomPassword;
-            navigator.clipboard.writeText(link).then(() => {
-                setStatus('📋 Ссылка скопирована!', 'ok');
-            }).catch(() => {
-                prompt('Скопируйте ссылку:', link);
-            });
-        };
+function mk(pid) {
+  closePeer(pid, true);
+  const pc = new RTCPeerConnection({ iceServers: ICE }), p = peers[pid] = { pc, q: [] };
+  stream.getTracks().forEach(t => pc.addTrack(t, stream));
+  pc.onicecandidate = e => e.candidate && send(pid, 'ice', e.candidate.toJSON());
+  pc.ontrack = e => tile(pid, e.streams[0], names[pid] || 'Гость');
+  pc.onconnectionstatechange = () => { if (pc.connectionState === 'failed') toast('Не удалось соединиться с ' + (names[pid] || 'участником') + ' (нужен TURN)'); };
+  return p;
+}
+async function call(pid) {
+  const p = mk(pid), o = await p.pc.createOffer();
+  await p.pc.setLocalDescription(o);
+  send(pid, 'offer', { type: o.type, sdp: o.sdp });
+}
+const flush = p => { p.q.splice(0).forEach(c => p.pc.addIceCandidate(c).catch(() => {})); };
 
-        window.toggleVideo = function() {
-            if (!localStream) return;
-            const track = localStream.getVideoTracks()[0];
-            track.enabled = !track.enabled;
-            const btn = document.getElementById('toggleVideo');
-            btn.textContent = track.enabled ? '📹' : '📹';
-            btn.classList.toggle('off');
-        };
+async function onMsg(s) {
+  const m = s.val(); remove(s.ref);
+  const d = JSON.parse(m.data);
+  if (m.type === 'offer') {
+    const p = mk(m.from);
+    await p.pc.setRemoteDescription(d); flush(p);
+    const a = await p.pc.createAnswer(); await p.pc.setLocalDescription(a);
+    send(m.from, 'answer', { type: a.type, sdp: a.sdp });
+  } else if (m.type === 'answer') {
+    const p = peers[m.from]; if (p) { await p.pc.setRemoteDescription(d); flush(p); }
+  } else {
+    const p = peers[m.from]; if (!p) return;
+    p.pc.remoteDescription ? p.pc.addIceCandidate(d).catch(() => {}) : p.q.push(d);
+  }
+}
 
-        window.toggleAudio = function() {
-            if (!localStream) return;
-            const track = localStream.getAudioTracks()[0];
-            track.enabled = !track.enabled;
-            const btn = document.getElementById('toggleAudio');
-            btn.textContent = track.enabled ? '🎤' : '🎤';
-            btn.classList.toggle('off');
-        };
+function tile(id, st, label) {
+  let t = $('t_' + id);
+  if (!t) {
+    t = el('div', 'tile'); t.id = 't_' + id;
+    const v = document.createElement('video'); v.autoplay = true; v.playsInline = true; if (id === 'me') v.muted = true;
+    t.append(v, el('span', '', label)); $('grid').append(t);
+  }
+  t.querySelector('video').srcObject = st;
+}
+function closePeer(pid, keepTile) {
+  const p = peers[pid]; if (p) { p.pc.close(); delete peers[pid]; }
+  if (!keepTile) { const t = $('t_' + pid); if (t) t.remove(); }
+}
 
-        window.leaveRoom = async function() {
-            if (currentRoomId) {
-                await remove(ref(db, `rooms/${currentRoomId}`));
-            }
-            if (peerConnection) {
-                peerConnection.close();
-            }
-            location.reload();
-        };
-
-        // Автозаполнение из URL
-        const params = new URLSearchParams(location.search);
-        if (params.get('room')) document.getElementById('joinRoomId').value = params.get('room');
-        if (params.get('pass')) document.getElementById('joinPassword').value = params.get('pass');
-        
-        setStatus('Готов к работе', 'ok');
-        log('Приложение загружено');
-    </script>
+$('bMic').onclick = e => { const t = stream.getAudioTracks()[0]; t.enabled = !t.enabled; e.target.classList.toggle('off', !t.enabled); };
+$('bCam').onclick = e => { const t = stream.getVideoTracks()[0]; t.enabled = !t.enabled; e.target.classList.toggle('off', !t.enabled); };
+$('bLink').onclick = () => {
+  const l = location.origin + location.pathname + '?room=' + roomId;
+  navigator.clipboard.writeText(l).then(() => toast('Ссылка скопирована (пароль отправьте отдельно)')).catch(() => prompt('Ссылка:', l));
+};
+$('bLeave').onclick = async () => {
+  unsubs.forEach(u => u()); Object.keys(peers).forEach(p => closePeer(p));
+  stream && stream.getTracks().forEach(t => t.stop());
+  const m = (await get(ref(db, 'rooms/' + roomId + '/members'))).val() || {};
+  const last = Object.keys(m).every(k => k === uid);
+  await Promise.all([remove(ref(db, 'rooms/' + roomId + '/members/' + uid)), remove(ref(db, `signals/${key}/peers/${uid}`))]).catch(() => {});
+  if (last) await Promise.all([remove(ref(db, 'rooms/' + roomId)), remove(ref(db, 'signals/' + key))]).catch(() => {});
+  location.href = location.pathname;
+};
+</script>
 </body>
 </html>
