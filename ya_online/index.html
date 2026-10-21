@@ -103,8 +103,11 @@ const db = getDatabase(app), auth = getAuth(app);
 // ===== ВСТАВЬТЕ СЮДА TURN (см. инструкцию). Без него часть пар не соединится =====
 const ICE = [
   { urls: 'stun:stun.l.google.com:19302' },
-  { urls: 'stun:stun1.l.google.com:19302' }
-  // , { urls: 'turn:ХОСТ:443?transport=tcp', username: 'ЛОГИН', credential: 'ПАРОЛЬ' }
+  { urls: 'stun:stun.relay.metered.ca:80' },
+  { urls: 'turn:global.relay.metered.ca:80', username: '16e2f85a0dffceef1b078dc4', credential: 'WBpQdq7pZ+wh09Ub' },
+  { urls: 'turn:global.relay.metered.ca:80?transport=tcp', username: '16e2f85a0dffceef1b078dc4', credential: 'WBpQdq7pZ+wh09Ub' },
+  { urls: 'turn:global.relay.metered.ca:443', username: '16e2f85a0dffceef1b078dc4', credential: 'WBpQdq7pZ+wh09Ub' },
+  { urls: 'turns:global.relay.metered.ca:443?transport=tcp', username: '16e2f85a0dffceef1b078dc4', credential: 'WBpQdq7pZ+wh09Ub' }
 ];
 const MAX = 4;
 
