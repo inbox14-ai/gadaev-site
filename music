@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Кассета — gadaev.pro/music</title>
+<meta name="theme-color" content="#12002b">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#ff2d95;--cy:#00e5ff;--yel:#ffe600;--vio:#7b2cff;--lcd:#a8ff60}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'VT323',monospace;font-size:20px;color:#fff;min-height:100vh;padding:14px 12px 40px;max-width:560px;margin:auto;
+background:repeating-linear-gradient(115deg,transparent 0 38px,#ffffff08 38px 40px),radial-gradient(circle at 15% 0,#7b2cff88,transparent 55%),radial-gradient(circle at 95% 35%,#ff2d9566,transparent 45%),linear-gradient(170deg,#12002b,#001c40);background-attachment:fixed}
+h1{font:16px 'Press Start 2P',monospace;text-align:center;margin:6px 0 14px;line-height:1.5;color:var(--yel);text-shadow:3px 3px 0 var(--pink),6px 6px 0 var(--vio)}
+h1 small{display:block;font-size:9px;color:var(--cy);text-shadow:none;margin-top:4px}
+.deck{background:linear-gradient(#3a3a46,#1b1b24);border:3px solid #000;border-radius:16px;padding:12px;box-shadow:0 0 0 3px var(--pink),0 0 30px #ff2d9588,inset 0 2px 0 #ffffff40}
+.tape{position:relative;height:158px;border-radius:10px;border:3px solid #000;background:linear-gradient(135deg,var(--pink) 0 45%,var(--yel) 45% 55%,var(--cy) 55%)}
+.label{display:flex;gap:8px;align-items:center;background:#fff8d6;color:#111;margin:9px;padding:6px;height:76px;border-radius:5px;border-bottom:4px solid #111;overflow:hidden}
+.label img{width:60px;height:60px;object-fit:cover;border:2px solid #111;background:#ddd;flex:none}
+.label b{display:block;font:11px 'Press Start 2P',monospace;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.label span{display:block;font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.label div{min-width:0}
+.win{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);width:64%;height:46px;background:#0c0c10;border:3px solid #000;border-radius:23px;display:flex;justify-content:space-around;align-items:center}
+.reel{width:34px;height:34px;border-radius:50%;border:3px solid #ddd;background:repeating-conic-gradient(#fff 0 20deg,#222 20deg 60deg)}
+.play .reel{animation:sp 1.1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.lcd{margin:12px 0 8px;background:#12200a;border:3px inset #444;border-radius:6px;padding:6px 10px;color:var(--lcd);text-shadow:0 0 6px var(--lcd);display:flex;justify-content:space-between;gap:10px}
+.lcd #ti{white-space:nowrap;overflow:hidden;flex:1}
+.lcd #ti i{display:inline-block;font-style:normal;padding-left:100%;animation:mq 12s linear infinite}
+@keyframes mq{to{transform:translateX(-100%)}}
+canvas{display:block;width:100%;height:64px;background:#08080e;border:3px inset #444;border-radius:6px}
+input[type=range]{accent-color:var(--pink)}
+#seek{width:100%;margin:8px 0 4px}
+.btns{display:flex;gap:7px;margin-top:6px}
+.b{flex:1;font:15px 'Press Start 2P',monospace;padding:12px 0 9px;color:#111;background:linear-gradient(#e8e8f0,#9a9aa8);border:2px solid #000;border-bottom-width:6px;border-radius:8px;cursor:pointer;min-height:48px}
+.b:active,.b.on{transform:translateY(3px);border-bottom-width:3px}
+.b.go{background:linear-gradient(var(--yel),#ffb300)}
+.b.pk{background:linear-gradient(#ff7cc0,var(--pink))}
+.b.cy{background:linear-gradient(#9ff6ff,var(--cy))}
+.row{display:flex;align-items:center;gap:10px;margin-top:10px}
+.row input{flex:1}
+.eq{display:flex;justify-content:space-around;align-items:flex-end;margin-top:12px;padding:10px 4px 6px;background:#101018;border:2px solid #000;border-radius:8px}
+.eq div{text-align:center;font-size:16px;color:var(--cy)}
+.eq input{writing-mode:vertical-lr;direction:rtl;height:100px;width:28px}
+.pre{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.pre .b{font-size:9px;padding:9px 0 6px;min-height:36px;border-bottom-width:4px}
+form{display:flex;gap:8px;margin:18px 0 8px}
+form input{flex:1;min-width:0;font:22px 'VT323',monospace;padding:8px 10px;border:3px solid #000;border-radius:8px;background:#fff8d6;color:#111;box-shadow:4px 4px 0 var(--cy)}
+form .b{flex:none;padding:0 14px}
+.tabs{display:flex;gap:8px;margin:6px 0}
+.tabs .b{font-size:10px}
+.t{display:flex;align-items:center;gap:10px;padding:8px;margin:7px 0;background:#ffffff14;border:2px solid #ffffff30;border-radius:10px}
+.t.now{border-color:var(--yel);background:#ffe60022}
+.t img{width:52px;height:52px;border-radius:6px;object-fit:cover;background:#333;flex:none;cursor:pointer}
+.t .i{flex:1;min-width:0;cursor:pointer}
+.t .i b{display:block;font-weight:400;font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t .i span{color:var(--cy);font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.t button{font-size:20px;background:#000;color:#fff;border:2px solid var(--pink);border-radius:8px;width:42px;height:42px;cursor:pointer}
+.t button.ok{border-color:var(--lcd)}
+.m{text-align:center;color:#ffffffaa;padding:14px}
+#toast{position:fixed;left:50%;bottom:18px;transform:translate(-50%,80px);background:var(--yel);color:#111;padding:10px 16px;border:3px solid #000;border-radius:8px;transition:.25s;z-index:9}
+#toast.s{transform:translate(-50%,0)}
+:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body class="">
+<h1>GADAEV&nbsp;TAPE<small>музыка на кассете</small></h1>
+
+<section class="deck" id="deck">
+  <div class="tape">
+    <div class="label"><img id="cv" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Crect width='8' height='8' fill='%23ff2d95'/%3E%3Cpath d='M3 2v3.2a1.2 1.2 0 1 0 .8 1.1V3.6L6 3V2z' fill='%23fff'/%3E%3C/svg%3E"><div><b id="lt">Вставь кассету</b><span id="la">найди трек ниже</span></div></div>
+    <div class="win"><i class="reel"></i><i class="reel"></i></div>
+  </div>
+  <div class="lcd"><div id="ti"><i>— нет кассеты —</i></div><div id="tm">0:00</div></div>
+  <canvas id="vz" width="520" height="64"></canvas>
+  <input type="range" id="seek" min="0" max="1000" value="0" aria-label="Перемотка">
+  <div class="btns">
+    <button class="b" id="prev" aria-label="Назад">|◀</button>
+    <button class="b go" id="pp" aria-label="Играть">▶</button>
+    <button class="b" id="stop" aria-label="Стоп">■</button>
+    <button class="b" id="next" aria-label="Вперёд">▶|</button>
+    <button class="b pk" id="save" aria-label="В плейлист">+</button>
+    <button class="b cy" id="shr" aria-label="Поделиться">↗</button>
+  </div>
+  <div class="row"><span>VOL</span><input type="range" id="vol" min="0" max="1" step="0.01" value="0.8" aria-label="Громкость"></div>
+  <div class="eq" id="eq"></div>
+  <div class="pre" id="pre"></div>
+</section>
+
+<form id="f"><input id="q" placeholder="Название или исполнитель" autocomplete="off" aria-label="Поиск"><button class="b go" aria-label="Найти">OK</button></form>
+<div class="tabs"><button class="b on" id="t1">Поиск</button><button class="b" id="t2">Плейлист</button></div>
+<div id="list"></div>
+<div id="toast"></div>
+
+<script>
+// ===== Настройки =====
+const APP='GADAEV_MUSIC';
+const JAMENDO_KEY=''; // необязательно: client_id с devportal.jamendo.com — добавит второй каталог (CC-музыка)
+const DEF_HOST='https://discoveryprovider.audius.co';
+// =====================
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const au=new Audio();au.crossOrigin='anonymous';au.preload='auto';
+let ctx,an,filt=[],HOST,results=[],queue=[],qi=-1,cur=null,tab=1;
+let pl=[];try{pl=JSON.parse(localStorage.getItem('tape_pl')||'[]')}catch(e){}
+const savePL=()=>{try{localStorage.setItem('tape_pl',JSON.stringify(pl))}catch(e){}};
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('s');clearTimeout(toast.k);toast.k=setTimeout(()=>t.classList.remove('s'),2200)};
+const fmt=s=>isFinite(s)?Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'):'0:00';
+const key=id=>location.origin+'/__tape/'+encodeURIComponent(id);
+
+// --- Эквалайзер ---
+const BANDS=[60,230,910,3600,14000],NAMES=['60','230','910','3.6k','14k'];
+const PRE={Плоско:[0,0,0,0,0],Бас:[9,6,0,-1,0],Рок:[5,3,-2,3,5],Поп:[-1,3,5,3,-1],Голос:[-3,0,5,4,-1]};
+$('#eq').innerHTML=BANDS.map((_,i)=>`<div><input type="range" min="-12" max="12" step="1" value="0" data-i="${i}" aria-label="${NAMES[i]} Гц"><br>${NAMES[i]}</div>`).join('');
+const eqv=[...document.querySelectorAll('#eq input')];
+$('#pre').innerHTML=Object.keys(PRE).map(k=>`<button class="b" data-p="${k}">${k}</button>`).join('');
+function setEQ(v){v.forEach((g,i)=>{eqv[i].value=g;if(filt[i])filt[i].gain.value=g})}
+eqv.forEach(e=>e.oninput=()=>{if(filt[e.dataset.i])filt[e.dataset.i].gain.value=+e.value});
+$('#pre').onclick=e=>{const p=e.target.dataset.p;if(p)setEQ(PRE[p])};
+function initAudio(){
+  if(ctx)return;
+  ctx=new(window.AudioContext||window.webkitAudioContext)();
+  let n=ctx.createMediaElementSource(au);
+  filt=BANDS.map((f,i)=>{const b=ctx.createBiquadFilter();b.type=i==0?'lowshelf':i==4?'highshelf':'peaking';b.frequency.value=f;b.Q.value=1;b.gain.value=+eqv[i].value;n.connect(b);n=b;return b});
+  an=ctx.createAnalyser();an.fftSize=128;an.smoothingTimeConstant=.75;n.connect(an);an.connect(ctx.destination);
+}
+
+// --- Визуализатор ---
+const cv=$('#vz'),c2=cv.getContext('2d');
+(function draw(){
+  requestAnimationFrame(draw);
+  c2.fillStyle='#08080e';c2.fillRect(0,0,cv.width,cv.height);
+  const N=26,w=cv.width/N;let d=new Uint8Array(64);
+  if(an&&!au.paused)an.getByteFrequencyData(d);
+  for(let i=0;i<N;i++){
+    const h=d[i+1]/255*cv.height,segs=Math.round(h/6);
+    for(let s=0;s<segs;s++){c2.fillStyle=s>9?'#ff2d95':s>6?'#ffe600':'#00e5ff';c2.fillRect(i*w+2,cv.height-(s+1)*6,w-4,4)}
+  }
+})();
+
+// --- Источники музыки ---
+async function host(){
+  if(HOST)return HOST;
+  try{const j=await(await fetch('https://api.audius.co')).json();HOST=j.data[Math.floor(Math.random()*j.data.length)]}catch(e){HOST=DEF_HOST}
+  return HOST;
+}
+const auT=d=>({id:'au:'+d.id,title:d.title,artist:d.user&&d.user.name,cover:d.artwork&&(d.artwork['480x480']||d.artwork['150x150']),dur:d.duration});
+const jaT=d=>({id:'ja:'+d.id,src:d.audio,title:d.name,artist:d.artist_name,cover:d.image,dur:d.duration});
+const srcOf=t=>t.id.startsWith('au:')?`${HOST||DEF_HOST}/v1/tracks/${t.id.slice(3)}/stream?app_name=${APP}`:t.src;
+async function search(q){
+  $('#list').innerHTML='<p class="m">Ищу на полках…</p>';
+  let out=[];
+  try{const h=await host();const j=await(await fetch(`${h}/v1/tracks/search?query=${encodeURIComponent(q)}&app_name=${APP}&limit=15`)).json();out=j.data.filter(d=>d.is_streamable!==false).map(auT)}catch(e){}
+  if(JAMENDO_KEY){try{const j=await(await fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_KEY}&format=json&limit=15&search=${encodeURIComponent(q)}`)).json();out=out.concat(j.results.map(jaT))}catch(e){}}
+  results=out;tab=1;tabs();render();
+}
+async function byId(id){
+  try{
+    if(id.startsWith('au:')){const h=await host();const j=await(await fetch(`${h}/v1/tracks/${id.slice(3)}?app_name=${APP}`)).json();return auT(j.data)}
+    if(id.startsWith('ja:')&&JAMENDO_KEY){const j=await(await fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_KEY}&format=json&id=${id.slice(3)}`)).json();return jaT(j.results[0])}
+  }catch(e){}
+}
+
+// --- Плеер ---
+async function play(list,i){
+  initAudio();queue=list;qi=i;cur=list[i];
+  await host();
+  let url=srcOf(cur);
+  try{const m=await(await caches.open('tapes')).match(key(cur.id));if(m)url=URL.createObjectURL(await m.blob())}catch(e){}
+  au.src=url;ctx.resume();
+  au.play().catch(()=>toast('Не играет. Попробуй другой трек'));
+  ui();render();
+}
+function ui(){
+  if(!cur)return;
+  $('#lt').textContent=cur.title;$('#la').textContent=cur.artist||'';
+  if(cur.cover)$('#cv').src=cur.cover;
+  $('#ti').innerHTML='<i>'+esc(cur.artist)+' — '+esc(cur.title)+'</i>';
+  document.title=cur.title+' — Кассета';
+}
+const toggle=()=>{if(!cur)return toast('Сначала найди трек');if(!au.src)return play(queue,qi);au.paused?(ctx&&ctx.resume(),au.play()):au.pause()};
+const step=d=>{if(queue.length){play(queue,(qi+d+queue.length)%queue.length)}};
+au.onplay=()=>{$('#deck').classList.add('play');$('#pp').textContent='❚❚'};
+au.onpause=()=>{$('#deck').classList.remove('play');$('#pp').textContent='▶'};
+au.onended=()=>step(1);
+au.onerror=()=>{if(au.src)toast('Трек недоступен')};
+au.ontimeupdate=()=>{$('#tm').textContent=fmt(au.currentTime);if(au.duration)$('#seek').value=au.currentTime/au.duration*1000};
+$('#seek').oninput=e=>{if(au.duration)au.currentTime=e.target.value/1000*au.duration};
+$('#vol').oninput=e=>au.volume=e.target.value;au.volume=.8;
+$('#pp').onclick=toggle;$('#prev').onclick=()=>step(-1);$('#next').onclick=()=>step(1);
+$('#stop').onclick=()=>{au.pause();au.currentTime=0};
+$('#save').onclick=()=>cur&&add(cur);
+$('#shr').onclick=()=>cur&&share(cur);
+
+// --- Плейлист, оффлайн, шеринг ---
+function add(t){if(pl.some(x=>x.id==t.id))return toast('Уже в плейлисте');pl.push({...t,off:0});savePL();toast('Добавлено в плейлист');render()}
+async function offline(t){
+  toast('Записываю на кассету…');
+  try{
+    const r=await fetch(srcOf(t),{mode:'cors'});if(!r.ok)throw 0;
+    await(await caches.open('tapes')).put(key(t.id),r);
+    if(!pl.some(x=>x.id==t.id))pl.push({...t});
+    pl.find(x=>x.id==t.id).off=1;savePL();toast('Сохранено: играет без интернета');render();
+  }catch(e){toast('Не удалось сохранить этот трек')}
+}
+async function share(t){
+  const url=location.origin+location.pathname+'?t='+encodeURIComponent(t.id);
+  try{if(navigator.share)return await navigator.share({title:t.title,text:(t.artist||'')+' — '+t.title,url})}catch(e){return}
+  try{await navigator.clipboard.writeText(url);toast('Ссылка скопирована')}catch(e){prompt('Ссылка:',url)}
+}
+async function del(i){const t=pl[i];try{await(await caches.open('tapes')).delete(key(t.id))}catch(e){}pl.splice(i,1);savePL();render()}
+
+// --- Список ---
+function tabs(){$('#t1').classList.toggle('on',tab==1);$('#t2').classList.toggle('on',tab==2)}
+function render(){
+  const L=tab==1?results:pl;
+  if(!L.length){$('#list').innerHTML=`<p class="m">${tab==1?'Введи название или исполнителя и жми OK':'Плейлист пуст. Жми «+» у трека'}</p>`;return}
+  $('#list').innerHTML=L.map((t,i)=>`<div class="t${cur&&cur.id==t.id?' now':''}"><img data-a="p" data-i="${i}" alt="" src="${esc(t.cover||'')}" onerror="this.style.visibility='hidden'"><div class="i" data-a="p" data-i="${i}"><b>${esc(t.title)}</b><span>${esc(t.artist)} · ${fmt(t.dur)}</span></div>
+  ${tab==1?`<button data-a="a" data-i="${i}" aria-label="В плейлист">+</button>`:`<button data-a="d" data-i="${i}" aria-label="Удалить">×</button>`}
+  <button class="${t.off?'ok':''}" data-a="o" data-i="${i}" aria-label="Сохранить для оффлайна">${t.off?'✔':'⬇'}</button><button data-a="s" data-i="${i}" aria-label="Поделиться">↗</button></div>`).join('');
+}
+$('#list').onclick=e=>{
+  const b=e.target.closest('[data-a]');if(!b)return;
+  const L=tab==1?results:pl,i=+b.dataset.i,a=b.dataset.a;
+  if(a=='p')play(L,i);else if(a=='a')add(L[i]);else if(a=='o')offline(L[i]);else if(a=='s')share(L[i]);else if(a=='d')del(i);
+};
+$('#t1').onclick=()=>{tab=1;tabs();render()};
+$('#t2').onclick=()=>{tab=2;tabs();render()};
+$('#f').onsubmit=e=>{e.preventDefault();const q=$('#q').value.trim();if(q)search(q)};
+
+// --- Открытие по ссылке ?t=... ---
+(async()=>{
+  const id=new URLSearchParams(location.search).get('t');
+  if(id){const t=await byId(id);if(t){results=[t];queue=results;qi=0;cur=t;ui();toast('Жми ▶ — тебе скинули трек')}}
+  render();
+})();
+</script>
+</body>
+</html>
