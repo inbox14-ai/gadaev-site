@@ -123,6 +123,7 @@ function initAudio(){
   ctx=new(window.AudioContext||window.webkitAudioContext)();
   let n=ctx.createMediaElementSource(au);
   filt=BANDS.map((f,i)=>{const b=ctx.createBiquadFilter();b.type=i==0?'lowshelf':i==4?'highshelf':'peaking';b.frequency.value=f;b.Q.value=1;b.gain.value=+eqv[i].value;n.connect(b);n=b;return b});
+  ctx.onstatechange=()=>{if(!au.paused&&ctx.state!=='running')ctx.resume().catch(()=>{})};
   an=ctx.createAnalyser();an.fftSize=128;an.smoothingTimeConstant=.75;n.connect(an);an.connect(ctx.destination);
 }
 
@@ -178,17 +179,30 @@ function ui(){
   if(cur.cover)$('#cv').src=cur.cover;
   $('#ti').innerHTML='<i>'+esc(cur.artist)+' — '+esc(cur.title)+'</i>';
   document.title=cur.title+' — Кассета';
+  if('mediaSession' in navigator)navigator.mediaSession.metadata=new MediaMetadata({title:cur.title,artist:cur.artist||'',album:'GADAEV TAPE',artwork:cur.cover?[{src:cur.cover,sizes:'480x480'}]:[]});
 }
 const toggle=()=>{if(!cur)return toast('Сначала найди трек');if(!au.src)return play(queue,qi);au.paused?(ctx&&ctx.resume(),au.play()):au.pause()};
 const step=d=>{if(queue.length){play(queue,(qi+d+queue.length)%queue.length)}};
-au.onplay=()=>{$('#deck').classList.add('play');$('#pp').textContent='❚❚'};
-au.onpause=()=>{$('#deck').classList.remove('play');$('#pp').textContent='▶'};
+au.onplay=()=>{$('#deck').classList.add('play');$('#pp').textContent='❚❚';if('mediaSession' in navigator)navigator.mediaSession.playbackState='playing'};
+au.onpause=()=>{$('#deck').classList.remove('play');$('#pp').textContent='▶';if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused'};
 au.onended=()=>step(1);
 au.onerror=()=>{if(au.src)toast('Трек недоступен')};
-au.ontimeupdate=()=>{$('#tm').textContent=fmt(au.currentTime);if(au.duration)$('#seek').value=au.currentTime/au.duration*1000};
+au.ontimeupdate=()=>{$('#tm').textContent=fmt(au.currentTime);if(au.duration){$('#seek').value=au.currentTime/au.duration*1000;if('mediaSession' in navigator)try{navigator.mediaSession.setPositionState({duration:au.duration,position:au.currentTime,playbackRate:1})}catch(e){}}};
 $('#seek').oninput=e=>{if(au.duration)au.currentTime=e.target.value/1000*au.duration};
 $('#vol').oninput=e=>au.volume=e.target.value;au.volume=.8;
 $('#pp').onclick=toggle;$('#prev').onclick=()=>step(-1);$('#next').onclick=()=>step(1);
+// Управление с экрана блокировки и из шторки
+if('mediaSession' in navigator){
+  const h=(a,f)=>{try{navigator.mediaSession.setActionHandler(a,f)}catch(e){}};
+  h('play',()=>{ctx&&ctx.resume();au.play()});
+  h('pause',()=>au.pause());
+  h('previoustrack',()=>step(-1));
+  h('nexttrack',()=>step(1));
+  h('seekto',e=>{au.currentTime=e.seekTime});
+  h('seekbackward',()=>{au.currentTime=Math.max(0,au.currentTime-10)});
+  h('seekforward',()=>{au.currentTime+=10});
+}
+document.addEventListener('visibilitychange',()=>{if(ctx&&!au.paused&&ctx.state!=='running')ctx.resume().catch(()=>{})});
 $('#stop').onclick=()=>{au.pause();au.currentTime=0};
 $('#save').onclick=()=>cur&&add(cur);
 $('#shr').onclick=()=>cur&&share(cur);
