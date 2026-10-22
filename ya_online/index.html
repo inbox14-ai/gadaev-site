@@ -51,6 +51,7 @@ svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke
 .bub{max-width:80%;padding:9px 13px;border-radius:18px;background:#2c2c2e;margin:4px 0;width:fit-content;word-break:break-word;-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 .bub.me{background:#0a84ff;margin-left:auto}#tm{max-height:calc(100dvh - 210px);overflow:auto;padding:4px 0}
 #bMus{position:fixed;top:calc(12px + env(safe-area-inset-top));right:14px;background:#1c1c1e}
+.bub .x{opacity:.45;margin-left:10px;font-size:12px;cursor:pointer;-webkit-user-select:none;user-select:none}
 </style>
 </head>
 <body>
@@ -121,6 +122,7 @@ svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke
   <input id="sCity" placeholder="Город" maxlength="40">
   <input id="sCo" placeholder="Страна" maxlength="40">
   <button class="btn" id="sOk">Сохранить</button>
+  <button class="btn g" id="sNt">Включить уведомления</button>
   <button class="btn g" data-close>Закрыть</button>
 </div></div>
 
@@ -128,7 +130,7 @@ svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke
   <button class="bk" id="mBack">‹ Назад</button>
   <h2 id="mH">Сообщения</h2>
   <div id="ml"></div>
-  <div id="th" style="display:none"><div id="tm"></div>
+  <div id="th" style="display:none"><button class="bk" id="tDel" style="color:#ff453a">Удалить переписку</button><div id="tm"></div>
     <div class="row"><input id="tx" maxlength="500" placeholder="Номер, Telegram, сообщение…"><button class="btn" id="tsend" style="flex:none;width:56px">➤</button></div></div>
 </section>
 <div class="modal" id="im"><div class="mc"><h3 id="iT"></h3><button class="btn" id="iOk">Принять</button><button class="btn g" id="iNo">Отклонить</button></div></div>
@@ -242,7 +244,7 @@ function renderCons() {
     const d = el('div', 'card'); d.style.cursor = 'default';
     d.append(el('b', '', (onl[id] ? '🟢 ' : '⚪️ ') + c.n), el('small', '', onl[id] ? 'в сети' : 'не в сети'));
     const r = el('div', 'row'); r.style.marginTop = '10px';
-    const k = el('button', 'btn', 'Позвонить'); k.disabled = !onl[id]; k.style.opacity = onl[id] ? 1 : .4; k.onclick = () => callCon(id);
+    const k = el('button', 'btn', 'Позвонить'); k.textContent = onl[id] ? 'Позвонить' : '📞 Оставить'; k.onclick = () => callCon(id);
     const w = el('button', 'btn g', 'Написать'); w.onclick = () => openThread(id);
     const x = el('button', 'btn g', '✕'); x.style.flex = 'none'; x.style.width = '48px'; x.onclick = () => { delete cons[id]; localStorage.yaCon = JSON.stringify(cons); renderCons(); };
     r.append(k, w, x); d.append(r); box.append(d);
@@ -368,6 +370,7 @@ $('bLeave').onclick = async () => { await leaveRoom(); show('home'); };
 // ---------- сообщения, звонки контактам ----------
 const dm = JSON.parse(localStorage.yaDm || '{}'), onl = {}, watched = {};
 let cur = null, inv = null;
+const seen = new Set();
 const saveDm = () => localStorage.yaDm = JSON.stringify(dm);
 const badge = () => { $('bdg').textContent = Object.values(dm).reduce((n, d) => n + (d.u || 0), 0) || ''; };
 const sendDm = (to, p) => push(ref(db, 'dm/' + to), { from: uid, n: prof.name || 'Гость', t: Date.now(), ...p });
@@ -377,11 +380,14 @@ function startNet() {
   const o = ref(db, 'online/' + uid); set(o, true); onDisconnect(o).remove();
   Object.keys(cons).forEach(watch); Object.keys(dm).forEach(watch); badge();
   onChildAdded(ref(db, 'dm/' + uid), s => {
-    const m = s.val(); remove(s.ref);
-    if (m.type === 'call') { if (Date.now() - m.t > 9e4) return; inv = m; $('iT').textContent = m.n + ' зовёт вас на видеозвонок'; modal('im', true); return; }
+    if (seen.has(s.key)) return; seen.add(s.key);
+    const m = s.val(); remove(s.ref).catch(() => {});
+    if (m.from === uid) return;
+    if (m.type === 'call' && Date.now() - m.t <= 9e4) { inv = m; $('iT').textContent = m.n + ' зовёт вас на видеозвонок'; modal('im', true); notify('Видеозвонок', m.n + ' зовёт вас'); navigator.vibrate && navigator.vibrate([300, 150, 300]); return; }
+    if (m.type === 'call' || m.type === 'missed') m.x = '📞 Пропущенный звонок · ' + new Date(m.t).toLocaleString('ru', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
     watch(m.from);
     const d = dm[m.from] = dm[m.from] || { n: m.n, u: 0, m: [] }; d.n = m.n; d.m.push({ o: 0, x: String(m.x).slice(0, 500), t: m.t });
-    if (!(cur === m.from && $('msg').classList.contains('on'))) { d.u = (d.u || 0) + 1; toast(m.n + ': ' + String(m.x).slice(0, 60)); }
+    if (!(cur === m.from && $('msg').classList.contains('on'))) { d.u = (d.u || 0) + 1; toast(m.n + ': ' + String(m.x).slice(0, 60)); notify(m.n, String(m.x).slice(0, 80)); }
     saveDm(); badge(); if ($('msg').classList.contains('on')) renderMsg();
   });
 }
@@ -390,7 +396,7 @@ function renderMsg() {
   const ml = $('ml'), th = $('th'); ml.textContent = '';
   $('mH').textContent = cur ? dm[cur].n + (onl[cur] ? ' · в сети' : '') : 'Сообщения';
   ml.style.display = cur ? 'none' : ''; th.style.display = cur ? '' : 'none';
-  if (cur) { const tm = $('tm'); tm.textContent = ''; dm[cur].m.forEach(m => tm.append(el('div', 'bub' + (m.o ? ' me' : ''), m.x))); tm.scrollTop = 1e9; return; }
+  if (cur) { const tm = $('tm'); tm.textContent = ''; dm[cur].m.forEach((m, i) => { const b = el('div', 'bub' + (m.o ? ' me' : '')), x = el('span', 'x', '✕'); x.onclick = () => { if (confirm('Удалить сообщение у вас?')) { dm[cur].m.splice(i, 1); saveDm(); renderMsg(); } }; b.append(el('span', '', m.x), x); tm.append(b); }); tm.scrollTop = 1e9; return; }
   const last = id => (dm[id] && dm[id].m.slice(-1)[0]) || null;
   const ids = [...new Set([...Object.keys(dm), ...Object.keys(cons)])].sort((a, b) => ((last(b) || {}).t || 0) - ((last(a) || {}).t || 0));
   if (!ids.length) ml.append(el('p', 'sub', 'Сообщений пока нет. Добавьте человека в контакты и напишите ему.'));
@@ -401,11 +407,17 @@ function renderMsg() {
   });
 }
 $('bMsg').onclick = () => { cur = null; show('msg'); renderMsg(); };
+$('tDel').onclick = () => { if (cur && confirm('Удалить всю переписку у вас?')) { delete dm[cur]; saveDm(); cur = null; badge(); renderMsg(); } };
 $('mBack').onclick = () => { if (cur) { cur = null; renderMsg(); } else show('home'); };
 $('tsend').onclick = () => { const x = $('tx').value.trim(); if (!x || !cur) return; sendDm(cur, { x }); dm[cur].m.push({ o: 1, x, t: Date.now() }); saveDm(); $('tx').value = ''; renderMsg(); };
 $('tx').onkeydown = e => { if (e.key === 'Enter') $('tsend').onclick(); };
 async function callCon(id) {
-  if (!onl[id]) return toast('Контакт не в сети');
+  if (!onl[id]) {
+    if (!confirm('Контакт не в сети. Оставить пропущенный звонок? Он увидит его, когда откроет сайт.')) return;
+    sendDm(id, { type: 'missed' });
+    dm[id] = dm[id] || { n: (cons[id] && cons[id].n) || 'Гость', u: 0, m: [] }; dm[id].m.push({ o: 1, x: '📞 Вы звонили (не в сети)', t: Date.now() }); saveDm();
+    return toast('Пропущенный звонок отправлен');
+  }
   if (roomId && !confirm('Вы в звонке. Выйти из него и позвонить?')) return;
   const rid = Math.random().toString(36).slice(2, 8), pass = Math.random().toString(36).slice(2, 8);
   const meta = { name: 'Звонок: ' + (prof.name || 'Гость'), desc: '', city: '', country: '', locked: true, hidden: true, owner: uid, created: Date.now(), chk: await sha('chk' + rid + pass) };
@@ -456,6 +468,18 @@ function musUpdate() {
 document.addEventListener('pointerdown', () => { started = true; musUpdate(); }, { once: true });
 document.addEventListener('visibilitychange', () => { if (!ac) return; document.hidden ? ac.suspend() : (mOn && !roomId && ac.resume()); });
 $('bMus').onclick = () => { mOn = !mOn; localStorage.yaMus = mOn ? '1' : '0'; $('bMus').classList.toggle('off', !mOn); started = true; musUpdate(); };
+// ---------- уведомления (работают, пока сайт открыт хотя бы в фоне) ----------
+function notify(t, b) {
+  if (!document.hidden) return;
+  document.title = '● ' + t + ' — Я online';
+  if ('Notification' in window && Notification.permission === 'granted') { try { new Notification(t, { body: b, tag: 'yo' }); } catch (e) {} }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) document.title = 'Я online'; });
+$('sNt').onclick = async () => {
+  if (!('Notification' in window)) return toast('Браузер не поддерживает уведомления');
+  const r = await Notification.requestPermission();
+  toast(r === 'granted' ? 'Уведомления включены' : 'Уведомления отключены в браузере');
+};
 </script>
 </body>
 </html>
