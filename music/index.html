@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Кассета — gadaev.pro/music</title>
 <meta name="theme-color" content="#12002b">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Кассета">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
 :root{--pink:#ff2d95;--cy:#00e5ff;--yel:#ffe600;--vio:#7b2cff;--lcd:#a8ff60}
@@ -57,6 +58,10 @@ form .b{flex:none;padding:0 14px}
 .t .i span{color:var(--cy);font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .t button{font-size:20px;background:#000;color:#fff;border:2px solid var(--pink);border-radius:8px;width:42px;height:42px;cursor:pointer}
 .t button.ok{border-color:var(--lcd)}
+.t{position:relative;overflow:hidden}
+.t .more{border:none;background:transparent;width:34px;font-size:28px;line-height:1}
+.act{position:absolute;right:0;top:0;bottom:0;display:flex;align-items:center;gap:7px;padding:0 9px;background:#2a0a4a;border-left:3px solid var(--pink);transform:translateX(100%);visibility:hidden;transition:transform .2s,visibility .2s}
+.t.open .act{transform:none;visibility:visible}
 .m{text-align:center;color:#ffffffaa;padding:14px}
 #toast{position:fixed;left:50%;bottom:18px;transform:translate(-50%,80px);background:var(--yel);color:#111;padding:10px 16px;border:3px solid #000;border-radius:8px;transition:.25s;z-index:9}
 #toast.s{transform:translate(-50%,0)}
@@ -82,9 +87,9 @@ form .b{flex:none;padding:0 14px}
     <button class="b pk" id="save" aria-label="В плейлист">+</button>
     <button class="b cy" id="shr" aria-label="Поделиться">↗</button>
   </div>
-  <div class="row"><button class="b cy" id="mode" style="flex:none;width:64px;padding:0" aria-label="Режим воспроизведения">🔁</button><span>VOL</span><input type="range" id="vol" min="0" max="1" step="0.01" value="0.8" aria-label="Громкость"></div>
-  <div class="eq" id="eq"></div>
-  <div class="pre" id="pre"></div>
+  <div class="row"><button class="b cy" id="mode" aria-label="Режим воспроизведения">🔁</button><button class="b" id="eqb" aria-label="Эквалайзер">EQ</button></div>
+  <div id="eqbox" hidden><div class="eq" id="eq"></div>
+  <div class="pre" id="pre"></div></div>
 </section>
 
 <form id="f"><input id="q" placeholder="Название или исполнитель" autocomplete="off" aria-label="Поиск"><button class="b go" aria-label="Найти">OK</button></form>
@@ -104,7 +109,7 @@ const au=new Audio();au.crossOrigin='anonymous';au.preload='auto';
 let ctx,an,filt=[],HOST,results=[],queue=[],qi=-1,cur=null,tab=1;
 let pl=[];try{pl=JSON.parse(localStorage.getItem('tape_pl')||'[]')}catch(e){}
 const savePL=()=>{try{localStorage.setItem('tape_pl',JSON.stringify(pl))}catch(e){}};
-let mode=0,hist=[],HOSTS=[],errs=0;const blobs=new Map();
+let mode=0,hist=[],HOSTS=[],errs=0,userPaused=false;const blobs=new Map();
 try{mode=+localStorage.getItem('tape_mode')||0}catch(e){}
 async function loadBlobs(){try{const c=await caches.open('tapes');for(const t of pl){if(t.off&&!blobs.has(t.id)){const m=await c.match(key(t.id));if(m)blobs.set(t.id,URL.createObjectURL(await m.blob()))}}}catch(e){}}
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('s');clearTimeout(toast.k);toast.k=setTimeout(()=>t.classList.remove('s'),2200)};
@@ -191,8 +196,9 @@ function ui(){
   $('#ti').innerHTML='<i>'+esc(cur.artist)+' — '+esc(cur.title)+'</i>';
   document.title=cur.title+' — Кассета';
   if('mediaSession' in navigator)navigator.mediaSession.metadata=new MediaMetadata({title:cur.title,artist:cur.artist||'',album:'GADAEV TAPE',artwork:cur.cover?[{src:cur.cover,sizes:'480x480'}]:[]});
+  setupMS();
 }
-const toggle=()=>{if(!cur)return toast('Сначала найди трек');if(!au.src)return play(queue,qi);au.paused?(ctx&&ctx.resume(),au.play()):au.pause()};
+const toggle=()=>{if(!cur)return toast('Сначала найди трек');if(!au.src)return play(queue,qi);au.paused?(ctx&&ctx.resume(),au.play()):(userPaused=true,au.pause())};
 const MICON=['🔁','🔀','🔂'],MNAME=['По порядку','Вперемешку','Повтор одного трека'];
 function nextIdx(){const n=queue.length;if(mode==1&&n>1){let r;do{r=Math.floor(Math.random()*n)}while(r==qi);return r}return(qi+1)%n}
 const step=d=>{
@@ -202,27 +208,31 @@ const step=d=>{
   play(queue,nextIdx());
 };
 function setMode(m,say){mode=m;try{localStorage.setItem('tape_mode',m)}catch(e){}$('#mode').textContent=MICON[m];if(say)toast(MNAME[m])}
-au.onplay=()=>{$('#deck').classList.add('play');$('#pp').textContent='❚❚';if('mediaSession' in navigator)navigator.mediaSession.playbackState='playing'};
+au.onplay=()=>{userPaused=false;$('#deck').classList.add('play');$('#pp').textContent='❚❚';if('mediaSession' in navigator)navigator.mediaSession.playbackState='playing'};
 au.onpause=()=>{$('#deck').classList.remove('play');$('#pp').textContent='▶';if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused'};
 au.onended=()=>{if(mode==2){au.currentTime=0;au.play()}else step(1)};
 au.onerror=()=>{if(!au.src)return;toast('Трек недоступен');if(++errs<3)setTimeout(()=>step(1),800)};
 au.onplaying=()=>{errs=0};
 au.ontimeupdate=()=>{$('#tm').textContent=fmt(au.currentTime)+' / '+fmt(au.duration);if(au.duration){$('#seek').value=au.currentTime/au.duration*1000;if('mediaSession' in navigator)try{navigator.mediaSession.setPositionState({duration:au.duration,position:au.currentTime,playbackRate:1})}catch(e){}}};
 $('#seek').oninput=e=>{if(au.duration)au.currentTime=e.target.value/1000*au.duration};
-$('#vol').oninput=e=>au.volume=e.target.value;au.volume=.8;
+$('#eqb').onclick=()=>{const b=$('#eqbox');b.hidden=!b.hidden;$('#eqb').classList.toggle('on',!b.hidden)};
 $('#pp').onclick=toggle;$('#prev').onclick=()=>step(-1);$('#next').onclick=()=>step(1);
 // Управление с экрана блокировки и из шторки
+function setupMS(){
 if('mediaSession' in navigator){
   const h=(a,f)=>{try{navigator.mediaSession.setActionHandler(a,f)}catch(e){}};
   h('play',()=>{ctx&&ctx.resume();au.play()});
-  h('pause',()=>au.pause());
+  h('pause',()=>{userPaused=true;au.pause()});
   h('previoustrack',()=>step(-1));
   h('nexttrack',()=>step(1));
   h('seekto',e=>{au.currentTime=e.seekTime});
   h('seekbackward',null);h('seekforward',null);
-}
-document.addEventListener('visibilitychange',()=>{if(ctx&&!au.paused&&ctx.state!=='running')ctx.resume().catch(()=>{})});
-$('#stop').onclick=()=>{au.pause();au.currentTime=0};
+}}
+setupMS();
+const wake=()=>{if(!ctx||!cur||userPaused)return;if(ctx.state!=='running')ctx.resume().catch(()=>{});if(au.paused&&!au.ended&&au.src)au.play().catch(()=>{})};
+document.addEventListener('visibilitychange',()=>{if(ctx&&!au.paused&&ctx.state!=='running')ctx.resume().catch(()=>{});if(!document.hidden)wake()});
+addEventListener('pageshow',wake);addEventListener('focus',wake);
+$('#stop').onclick=()=>{userPaused=true;au.pause();au.currentTime=0};
 $('#save').onclick=()=>cur&&add(cur);
 $('#shr').onclick=()=>cur&&share(cur);
 $('#mode').onclick=()=>setMode((mode+1)%3,1);setMode(mode,0);
@@ -250,16 +260,19 @@ async function del(i){const t=pl[i];if(blobs.has(t.id)){URL.revokeObjectURL(blob
 function tabs(){$('#t1').classList.toggle('on',tab==1);$('#t2').classList.toggle('on',tab==2)}
 function render(){
   const L=tab==1?results:pl;
-  if(!L.length){$('#list').innerHTML=`<p class="m">${tab==1?'Введи название или исполнителя и жми OK':'Плейлист пуст. Жми «+» у трека'}</p>`;return}
-  $('#list').innerHTML=L.map((t,i)=>`<div class="t${cur&&cur.id==t.id?' now':''}"><img data-a="p" data-i="${i}" alt="" src="${esc(t.cover||'')}" onerror="this.style.visibility='hidden'"><div class="i" data-a="p" data-i="${i}"><b>${esc(t.title)}</b><span>${esc(t.artist)} · ${fmt(t.dur)}${t.from?' · '+esc(t.from):''}</span></div>
-  ${tab==1?`<button data-a="a" data-i="${i}" aria-label="В плейлист">+</button>`:`<button data-a="d" data-i="${i}" aria-label="Удалить">×</button>`}
-  <button class="${t.off?'ok':''}" data-a="o" data-i="${i}" aria-label="Сохранить для оффлайна">${t.off?'✔':'⬇'}</button><button data-a="s" data-i="${i}" aria-label="Поделиться">↗</button></div>`).join('');
+  if(!L.length){$('#list').innerHTML=`<p class="m">${tab==1?'Введи название или исполнителя и жми OK':'Плейлист пуст. Жми «⋮» → «+» у трека'}</p>`;return}
+  $('#list').innerHTML=L.map((t,i)=>`<div class="t${cur&&cur.id==t.id?' now':''}"><img data-a="p" data-i="${i}" alt="" src="${esc(t.cover||'')}" onerror="this.style.visibility='hidden'"><div class="i" data-a="p" data-i="${i}"><b>${esc(t.title)}</b><span>${esc(t.artist)} · ${fmt(t.dur)}${t.from?' · '+esc(t.from):''}</span></div><button class="more" data-a="m" aria-label="Действия">⋮</button><div class="act">${tab==1?`<button data-a="a" data-i="${i}" aria-label="В плейлист">+</button>`:`<button data-a="d" data-i="${i}" aria-label="Удалить">×</button>`}<button class="${t.off?'ok':''}" data-a="o" data-i="${i}" aria-label="Сохранить для оффлайна">${t.off?'✔':'⬇'}</button><button data-a="s" data-i="${i}" aria-label="Поделиться">↗</button><button data-a="x" aria-label="Закрыть">✕</button></div></div>`).join('');
 }
 $('#list').onclick=e=>{
   const b=e.target.closest('[data-a]');if(!b)return;
-  const L=tab==1?results:pl,i=+b.dataset.i,a=b.dataset.a;
+  const a=b.dataset.a,row=b.closest('.t');
+  if(a=='m'){const o=row.classList.contains('open');document.querySelectorAll('.t.open').forEach(r=>r.classList.remove('open'));if(!o)row.classList.add('open');return}
+  if(a=='x'){row.classList.remove('open');return}
+  const L=tab==1?results:pl,i=+b.dataset.i;
   if(a=='p')play(L,i);else if(a=='a')add(L[i]);else if(a=='o')offline(L[i]);else if(a=='s')share(L[i]);else if(a=='d')del(i);
+  row.classList.remove('open');
 };
+document.addEventListener('click',e=>{if(!e.target.closest('.t.open'))document.querySelectorAll('.t.open').forEach(r=>r.classList.remove('open'))});
 $('#fi').onchange=async e=>{
   let n=0;
   try{
