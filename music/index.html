@@ -63,6 +63,7 @@ form .b{flex:none;padding:0 14px}
 .act{position:absolute;right:0;top:0;bottom:0;display:flex;align-items:center;gap:7px;padding:0 9px;background:#2a0a4a;border-left:3px solid var(--pink);transform:translateX(100%);visibility:hidden;transition:transform .2s,visibility .2s}
 .t.open .act{transform:none;visibility:visible}
 .eq input:disabled{opacity:.35}
+.t .i small{display:block;font-size:15px;color:var(--yel);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .t{transition:transform .15s;-webkit-user-select:none;user-select:none}
 .t img{-webkit-touch-callout:none;-webkit-user-drag:none}
 .t.drag{transition:none;z-index:5;box-shadow:0 0 0 3px var(--yel),0 8px 24px #000a;background:#4a1a7a}
@@ -104,7 +105,7 @@ form .b{flex:none;padding:0 14px}
 <script>
 // ===== Настройки =====
 const APP='GADAEV_MUSIC';
-const JAMENDO_KEY=''; // необязательно: client_id с devportal.jamendo.com — добавит второй каталог (CC-музыка)
+const JAMENDO_KEY='6683c7da'; // необязательно: client_id с devportal.jamendo.com — добавит второй каталог (CC-музыка)
 const DEF_HOST='https://discoveryprovider.audius.co';
 // =====================
 const $=s=>document.querySelector(s);
@@ -161,28 +162,61 @@ async function host(){
   try{const j=await(await fetch('https://api.audius.co')).json();HOSTS=j.data;HOST=HOSTS[Math.floor(Math.random()*HOSTS.length)]}catch(e){HOST=DEF_HOST}
   return HOST;
 }
-const auT=d=>({from:'Audius',id:'au:'+d.id,title:d.title,artist:d.user&&d.user.name,cover:d.artwork&&(d.artwork['480x480']||d.artwork['150x150']),dur:d.duration});
-const jaT=d=>({from:'Jamendo',id:'ja:'+d.id,src:d.audio,title:d.name,artist:d.artist_name,cover:d.image,dur:d.duration});
+const ccName=u=>{const m=/creativecommons\.org\/(licenses|publicdomain)\/([a-z0-9-]+)/i.exec(u||'');return m?(m[2]=='zero'?'CC0':m[2]=='mark'?'Public Domain':'CC '+m[2].toUpperCase()):''};
+const norm=x=>String(x||'').toLowerCase().replace(/ё/g,'е').replace(/[^a-zа-я0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
+const auT=d=>({from:'Audius',pop:(d.play_count||0)+3*(d.favorite_count||0),lic:typeof d.license==='string'?d.license:'',id:'au:'+d.id,title:d.title,artist:d.user&&d.user.name,cover:d.artwork&&(d.artwork['480x480']||d.artwork['150x150']),dur:d.duration});
+const jaT=d=>({from:'Jamendo',lic:ccName(d.license_ccurl),id:'ja:'+d.id,src:d.audio,title:d.name,artist:d.artist_name,cover:d.image,dur:d.duration});
 const srcOf=t=>t.id.startsWith('au:')?`${HOST||DEF_HOST}/v1/tracks/${t.id.slice(3)}/stream?app_name=${APP}`:t.src;
-const iaT=async id=>{try{
+const iaT=async(id,pop)=>{try{
   const j=await(await fetch('https://archive.org/metadata/'+encodeURIComponent(id))).json();
   const f=(j.files||[]).find(x=>/MP3/i.test(x.format||''));if(!f)return;
   const m=j.metadata||{},one=v=>[].concat(v||[])[0];
-  return{from:'Archive',id:'ia:'+id,src:'https://archive.org/download/'+encodeURIComponent(id)+'/'+f.name.split('/').map(encodeURIComponent).join('/'),title:one(m.title)||id,artist:one(m.creator)||'Internet Archive',cover:'https://archive.org/services/img/'+encodeURIComponent(id),dur:parseFloat(f.length)||0};
+  return{from:'Archive',pop:pop||0,lic:ccName(m.licenseurl),id:'ia:'+id,src:'https://archive.org/download/'+encodeURIComponent(id)+'/'+f.name.split('/').map(encodeURIComponent).join('/'),title:one(m.title)||id,artist:one(m.creator)||'Internet Archive',cover:'https://archive.org/services/img/'+encodeURIComponent(id),dur:parseFloat(f.length)||0};
 }catch(e){}};
+const strip=h=>String(h||'').replace(/<[^>]*>/g,'').trim();
+const WCQ='https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=url|mime|extmetadata&';
+const wcT=p=>{const ii=(p&&p.imageinfo||[])[0];if(!ii||!ii.mime||!au.canPlayType(ii.mime))return;const e=ii.extmetadata||{},v=k=>e[k]&&strip(e[k].value);
+  return{from:'Wikimedia Commons',id:'wc:'+p.pageid,src:ii.url,title:v('ObjectName')||p.title.replace(/^File:/,'').replace(/\.[^.]+$/,'').replace(/_/g,' '),artist:v('Artist')||'Wikimedia Commons',cover:'',dur:0,lic:v('LicenseShortName')||''}};
+const srcWc=async q=>{try{const j=await(await fetch(WCQ+'generator=search&gsrnamespace=6&gsrlimit=15&gsrsearch='+encodeURIComponent('filetype:audio '+q))).json();return Object.values((j.query&&j.query.pages)||{}).map(wcT).filter(Boolean)}catch(e){return[]}};
+const ovT=d=>{const L=String(d.license||'').toLowerCase();return{from:'Openverse'+(d.provider?' · '+d.provider:''),id:'ov:'+d.id,src:String(d.url||'').replace(/^http:/,'https:'),title:d.title,artist:d.creator||'',cover:d.thumbnail||'',dur:(d.duration||0)/1000,lic:L=='cc0'?'CC0':L=='pdm'?'Public Domain':L?'CC '+L.toUpperCase()+(d.license_version?' '+d.license_version:''):''}};
+const srcOv=async q=>{try{const j=await(await fetch('https://api.openverse.org/v1/audio/?category=music&page_size=15&q='+encodeURIComponent(q))).json();return(j.results||[]).filter(d=>d.url).map(ovT)}catch(e){return[]}};
+const itT=d=>({from:'Apple Music',id:'it:'+d.trackId,src:d.previewUrl,title:d.trackName,artist:d.artistName,cover:(d.artworkUrl100||'').replace('100x100','300x300'),dur:30,prev:1,lic:'официальное превью'});
+const srcAu=async q=>{await host();for(const h of[...new Set([HOST,...HOSTS,DEF_HOST])].slice(0,4)){try{const j=await(await fetch(`${h}/v1/tracks/search?query=${encodeURIComponent(q)}&app_name=${APP}&limit=25`)).json();HOST=h;return j.data.filter(d=>d.is_streamable!==false).map(auT)}catch(e){}}return[]};
+const srcJa=async q=>{if(!JAMENDO_KEY)return[];try{const j=await(await fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_KEY}&format=json&limit=25&search=${encodeURIComponent(q)}`)).json();return j.results.map(jaT)}catch(e){return[]}};
+const srcIa=async q=>{try{const r=await(await fetch('https://archive.org/advancedsearch.php?q='+encodeURIComponent('('+q+') AND mediatype:audio')+'&fl[]=identifier&fl[]=downloads&rows=8&output=json')).json();return(await Promise.all(r.response.docs.map(d=>iaT(d.identifier,d.downloads)))).filter(Boolean)}catch(e){return[]}};
+const srcIt=async q=>{const one=async c=>{try{const j=await(await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&entity=song&limit=25&country=${c}`)).json();return j.results||[]}catch(e){return[]}};
+  const [x,y]=await Promise.all([one('RU'),one('US')]);return[...x,...y].filter(d=>d.previewUrl).map(itT)};
+// Оригиналы выше, ремиксы/каверы/версии ниже
+const SEP='(^|[^a-zа-яё0-9])',END='(?=$|[^a-zа-яё0-9])';
+const STRONG=new RegExp(SEP+'(remix|rmx|bootleg|mashup|cover|slowed|reverb|sped up|speed up|speedup|nightcore|8d|bass boosted|bass boost|ремикс|кавер)'+END,'i');
+const MILD=new RegExp(SEP+'(edit|flip|rework|vip|instrumental|karaoke|acoustic|live|минус|инструментал)'+END,'i');
+function rank(list,q){
+  const nq=norm(q),w=nq.split(' ').filter(Boolean),wantV=STRONG.test(q)||MILD.test(q),seen=new Set();
+  list.forEach(t=>{
+    const ti=norm(t.title),ar=norm(t.artist),all=ar+' '+ti;let sc=0;
+    if(ti===nq||all===nq||ti+' '+ar===nq)sc+=100;else if(ti.startsWith(nq)||all.startsWith(nq))sc+=60;
+    const hit=w.filter(x=>all.includes(x)).length;sc+=40*hit/(w.length||1);if(w.length>1&&hit<w.length)sc-=40;
+    if(w.some(x=>ar.includes(x))&&w.some(x=>ti.includes(x)))sc+=15;
+    sc+=Math.min(15,Math.log10(1+(t.pop||0))*3);
+    if(!t.prev)sc+=8;if(t.from==='Archive')sc-=12;
+    t.sc=sc;t.v=!wantV&&(STRONG.test(t.title)||MILD.test(t.title))?1:0;
+  });
+  return list.sort((a,b)=>a.v-b.v||b.sc-a.sc).filter(t=>{const k=norm(t.artist)+'|'+norm(t.title);if(seen.has(k))return false;seen.add(k);return true}).slice(0,60);
+}
 async function search(q){
   if(!navigator.onLine){toast('Нет интернета. Играют сохранённые треки (⬇)');tab=2;tabs();render();return}
-  $('#list').innerHTML='<p class="m">Ищу на полках…</p>';
-  let out=[];
-  await host();for(const h of[...new Set([HOST,...HOSTS,DEF_HOST])].slice(0,4)){try{const j=await(await fetch(`${h}/v1/tracks/search?query=${encodeURIComponent(q)}&app_name=${APP}&limit=15`)).json();out=j.data.filter(d=>d.is_streamable!==false).map(auT);HOST=h;break}catch(e){}}
-  if(JAMENDO_KEY){try{const j=await(await fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_KEY}&format=json&limit=15&search=${encodeURIComponent(q)}`)).json();out=out.concat(j.results.map(jaT))}catch(e){}}
-  try{const r=await(await fetch('https://archive.org/advancedsearch.php?q='+encodeURIComponent('('+q+') AND mediatype:audio')+'&fl[]=identifier&rows=8&output=json')).json();
-    out=out.concat((await Promise.all(r.response.docs.map(d=>iaT(d.identifier)))).filter(Boolean))}catch(e){}
-  results=out;tab=1;tabs();render();if(!out.length)toast('Ничего не найдено или каталог недоступен');
+  $('#list').innerHTML='<p class="m">Ищу во всех каталогах…</p>';
+  const parts=await Promise.all([srcAu(q),srcJa(q),srcIa(q),srcIt(q),srcWc(q),srcOv(q)]);
+  const out=rank(parts.flat(),q);
+  results=out;tab=1;tabs();render();
+  if(!out.length)toast('Ничего не найдено или каталоги недоступны');
 }
 async function byId(id){
   try{
     if(id.startsWith('ia:'))return await iaT(id.slice(3));
+    if(id.startsWith('wc:')){const j=await(await fetch(WCQ+'pageids='+id.slice(3))).json();return wcT(Object.values(j.query.pages)[0])}
+    if(id.startsWith('ov:')){return ovT(await(await fetch('https://api.openverse.org/v1/audio/'+id.slice(3)+'/')).json())}
+    if(id.startsWith('it:')){const j=await(await fetch('https://itunes.apple.com/lookup?id='+id.slice(3))).json();return j.results[0]&&itT(j.results[0])}
     if(id.startsWith('au:')){const h=await host();const j=await(await fetch(`${h}/v1/tracks/${id.slice(3)}?app_name=${APP}`)).json();return auT(j.data)}
     if(id.startsWith('ja:')&&JAMENDO_KEY){const j=await(await fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_KEY}&format=json&id=${id.slice(3)}`)).json();return jaT(j.results[0])}
   }catch(e){}
@@ -251,7 +285,8 @@ if('mediaSession' in navigator){
   h('previoustrack',()=>step(-1));
   h('nexttrack',()=>step(1));
   h('seekto',e=>{if(!isFinite(au.duration)||!au.duration)return;au.currentTime=Math.max(0,Math.min(e.seekTime,au.duration-.3));posState(1)});
-  h('seekbackward',null);h('seekforward',null);
+  h('seekbackward',e=>{au.currentTime=Math.max(0,au.currentTime-(e.seekOffset||10));posState(1)});
+  h('seekforward',e=>{if(isFinite(au.duration))au.currentTime=Math.min(au.duration-.3,au.currentTime+(e.seekOffset||10));posState(1)});
 }}
 setupMS();
 const wake=()=>{if(!cur||userPaused)return;if(au.paused&&!au.ended&&au.src)resumePlay();else if(ctx&&ctx.state!=='running')ctx.resume().catch(()=>{})};
@@ -266,6 +301,7 @@ $('#mode').onclick=()=>setMode((mode+1)%3,1);setMode(mode,0);
 // --- Плейлист, оффлайн, шеринг ---
 function add(t){if(pl.some(x=>x.id==t.id))return toast('Уже в плейлисте');pl.push({...t,off:0});savePL();toast('Добавлено в плейлист');render()}
 async function offline(t){
+  if(t.prev)return toast('Превью не сохраняется. Полная версия по ссылке 🔗');
   toast('Записываю на кассету…');
   try{
     const r=await fetch(srcOf(t),{mode:'cors'});if(!r.ok)throw 0;
@@ -287,7 +323,7 @@ function tabs(){$('#t1').classList.toggle('on',tab==1);$('#t2').classList.toggle
 function render(){
   const L=tab==1?results:pl;
   if(!L.length){$('#list').innerHTML=`<p class="m">${tab==1?'Введи название или исполнителя и жми OK':'Плейлист пуст. Жми «⋮» → «+» у трека'}</p>`;return}
-  $('#list').innerHTML=L.map((t,i)=>`<div class="t${cur&&cur.id==t.id?' now':''}"><img data-a="p" data-i="${i}" alt="" src="${esc(t.cover||'')}" onerror="this.style.visibility='hidden'"><div class="i" data-a="p" data-i="${i}"><b>${esc(t.title)}</b><span>${esc(t.artist)} · ${fmt(t.dur)}${t.from?' · '+esc(t.from):''}</span></div><button class="more" data-a="m" aria-label="Действия">⋮</button><div class="act">${tab==1?`<button data-a="a" data-i="${i}" aria-label="В плейлист">+</button>`:`<button data-a="d" data-i="${i}" aria-label="Удалить">×</button>`}<button class="${t.off?'ok':''}" data-a="o" data-i="${i}" aria-label="Сохранить для оффлайна">${t.off?'✔':'⬇'}</button><button data-a="s" data-i="${i}" aria-label="Поделиться">↗</button><button data-a="x" aria-label="Закрыть">✕</button></div></div>`).join('');
+  $('#list').innerHTML=L.map((t,i)=>`${tab==1&&t.v&&(i==0||!L[i-1].v)?'<p class="m" style="padding:8px">— Ремиксы и другие версии —</p>':''}<div class="t${cur&&cur.id==t.id?' now':''}"><img data-a="p" data-i="${i}" alt="" src="${esc(t.cover||'')}" onerror="this.style.visibility='hidden'"><div class="i" data-a="p" data-i="${i}"><b>${esc(t.title)}</b><span>${esc(t.artist)}${t.dur?' · '+fmt(t.dur):''}</span><small>${esc(t.from||'')}${t.lic?' · '+esc(t.lic):''}${t.prev?' · превью 30 сек':''}</small></div><button class="more" data-a="m" aria-label="Действия">⋮</button><div class="act">${tab==1?`<button data-a="a" data-i="${i}" aria-label="В плейлист">+</button>`:`<button data-a="d" data-i="${i}" aria-label="Удалить">×</button>`}${t.prev?`<button data-a="l" data-i="${i}" aria-label="Слушать полностью">🔗</button>`:`<button class="${t.off?'ok':''}" data-a="o" data-i="${i}" aria-label="Сохранить для оффлайна">${t.off?'✔':'⬇'}</button>`}<button data-a="s" data-i="${i}" aria-label="Поделиться">↗</button><button data-a="x" aria-label="Закрыть">✕</button></div></div>`).join('');
 }
 $('#list').onclick=e=>{
   if(Date.now()<noClick)return;
@@ -296,7 +332,7 @@ $('#list').onclick=e=>{
   if(a=='m'){const o=row.classList.contains('open');document.querySelectorAll('.t.open').forEach(r=>r.classList.remove('open'));if(!o)row.classList.add('open');return}
   if(a=='x'){row.classList.remove('open');return}
   const L=tab==1?results:pl,i=+b.dataset.i;
-  if(a=='p')play(L,i);else if(a=='a')add(L[i]);else if(a=='o')offline(L[i]);else if(a=='s')share(L[i]);else if(a=='d')del(i);
+  if(a=='p')play(L,i);else if(a=='a')add(L[i]);else if(a=='o')offline(L[i]);else if(a=='s')share(L[i]);else if(a=='d')del(i);else if(a=='l')window.open('https://music.yandex.ru/search?text='+encodeURIComponent(L[i].artist+' '+L[i].title),'_blank');
   row.classList.remove('open');
 };
 document.addEventListener('click',e=>{if(!e.target.closest('.t.open'))document.querySelectorAll('.t.open').forEach(r=>r.classList.remove('open'))});
