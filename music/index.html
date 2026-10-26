@@ -65,6 +65,9 @@ form .b{flex:none;padding:0 14px}
 .t.open .act{transform:none;visibility:visible}
 .eq input:disabled{opacity:.35}
 .lk{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.chs{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
+.ch{font:20px 'VT323',monospace;color:#fff;background:#ffffff1c;border:2px solid var(--pink);border-radius:20px;padding:6px 12px;cursor:pointer}
+.m.h{text-align:left;padding:6px 0 2px;color:var(--yel)}
 .lk a{flex:1;min-width:44%;text-align:center;text-decoration:none;color:#111;font-size:20px;padding:10px 6px;background:linear-gradient(#9ff6ff,var(--cy));border:2px solid #000;border-bottom-width:5px;border-radius:8px}
 .t .i small{display:block;font-size:15px;color:var(--yel);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .t{transition:transform .15s;-webkit-user-select:none;user-select:none}
@@ -100,7 +103,7 @@ form .b{flex:none;padding:0 14px}
   <div class="pre" id="pre"></div></div>
 </section>
 
-<form id="f"><input id="q" placeholder="Название или исполнитель" autocomplete="off" aria-label="Поиск"><button class="b go" aria-label="Найти">OK</button></form>
+<form id="f"><input id="q" list="dl" placeholder="Название или исполнитель" autocomplete="off" aria-label="Поиск"><datalist id="dl"></datalist><button class="b go" aria-label="Найти">OK</button></form>
 <div class="tabs"><button class="b on" id="t1">Поиск</button><button class="b" id="t2">Плейлист</button><label class="b pk" for="fi" style="display:block;text-align:center;font-size:10px;line-height:2.2;cursor:pointer">+ Мой файл</label><input type="file" id="fi" accept="audio/*" multiple hidden></div>
 <div id="list"></div>
 <div id="toast"></div>
@@ -119,6 +122,7 @@ let ctx,an,filt=[],HOST,results=[],queue=[],qi=-1,cur=null,tab=1;
 let pl=[];try{pl=JSON.parse(localStorage.getItem('tape_pl')||'[]')}catch(e){}
 const savePL=()=>{try{localStorage.setItem('tape_pl',JSON.stringify(pl))}catch(e){}};
 let mode=0,hist=[],HOSTS=[],errs=0,userPaused=false,dr=null,noClick=0,lastPS=0,lastSave=0,pendingPos=0,lastQ='';const blobs=new Map();
+let qh=[],chartsC=[];try{qh=JSON.parse(localStorage.getItem('tape_q')||'[]')}catch(e){}
 try{mode=+localStorage.getItem('tape_mode')||0}catch(e){}
 async function loadBlobs(){try{const c=await caches.open('tapes');for(const t of pl){if(t.off&&!blobs.has(t.id)){const m=await c.match(key(t.id));if(m)blobs.set(t.id,URL.createObjectURL(await m.blob()))}}}catch(e){}}
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('s');clearTimeout(toast.k);toast.k=setTimeout(()=>t.classList.remove('s'),2200)};
@@ -193,26 +197,64 @@ const srcIt=async q=>{const one=async c=>{try{const j=await(await fetch(`https:/
 const SEP='(^|[^a-zа-яё0-9])',END='(?=$|[^a-zа-яё0-9])';
 const STRONG=new RegExp(SEP+'(remix|rmx|bootleg|mashup|cover|slowed|reverb|sped up|speed up|speedup|nightcore|8d|bass boosted|bass boost|ремикс|кавер)'+END,'i');
 const MILD=new RegExp(SEP+'(edit|flip|rework|vip|instrumental|karaoke|acoustic|live|минус|инструментал)'+END,'i');
-function rank(list,q){
-  const nq=norm(q),w=nq.split(' ').filter(Boolean),wantV=STRONG.test(q)||MILD.test(q),seen=new Set();
+function rank(list,qs){
+  qs=[].concat(qs);const wantV=qs.some(q=>STRONG.test(q)||MILD.test(q)),seen=new Set();
+  const nqs=qs.map(q=>{const n=norm(q);return{n,w:n.split(' ').filter(Boolean)}});
   list.forEach(t=>{
-    const ti=norm(t.title),ar=norm(t.artist),all=ar+' '+ti;let sc=0;
-    if(ti===nq||all===nq||ti+' '+ar===nq)sc+=100;else if(ti.startsWith(nq)||all.startsWith(nq))sc+=60;
-    const hit=w.filter(x=>all.includes(x)).length;sc+=40*hit/(w.length||1);if(w.length>1&&hit<w.length)sc-=40;
-    if(w.some(x=>ar.includes(x))&&w.some(x=>ti.includes(x)))sc+=15;
-    sc+=Math.min(15,Math.log10(1+(t.pop||0))*3);
+    const ti=norm(t.title),ar=norm(t.artist),all=ar+' '+ti;let best=-1e9;
+    nqs.forEach(({n,w})=>{let sc=0;
+      if(ti===n||all===n||ti+' '+ar===n)sc+=100;else if(n&&(ti.startsWith(n)||all.startsWith(n)))sc+=60;
+      const hit=w.filter(x=>all.includes(x)).length;sc+=40*hit/(w.length||1);if(w.length>1&&hit<w.length)sc-=40;
+      if(w.some(x=>ar.includes(x))&&w.some(x=>ti.includes(x)))sc+=15;
+      best=Math.max(best,sc)});
+    let sc=best+Math.min(15,Math.log10(1+(t.pop||0))*3);
     if(!t.prev)sc+=8;if(t.from==='Archive')sc-=12;
     t.sc=sc;t.v=!wantV&&(STRONG.test(t.title)||MILD.test(t.title))?1:0;
   });
   return list.sort((a,b)=>a.v-b.v||b.sc-a.sc).filter(t=>{const k=norm(t.artist)+'|'+norm(t.title);if(seen.has(k))return false;seen.add(k);return true}).slice(0,60);
 }
+// Умный поиск: кириллица -> латиница и исправление неверной раскладки
+const RUEN={а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'e',ж:'zh',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'kh',ц:'ts',ч:'ch',ш:'sh',щ:'sch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya'};
+const hasRu=x=>/[а-яё]/i.test(x);
+const translit=x=>x.toLowerCase().replace(/[а-яё]/g,c=>RUEN[c]??c);
+const L_EN="qwertyuiop[]asdfghjkl;'zxcvbnm,.`",L_RU="йцукенгшщзхъфывапролджэячсмитьбюё";
+const swap=x=>[...x].map(c=>{const l=c.toLowerCase();let i=L_EN.indexOf(l);if(i>=0){const r=L_RU[i];return c===l?r:r.toUpperCase()}i=L_RU.indexOf(l);if(i>=0){const r=L_EN[i];return c===l?r:r.toUpperCase()}return c}).join('');
+async function runAll(qs){
+  const jobs=[];qs.forEach(x=>jobs.push(srcAu(x),srcJa(x),srcIa(x),srcIt(x)));jobs.push(srcWc(qs[0]),srcOv(qs[0]));
+  return(await Promise.all(jobs)).flat();
+}
+function remember(q){qh=[q,...qh.filter(x=>x!==q)].slice(0,12);try{localStorage.setItem('tape_q',JSON.stringify(qh))}catch(e){}fillDL()}
+function fillDL(){const d=$('#dl');if(d)d.innerHTML=qh.map(x=>`<option value="${esc(x)}">`).join('')}
 async function search(q){
   if(!navigator.onLine){toast('Нет интернета. Играют сохранённые треки (⬇)');tab=2;tabs();render();return}
-  lastQ=q;$('#list').innerHTML='<p class="m">Ищу во всех каталогах…</p>';
-  const parts=await Promise.all([srcAu(q),srcJa(q),srcIa(q),srcIt(q),srcWc(q),srcOv(q)]);
-  const out=rank(parts.flat(),q);
+  lastQ=q;remember(q);$('#list').innerHTML='<p class="m">Ищу во всех каталогах…</p>';
+  let qs=[q];if(hasRu(q))qs.push(translit(q));
+  let out=rank(await runAll(qs),qs);
+  if(out.length<6){ // мало найдено: пробуем исправить раскладку
+    const sw=swap(q);
+    if(sw!==q){const q2=[sw];if(hasRu(sw))q2.push(translit(sw));qs=qs.concat(q2);out=rank(out.concat(await runAll(q2)),qs)}
+  }
   results=out;tab=1;tabs();render();
   if(!out.length)toast('Ничего не найдено или каталоги недоступны');
+}
+// Подборки по настроению и жанру (самое популярное за неделю)
+const MOODS=[['⚡ Бодрое',{g:'Electronic',t:'energetic',q:'dance hits'}],['🌙 Спокойное',{g:'Ambient',t:'relaxing',q:'chill'}],['💧 Грустное',{g:'Alternative',t:'melancholic',q:'sad songs'}],['🏋 Для спорта',{g:'Hip-Hop/Rap',t:'energetic',q:'workout'}],['💻 Для работы',{g:'Lo-Fi',t:'focus',q:'focus music'}],['🎸 Рок',{g:'Rock',t:'rock',q:'rock hits'}],['🎤 Рэп',{g:'Hip-Hop/Rap',t:'hiphop',q:'русский рэп'}],['✨ Поп',{g:'Pop',t:'pop',q:'pop hits'}],['🎷 Джаз',{g:'Jazz',t:'jazz',q:'jazz classics'}],['🎻 Классика',{g:'Classical',t:'classical',q:'classical music'}],['🌿 Инди',{g:'Alternative',t:'indie',q:'indie'}]];
+async function explore(i){
+  const c=MOODS[i][1];lastQ='';
+  $('#list').innerHTML='<p class="m">Собираю подборку…</p>';
+  const A=(async()=>{await host();try{const j=await(await fetch(`${HOST}/v1/tracks/trending?genre=${encodeURIComponent(c.g)}&time=week&limit=25&app_name=${APP}`)).json();return j.data.filter(d=>d.is_streamable!==false).map(auT)}catch(e){return[]}})();
+  const J=JAMENDO_KEY?fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_KEY}&format=json&limit=25&order=popularity_week&tags=${encodeURIComponent(c.t)}`).then(r=>r.json()).then(j=>j.results.map(jaT)).catch(()=>[]):[];
+  const parts=await Promise.all([A,J,srcIt(c.q)]);
+  results=rank(parts.flat(),['']);tab=1;tabs();render();toast(MOODS[i][0]);
+}
+async function loadCharts(){try{const j=await(await fetch('https://rss.applemarketingtools.com/api/v2/ru/music/most-played/15/songs.json')).json();chartsC=j.feed.results.map(d=>d.artistName+' — '+d.name)}catch(e){}}
+function homeHtml(){
+  const chip=(t,a,x)=>`<button class="ch" data-a="${a}" ${a=='q'?`data-q="${esc(x)}"`:`data-i="${x}"`}>${esc(t)}</button>`;
+  let h='<p class="m">Введи название или исполнителя и жми OK</p>';
+  if(qh.length)h+=`<p class="m h">Недавние запросы</p><div class="chs">${qh.slice(0,8).map(x=>chip(x,'q',x)).join('')}</div>`;
+  h+=`<p class="m h">Подборки по настроению и жанру</p><div class="chs">${MOODS.map((m,i)=>chip(m[0],'g',i)).join('')}</div>`;
+  if(chartsC.length)h+=`<p class="m h">Сейчас популярно</p><div class="chs">${chartsC.map(x=>chip(x,'q',x)).join('')}</div>`;
+  return h;
 }
 async function byId(id){
   try{
@@ -328,13 +370,15 @@ function addLinks(){
 }
 function render(){
   const L=tab==1?results:pl;
-  if(!L.length){$('#list').innerHTML=`<p class="m">${tab==1?'Введи название или исполнителя и жми OK':'Плейлист пуст. Жми «⋮» → «+» у трека'}</p>`;addLinks();return}
+  if(!L.length){$('#list').innerHTML=tab==1?homeHtml():'<p class="m">Плейлист пуст. Жми «⋮» → «+» у трека</p>';addLinks();return}
   $('#list').innerHTML=L.map((t,i)=>`${tab==1&&t.v&&(i==0||!L[i-1].v)?'<p class="m" style="padding:8px">— Ремиксы и другие версии —</p>':''}<div class="t${cur&&cur.id==t.id?' now':''}"><img data-a="p" data-i="${i}" alt="" src="${esc(t.cover||'')}" onerror="this.style.visibility='hidden'"><div class="i" data-a="p" data-i="${i}"><b>${esc(t.title)}</b><span>${esc(t.artist)}${t.dur?' · '+fmt(t.dur):''}</span><small>${esc(t.from||'')}${t.lic?' · '+esc(t.lic):''}${t.prev?' · превью 30 сек':''}</small></div><button class="more" data-a="m" aria-label="Действия">⋮</button><div class="act">${tab==1?`<button data-a="a" data-i="${i}" aria-label="В плейлист">+</button>`:`<button data-a="d" data-i="${i}" aria-label="Удалить">×</button>`}${t.prev?`<button data-a="l" data-i="${i}" aria-label="Слушать полностью">🔗</button>`:`<button class="${t.off?'ok':''}" data-a="o" data-i="${i}" aria-label="Сохранить для оффлайна">${t.off?'✔':'⬇'}</button>`}<button data-a="s" data-i="${i}" aria-label="Поделиться">↗</button></div></div>`).join('');addLinks();
 }
 $('#list').onclick=e=>{
   if(Date.now()<noClick)return;
   const b=e.target.closest('[data-a]');if(!b)return;
   const a=b.dataset.a,row=b.closest('.t');
+  if(a=='q'){$('#q').value=b.dataset.q;search(b.dataset.q);return}
+  if(a=='g'){explore(+b.dataset.i);return}
   if(a=='m'){const o=row.classList.contains('open');document.querySelectorAll('.t.open').forEach(r=>r.classList.remove('open'));if(!o)row.classList.add('open');return}
   if(a=='x'){row.classList.remove('open');return}
   const L=tab==1?results:pl,i=+b.dataset.i;
@@ -416,7 +460,7 @@ $('#f').onsubmit=e=>{e.preventDefault();const q=$('#q').value.trim();if(q)search
   }catch(e){}}
   if(id){const t=await byId(id);if(t){results=[t];queue=results;qi=0;cur=t;ui();toast('Жми ▶ — тебе скинули трек')}}
   if(!navigator.onLine&&pl.length){tab=2;tabs()}
-  host();loadBlobs();render();
+  fillDL();host();loadBlobs();render();loadCharts().then(()=>{if(tab==1&&!results.length&&!lastQ)render()});
 })();
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>
