@@ -153,7 +153,8 @@ pl=PLS[cp].t;
 const savePL=()=>{try{localStorage.setItem('tape_pls',JSON.stringify(PLS));localStorage.setItem('tape_cp',cp)}catch(e){}};
 let mode=0,hist=[],HOSTS=[],errs=0,userPaused=false,dr=null,noClick=0,lastPS=0,lastSave=0,pendingPos=0,lastQ='';const blobs=new Map();
 let qh=[],chartsC=[];try{qh=JSON.parse(localStorage.getItem('tape_q')||'[]')}catch(e){}
-let favs=[],radioRes=[],radioTitle='',countriesC=[],openC='',cst={},RL=[],sgSeq=0;try{favs=JSON.parse(localStorage.getItem('tape_rfav')||'[]')}catch(e){}
+const BLOCK=/abdul\s*-?\s*bas[iy]t|abdul\s*-?\s*samad/i; // станции, которые не показываем нигде
+let cshow={},favs=[],radioRes=[],radioTitle='',countriesC=[],openC='',cst={},RL=[],sgSeq=0;try{favs=JSON.parse(localStorage.getItem('tape_rfav')||'[]')}catch(e){}
 try{mode=+localStorage.getItem('tape_mode')||0}catch(e){}
 async function loadBlobs(){try{const c=await caches.open('tapes');for(const t of PLS.flatMap(p=>p.t)){if(t.off&&!blobs.has(t.id)){const m=await c.match(key(t.id));if(m)blobs.set(t.id,URL.createObjectURL(await m.blob()))}}}catch(e){}}
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('s');clearTimeout(toast.k);toast.k=setTimeout(()=>t.classList.remove('s'),2200)};
@@ -318,7 +319,7 @@ async function explore(i){
 const RB=['https://de1.api.radio-browser.info','https://at1.api.radio-browser.info','https://nl1.api.radio-browser.info'];
 const RADIO=[['📻 Хиты',{tag:'hits'}],['🇷🇺 Россия',{cc:'RU'}],['🎸 Рок',{tag:'rock'}],['✨ Поп',{tag:'pop'}],['🎤 Рэп',{tag:'hiphop'}],['💃 Танцы',{tag:'dance'}],['🎷 Джаз',{tag:'jazz'}],['🎻 Классика',{tag:'classical'}],['🌙 Релакс',{tag:'chillout'}],['📼 Ретро',{tag:'oldies'}]];
 const radioT=d=>({from:'Радио',id:'rb:'+d.stationuuid,src:d.url_resolved,title:String(d.name||'').trim(),artist:[(d.tags||'').split(',').slice(0,2).join(', '),d.countrycode].filter(Boolean).join(' · '),cover:d.favicon||'',dur:0,radio:1,lic:'эфир радиостанции',pop:d.clickcount||0});
-async function radioList(p,n=40){for(const h of RB){try{const j=await(await fetch(`${h}/json/stations/search?${p}&limit=${n}&hidebroken=true&order=clickcount&reverse=true`)).json();const out=j.filter(d=>/^https:/.test(d.url_resolved||'')).map(radioT);if(out.length||!j.length)return out}catch(e){}}return[]}
+async function radioList(p,n=40){for(const h of RB){try{const j=await(await fetch(`${h}/json/stations/search?${p}&limit=${n}&hidebroken=true&order=clickcount&reverse=true`)).json();const out=[],seen=new Set();for(const d of j){if(!/^https:/.test(d.url_resolved||''))continue;const t=radioT(d);if(!t.title||BLOCK.test(t.title))continue;const k=norm(t.title)||t.title.toLowerCase();if(seen.has(k))continue;seen.add(k);out.push(t)}if(out.length||!j.length)return out}catch(e){}}return[]}
 async function exploreRadio(i){
   const c=RADIO[i][1];tab=3;tabs();radioTitle=RADIO[i][0];radioRes=[];$('#list').innerHTML='<p class="m">Ищу радиостанции…</p>';
   radioRes=await radioList(c.tag?'tag='+encodeURIComponent(c.tag):'countrycode='+c.cc,60);
@@ -434,7 +435,7 @@ function setMode(m,say){mode=m;try{localStorage.setItem('tape_mode',m)}catch(e){
 au.onplay=()=>{userPaused=false;$('#deck').classList.add('play');$('#pp').textContent='❚❚';if('mediaSession' in navigator)navigator.mediaSession.playbackState='playing'};
 au.onpause=()=>{if(!document.hidden&&!au.ended&&au.readyState>1)userPaused=true;$('#deck').classList.remove('play');$('#pp').textContent='▶';if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused'};
 au.onended=()=>{if(mode==2){au.currentTime=0;au.play()}else step(1)};
-au.onerror=()=>{if(!au.src)return;toast('Трек недоступен');if(++errs<3)setTimeout(()=>step(1),800)};
+au.onerror=()=>{if(!au.src)return;if(cur&&cur.radio){toast(FX?'С включённым VU радио не играет. Выключи кнопку VU':'Станция сейчас не отвечает');return}toast('Трек недоступен');if(++errs<3)setTimeout(()=>step(1),800)};
 au.onplaying=()=>{errs=0;if(cur&&cur.radio)setTimeout(pollNP,1500)};
 function saveState(){try{if(!cur)return;localStorage.setItem('tape_state',JSON.stringify({cur,pos:au.currentTime||pendingPos||0,q:(()=>{const k=PLS.findIndex(p=>p.t===queue);return k>=0?'pl:'+k:queue.slice(0,40)})()}))}catch(e){}}
 function posState(force){
@@ -519,15 +520,21 @@ function plHead(){
 function renderRadio(){
   RL=[];
   const addRows=arr=>arr.map(t=>{RL.push(t);return row(t,RL.length-1,3)}).join('');
-  let h='<p class="m h">♥ Избранные станции</p>'+(favs.length?addRows(favs):'<p class="m" style="padding:4px 0 10px">Пока пусто. Открой «⋮» у станции и нажми ♡</p>');
-  h+=`<p class="m h">Подборки</p><div class="chs">${RADIO.map((m,i)=>chipH(m[0],'r',i)).join('')}</div>`;
+  const F=favs.filter(t=>!BLOCK.test(t.title));
+  let h='';
   if(radioRes.length)h+=`<p class="m h">${esc(radioTitle)}</p>`+addRows(radioRes);
-  h+='<p class="m h">Все страны</p>';
+  h+='<p class="m h">♥ Избранные станции</p>'+(F.length?addRows(F):'<p class="m" style="padding:4px 0 10px">Пока пусто. Открой «⋮» у станции и нажми ♡</p>');
+  h+=`<p class="m h">Подборки</p><div class="chs">${RADIO.map((m,i)=>chipH(m[0],'r',i)).join('')}</div>`;
+  h+='<p class="m h">Все страны</p><p class="m" style="font-size:16px;padding:0 0 8px;text-align:left">Цифра — все станции каталога. В браузере играют только станции с защищённым потоком, поэтому в списке их меньше. Нужную станцию проще найти поиском по названию.</p>';
   if(!countriesC.length)h+='<p class="m">Загружаю список стран…</p>';
   countriesC.forEach(c=>{
-    const open=openC==c.cc;
-    h+=`<button class="cty${open?' on':''}" data-a="c" data-c="${c.cc}"><span>${flag(c.cc)} ${esc(c.name)}</span><i>${c.n}</i></button>`;
-    if(open)h+=cst[c.cc]?(cst[c.cc].length?addRows(cst[c.cc]):'<p class="m">Станции не найдены</p>'):'<p class="m">Загружаю…</p>';
+    const open=openC==c.cc,arr=cst[c.cc];
+    h+=`<button class="cty${open?' on':''}" data-a="c" data-c="${c.cc}"><span>${flag(c.cc)} ${esc(c.name)}</span><i>${arr?arr.length+' из '+c.n:c.n}</i></button>`;
+    if(open){
+      if(!arr)h+='<p class="m">Загружаю…</p>';
+      else if(!arr.length)h+='<p class="m">Станции не найдены</p>';
+      else{const k=cshow[c.cc]||100;h+=addRows(arr.slice(0,k))+(arr.length>k?`<button class="ch" data-a="more" data-c="${c.cc}" style="margin:6px 0 10px">Показать ещё (${arr.length-k})</button>`:'')}
+    }
   });
   $('#list').innerHTML=h;
 }
@@ -549,7 +556,8 @@ $('#list').onclick=async e=>{
   if(a=='pa'){const k=newPL();if(k!=null)switchPL(k);return}
   if(a=='pr'){const n=(prompt('Новое название',PLS[cp].n)||'').trim();if(n){PLS[cp].n=n;savePL();render()}return}
   if(a=='px'){if(PLS.length<2)return toast('Нужен хотя бы один плейлист');if(confirm('Удалить плейлист «'+PLS[cp].n+'»?')){PLS.splice(cp,1);cp=Math.min(cp,PLS.length-1);switchPL(cp)}return}
-  if(a=='c'){const cc=b.dataset.c;openC=openC==cc?'':cc;renderRadio();if(openC&&!cst[cc]){cst[cc]=await radioList('countrycode='+cc,100);renderRadio()}return}
+  if(a=='c'){const cc=b.dataset.c;openC=openC==cc?'':cc;renderRadio();if(openC&&!cst[cc]){cst[cc]=await radioList('countrycode='+cc,600);renderRadio()}return}
+  if(a=='more'){const cc=b.dataset.c;cshow[cc]=(cshow[cc]||100)+100;renderRadio();return}
   if(a=='m'){const o=row.classList.contains('open');document.querySelectorAll('.t.open').forEach(r=>r.classList.remove('open'));if(!o)row.classList.add('open');return}
   if(a=='x'){row.classList.remove('open');return}
   const L=tab==1?results:tab==2?pl:RL,i=+b.dataset.i;
@@ -635,7 +643,7 @@ async function suggest(v){
   showSg([...new Set([...hs,...st,...rest])].slice(0,8));
 }
 let sgT;
-$('#q').oninput=e=>{const v=e.target.value.trim();$('#qx').hidden=!e.target.value;clearTimeout(sgT);if(!v||tab==3){sgSeq++;showSg([]);return}sgT=setTimeout(()=>suggest(v),250)};
+$('#q').oninput=e=>{const v=e.target.value.trim();$('#qx').hidden=!e.target.value;clearTimeout(sgT);if(!v){sgSeq++;showSg([]);if(tab==3){radioRes=[];renderRadio()}return}if(tab==3){sgSeq++;showSg([]);sgT=setTimeout(()=>radioSearch(v),500);return}sgT=setTimeout(()=>suggest(v),250)};
 $('#qx').onclick=()=>{const q=$('#q');q.value='';$('#qx').hidden=true;sgSeq++;showSg([]);lastQ='';radioRes=[];if(tab!=3){results=[];tab=1}tabs();render();q.focus()};
 $('#sg').onclick=e=>{const d=e.target.closest('.sgi');if(!d)return;$('#q').value=d.dataset.q;showSg([]);search(d.dataset.q)};
 document.addEventListener('click',e=>{if(!e.target.closest('.sb'))$('#sg').hidden=true});
