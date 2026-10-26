@@ -63,6 +63,8 @@ form .b{flex:none;padding:0 14px}
 .act{position:absolute;right:0;top:0;bottom:0;display:flex;align-items:center;gap:7px;padding:0 9px;background:#2a0a4a;border-left:3px solid var(--pink);transform:translateX(100%);visibility:hidden;transition:transform .2s,visibility .2s}
 .t.open .act{transform:none;visibility:visible}
 .eq input:disabled{opacity:.35}
+.lk{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.lk a{flex:1;min-width:44%;text-align:center;text-decoration:none;color:#111;font-size:20px;padding:10px 6px;background:linear-gradient(#9ff6ff,var(--cy));border:2px solid #000;border-bottom-width:5px;border-radius:8px}
 .t .i small{display:block;font-size:15px;color:var(--yel);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .t{transition:transform .15s;-webkit-user-select:none;user-select:none}
 .t img{-webkit-touch-callout:none;-webkit-user-drag:none}
@@ -115,7 +117,7 @@ const au=new Audio();if(FX)au.crossOrigin='anonymous';au.preload='auto';
 let ctx,an,filt=[],HOST,results=[],queue=[],qi=-1,cur=null,tab=1;
 let pl=[];try{pl=JSON.parse(localStorage.getItem('tape_pl')||'[]')}catch(e){}
 const savePL=()=>{try{localStorage.setItem('tape_pl',JSON.stringify(pl))}catch(e){}};
-let mode=0,hist=[],HOSTS=[],errs=0,userPaused=false,dr=null,noClick=0,lastPS=0,lastSave=0,pendingPos=0;const blobs=new Map();
+let mode=0,hist=[],HOSTS=[],errs=0,userPaused=false,dr=null,noClick=0,lastPS=0,lastSave=0,pendingPos=0,lastQ='';const blobs=new Map();
 try{mode=+localStorage.getItem('tape_mode')||0}catch(e){}
 async function loadBlobs(){try{const c=await caches.open('tapes');for(const t of pl){if(t.off&&!blobs.has(t.id)){const m=await c.match(key(t.id));if(m)blobs.set(t.id,URL.createObjectURL(await m.blob()))}}}catch(e){}}
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('s');clearTimeout(toast.k);toast.k=setTimeout(()=>t.classList.remove('s'),2200)};
@@ -205,7 +207,7 @@ function rank(list,q){
 }
 async function search(q){
   if(!navigator.onLine){toast('Нет интернета. Играют сохранённые треки (⬇)');tab=2;tabs();render();return}
-  $('#list').innerHTML='<p class="m">Ищу во всех каталогах…</p>';
+  lastQ=q;$('#list').innerHTML='<p class="m">Ищу во всех каталогах…</p>';
   const parts=await Promise.all([srcAu(q),srcJa(q),srcIa(q),srcIt(q),srcWc(q),srcOv(q)]);
   const out=rank(parts.flat(),q);
   results=out;tab=1;tabs();render();
@@ -285,8 +287,7 @@ if('mediaSession' in navigator){
   h('previoustrack',()=>step(-1));
   h('nexttrack',()=>step(1));
   h('seekto',e=>{if(!isFinite(au.duration)||!au.duration)return;au.currentTime=Math.max(0,Math.min(e.seekTime,au.duration-.3));posState(1)});
-  h('seekbackward',e=>{au.currentTime=Math.max(0,au.currentTime-(e.seekOffset||10));posState(1)});
-  h('seekforward',e=>{if(isFinite(au.duration))au.currentTime=Math.min(au.duration-.3,au.currentTime+(e.seekOffset||10));posState(1)});
+  h('seekbackward',null);h('seekforward',null);
 }}
 setupMS();
 const wake=()=>{if(!cur||userPaused)return;if(au.paused&&!au.ended&&au.src)resumePlay();else if(ctx&&ctx.state!=='running')ctx.resume().catch(()=>{})};
@@ -320,10 +321,14 @@ async function del(i){const t=pl[i];if(blobs.has(t.id)){URL.revokeObjectURL(blob
 
 // --- Список ---
 function tabs(){$('#t1').classList.toggle('on',tab==1);$('#t2').classList.toggle('on',tab==2)}
+function addLinks(){
+  if(tab!=1||!lastQ)return;const e=encodeURIComponent(lastQ);
+  $('#list').insertAdjacentHTML('beforeend',`<p class="m" style="padding:10px 0 2px">Нет нужной песни? Послушай её полностью здесь:</p><div class="lk"><a href="https://music.yandex.ru/search?text=${e}" target="_blank" rel="noopener">Яндекс Музыка</a><a href="https://vk.com/audio?q=${e}" target="_blank" rel="noopener">VK Музыка</a><a href="https://zvuk.com/search?query=${e}" target="_blank" rel="noopener">Звук</a><a href="https://music.youtube.com/search?q=${e}" target="_blank" rel="noopener">YouTube Music</a></div>`);
+}
 function render(){
   const L=tab==1?results:pl;
-  if(!L.length){$('#list').innerHTML=`<p class="m">${tab==1?'Введи название или исполнителя и жми OK':'Плейлист пуст. Жми «⋮» → «+» у трека'}</p>`;return}
-  $('#list').innerHTML=L.map((t,i)=>`${tab==1&&t.v&&(i==0||!L[i-1].v)?'<p class="m" style="padding:8px">— Ремиксы и другие версии —</p>':''}<div class="t${cur&&cur.id==t.id?' now':''}"><img data-a="p" data-i="${i}" alt="" src="${esc(t.cover||'')}" onerror="this.style.visibility='hidden'"><div class="i" data-a="p" data-i="${i}"><b>${esc(t.title)}</b><span>${esc(t.artist)}${t.dur?' · '+fmt(t.dur):''}</span><small>${esc(t.from||'')}${t.lic?' · '+esc(t.lic):''}${t.prev?' · превью 30 сек':''}</small></div><button class="more" data-a="m" aria-label="Действия">⋮</button><div class="act">${tab==1?`<button data-a="a" data-i="${i}" aria-label="В плейлист">+</button>`:`<button data-a="d" data-i="${i}" aria-label="Удалить">×</button>`}${t.prev?`<button data-a="l" data-i="${i}" aria-label="Слушать полностью">🔗</button>`:`<button class="${t.off?'ok':''}" data-a="o" data-i="${i}" aria-label="Сохранить для оффлайна">${t.off?'✔':'⬇'}</button>`}<button data-a="s" data-i="${i}" aria-label="Поделиться">↗</button><button data-a="x" aria-label="Закрыть">✕</button></div></div>`).join('');
+  if(!L.length){$('#list').innerHTML=`<p class="m">${tab==1?'Введи название или исполнителя и жми OK':'Плейлист пуст. Жми «⋮» → «+» у трека'}</p>`;addLinks();return}
+  $('#list').innerHTML=L.map((t,i)=>`${tab==1&&t.v&&(i==0||!L[i-1].v)?'<p class="m" style="padding:8px">— Ремиксы и другие версии —</p>':''}<div class="t${cur&&cur.id==t.id?' now':''}"><img data-a="p" data-i="${i}" alt="" src="${esc(t.cover||'')}" onerror="this.style.visibility='hidden'"><div class="i" data-a="p" data-i="${i}"><b>${esc(t.title)}</b><span>${esc(t.artist)}${t.dur?' · '+fmt(t.dur):''}</span><small>${esc(t.from||'')}${t.lic?' · '+esc(t.lic):''}${t.prev?' · превью 30 сек':''}</small></div><button class="more" data-a="m" aria-label="Действия">⋮</button><div class="act">${tab==1?`<button data-a="a" data-i="${i}" aria-label="В плейлист">+</button>`:`<button data-a="d" data-i="${i}" aria-label="Удалить">×</button>`}${t.prev?`<button data-a="l" data-i="${i}" aria-label="Слушать полностью">🔗</button>`:`<button class="${t.off?'ok':''}" data-a="o" data-i="${i}" aria-label="Сохранить для оффлайна">${t.off?'✔':'⬇'}</button>`}<button data-a="s" data-i="${i}" aria-label="Поделиться">↗</button><button data-a="x" aria-label="Закрыть">✕</button></div></div>`).join('');addLinks();
 }
 $('#list').onclick=e=>{
   if(Date.now()<noClick)return;
