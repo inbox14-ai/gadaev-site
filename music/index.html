@@ -228,6 +228,8 @@ function fillDL(){const d=$('#dl');if(d)d.innerHTML=qh.map(x=>`<option value="${
 async function search(q){
   if(!navigator.onLine){toast('Нет интернета. Играют сохранённые треки (⬇)');tab=2;tabs();render();return}
   lastQ=q;remember(q);$('#list').innerHTML='<p class="m">Ищу во всех каталогах…</p>';
+  const rm=/^(радио|radio)\s+(.+)/i.exec(q);
+  if(rm){results=await radioList('name='+encodeURIComponent(rm[2]));tab=1;tabs();render();if(!results.length)toast('Станции не найдены');return}
   let qs=[q];if(hasRu(q))qs.push(translit(q));
   let out=rank(await runAll(qs),qs);
   if(out.length<6){ // мало найдено: пробуем исправить раскладку
@@ -238,27 +240,70 @@ async function search(q){
   if(!out.length)toast('Ничего не найдено или каталоги недоступны');
 }
 // Подборки по настроению и жанру (самое популярное за неделю)
-const MOODS=[['⚡ Бодрое',{g:'Electronic',t:'energetic',q:'dance hits'}],['🌙 Спокойное',{g:'Ambient',t:'relaxing',q:'chill'}],['💧 Грустное',{g:'Alternative',t:'melancholic',q:'sad songs'}],['🏋 Для спорта',{g:'Hip-Hop/Rap',t:'energetic',q:'workout'}],['💻 Для работы',{g:'Lo-Fi',t:'focus',q:'focus music'}],['🎸 Рок',{g:'Rock',t:'rock',q:'rock hits'}],['🎤 Рэп',{g:'Hip-Hop/Rap',t:'hiphop',q:'русский рэп'}],['✨ Поп',{g:'Pop',t:'pop',q:'pop hits'}],['🎷 Джаз',{g:'Jazz',t:'jazz',q:'jazz classics'}],['🎻 Классика',{g:'Classical',t:'classical',q:'classical music'}],['🌿 Инди',{g:'Alternative',t:'indie',q:'indie'}]];
+const MOODS=[
+['⚡ Бодрое',{g:'Electronic',t:'energetic',q:'dance hits'},'Настроение'],
+['🌙 Спокойное',{g:'Ambient',t:'relaxing',q:'chill',ia:['netlabels','ambient']},'Настроение'],
+['💧 Грустное',{g:'Alternative',t:'melancholic',q:'sad songs'},'Настроение'],
+['🏋 Для спорта',{g:'Hip-Hop/Rap',t:'energetic',q:'workout'},'Настроение'],
+['💻 Для работы',{g:'Lo-Fi',t:'focus',q:'focus music'},'Настроение'],
+['❤ Романтика',{g:'R&B/Soul',t:'romantic',q:'love songs'},'Настроение'],
+['🎉 Вечеринка',{g:'Electronic',t:'party',q:'party hits'},'Настроение'],
+['😴 Для сна',{g:'Ambient',t:'sleep',q:'sleep music'},'Настроение'],
+['🎸 Рок',{g:'Rock',t:'rock',q:'rock hits'},'Жанры'],
+['🎤 Рэп',{g:'Hip-Hop/Rap',t:'hiphop',q:'hip hop hits'},'Жанры'],
+['✨ Поп',{g:'Pop',t:'pop',q:'pop hits'},'Жанры'],
+['🎷 Джаз',{g:'Jazz',t:'jazz',q:'jazz classics',wc:'jazz'},'Жанры'],
+['🎻 Классика',{g:'Classical',t:'classical',q:'classical music',wc:'classical symphony'},'Жанры'],
+['🌿 Инди',{g:'Alternative',t:'indie',q:'indie',ia:['netlabels','indie']},'Жанры'],
+['🎛 Электроника',{g:'Electronic',t:'electronic',q:'electronic',ia:['netlabels','electronic']},'Жанры'],
+['🪕 Фолк',{g:'Folk',t:'folk',q:'folk',wc:'folk music'},'Жанры'],
+['🤘 Метал',{g:'Metal',t:'metal',q:'metal'},'Жанры'],
+['🎺 Блюз',{g:'Blues',t:'blues',q:'blues',wc:'blues'},'Жанры'],
+['🎬 Саундтреки',{g:'Soundtrack',t:'soundtrack',q:'movie soundtrack'},'Жанры'],
+['📼 80-е',{q:'80s hits'},'Эпохи'],
+['💿 90-е',{q:'90s hits'},'Эпохи'],
+['📀 2000-е',{q:'2000s hits'},'Эпохи'],
+['📱 2010-е',{q:'2010s hits'},'Эпохи'],
+['🇷🇺 Русский рок',{q:'русский рок'},'По-русски'],
+['🇷🇺 Русский поп',{q:'русский поп'},'По-русски'],
+['🇷🇺 Русский рэп',{q:'русский рэп'},'По-русски'],
+['🇷🇺 Шансон',{q:'шансон'},'По-русски'],
+['🇷🇺 Эстрада СССР',{q:'советская эстрада'},'По-русски']];
+const srcIaC=async(coll,term)=>{try{const r=await(await fetch('https://archive.org/advancedsearch.php?q='+encodeURIComponent(`collection:${coll} AND mediatype:audio AND (${term})`)+'&fl[]=identifier&fl[]=downloads&rows=8&sort[]=downloads+desc&output=json')).json();return(await Promise.all(r.response.docs.map(d=>iaT(d.identifier,d.downloads)))).filter(Boolean)}catch(e){return[]}};
 async function explore(i){
   const c=MOODS[i][1];lastQ='';
   $('#list').innerHTML='<p class="m">Собираю подборку…</p>';
-  const A=(async()=>{await host();try{const j=await(await fetch(`${HOST}/v1/tracks/trending?genre=${encodeURIComponent(c.g)}&time=week&limit=25&app_name=${APP}`)).json();return j.data.filter(d=>d.is_streamable!==false).map(auT)}catch(e){return[]}})();
-  const J=JAMENDO_KEY?fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_KEY}&format=json&limit=25&order=popularity_week&tags=${encodeURIComponent(c.t)}`).then(r=>r.json()).then(j=>j.results.map(jaT)).catch(()=>[]):[];
-  const parts=await Promise.all([A,J,srcIt(c.q)]);
+  const A=c.g?(async()=>{await host();try{const j=await(await fetch(`${HOST}/v1/tracks/trending?genre=${encodeURIComponent(c.g)}&time=week&limit=25&app_name=${APP}`)).json();return j.data.filter(d=>d.is_streamable!==false).map(auT)}catch(e){return[]}})():[];
+  const J=JAMENDO_KEY&&c.t?fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_KEY}&format=json&limit=25&order=popularity_week&tags=${encodeURIComponent(c.t)}`).then(r=>r.json()).then(j=>j.results.map(jaT)).catch(()=>[]):[];
+  const parts=await Promise.all([A,J,c.q?srcIt(c.q):[],c.wc?srcWc(c.wc):[],c.ia?srcIaC(c.ia[0],c.ia[1]):[]]);
   results=rank(parts.flat(),['']);tab=1;tabs();render();toast(MOODS[i][0]);
+}
+// Интернет-радио (открытый каталог radio-browser): эфирная музыка, в т.ч. хиты
+const RB=['https://de1.api.radio-browser.info','https://at1.api.radio-browser.info','https://nl1.api.radio-browser.info'];
+const RADIO=[['📻 Хиты',{tag:'hits'}],['🇷🇺 Россия',{cc:'RU'}],['🎸 Рок',{tag:'rock'}],['✨ Поп',{tag:'pop'}],['🎤 Рэп',{tag:'hiphop'}],['💃 Танцы',{tag:'dance'}],['🎷 Джаз',{tag:'jazz'}],['🎻 Классика',{tag:'classical'}],['🌙 Релакс',{tag:'chillout'}],['📼 Ретро',{tag:'oldies'}]];
+const radioT=d=>({from:'Радио',id:'rb:'+d.stationuuid,src:d.url_resolved,title:String(d.name||'').trim(),artist:[(d.tags||'').split(',').slice(0,2).join(', '),d.countrycode].filter(Boolean).join(' · '),cover:d.favicon||'',dur:0,radio:1,lic:'эфир радиостанции',pop:d.clickcount||0});
+async function radioList(p){for(const h of RB){try{const j=await(await fetch(`${h}/json/stations/search?${p}&limit=40&hidebroken=true&order=clickcount&reverse=true`)).json();const out=j.filter(d=>/^https:/.test(d.url_resolved||'')).map(radioT);if(out.length||!j.length)return out}catch(e){}}return[]}
+async function exploreRadio(i){
+  const c=RADIO[i][1];lastQ='';$('#list').innerHTML='<p class="m">Ищу радиостанции…</p>';
+  results=await radioList(c.tag?'tag='+encodeURIComponent(c.tag):'countrycode='+c.cc);
+  tab=1;tabs();render();toast(RADIO[i][0]);
+  if(!results.length)toast('Радиостанции недоступны');
 }
 async function loadCharts(){try{const j=await(await fetch('https://rss.applemarketingtools.com/api/v2/ru/music/most-played/15/songs.json')).json();chartsC=j.feed.results.map(d=>d.artistName+' — '+d.name)}catch(e){}}
 function homeHtml(){
   const chip=(t,a,x)=>`<button class="ch" data-a="${a}" ${a=='q'?`data-q="${esc(x)}"`:`data-i="${x}"`}>${esc(t)}</button>`;
   let h='<p class="m">Введи название или исполнителя и жми OK</p>';
   if(qh.length)h+=`<p class="m h">Недавние запросы</p><div class="chs">${qh.slice(0,8).map(x=>chip(x,'q',x)).join('')}</div>`;
-  h+=`<p class="m h">Подборки по настроению и жанру</p><div class="chs">${MOODS.map((m,i)=>chip(m[0],'g',i)).join('')}</div>`;
+  ['Настроение','Жанры','Эпохи','По-русски'].forEach(g=>{
+    h+=`<p class="m h">${g}</p><div class="chs">${MOODS.map((m,i)=>m[2]==g?chip(m[0],'g',i):'').join('')}</div>`});
+  h+=`<p class="m h">Радио (эфир, всегда онлайн)</p><div class="chs">${RADIO.map((m,i)=>chip(m[0],'r',i)).join('')}</div><p class="m" style="font-size:17px;padding:0 0 10px">Конкретную станцию найдёшь так: «радио европа»</p>`;
   if(chartsC.length)h+=`<p class="m h">Сейчас популярно</p><div class="chs">${chartsC.map(x=>chip(x,'q',x)).join('')}</div>`;
   return h;
 }
 async function byId(id){
   try{
     if(id.startsWith('ia:'))return await iaT(id.slice(3));
+    if(id.startsWith('rb:')){const j=await(await fetch(RB[0]+'/json/stations/byuuid/'+id.slice(3))).json();return j[0]&&radioT(j[0])}
     if(id.startsWith('wc:')){const j=await(await fetch(WCQ+'pageids='+id.slice(3))).json();return wcT(Object.values(j.query.pages)[0])}
     if(id.startsWith('ov:')){return ovT(await(await fetch('https://api.openverse.org/v1/audio/'+id.slice(3)+'/')).json())}
     if(id.startsWith('it:')){const j=await(await fetch('https://itunes.apple.com/lookup?id='+id.slice(3))).json();return j.results[0]&&itT(j.results[0])}
@@ -290,6 +335,7 @@ function ui(){
 function resumePlay(){
   userPaused=false;
   if(!au.src&&cur)return play(queue,qi,true,pendingPos);
+  if(cur&&cur.radio&&au.paused&&au.src)au.src=srcOf(cur);
   if(ctx&&ctx.state!=='running')ctx.resume().catch(()=>{});
   if(au.error&&cur){const t=au.currentTime;au.src=blobs.get(cur.id)||srcOf(cur);au.addEventListener('loadedmetadata',()=>{au.currentTime=t},{once:true})}
   au.play().catch(()=>toast('Нажми ▶ в плеере'));
@@ -345,6 +391,7 @@ $('#mode').onclick=()=>setMode((mode+1)%3,1);setMode(mode,0);
 // --- Плейлист, оффлайн, шеринг ---
 function add(t){if(pl.some(x=>x.id==t.id))return toast('Уже в плейлисте');pl.push({...t,off:0});savePL();toast('Добавлено в плейлист');render()}
 async function offline(t){
+  if(t.radio)return toast('Радио нельзя сохранить');
   if(t.prev)return toast('Превью не сохраняется. Полная версия по ссылке 🔗');
   toast('Записываю на кассету…');
   try{
@@ -371,7 +418,7 @@ function addLinks(){
 function render(){
   const L=tab==1?results:pl;
   if(!L.length){$('#list').innerHTML=tab==1?homeHtml():'<p class="m">Плейлист пуст. Жми «⋮» → «+» у трека</p>';addLinks();return}
-  $('#list').innerHTML=L.map((t,i)=>`${tab==1&&t.v&&(i==0||!L[i-1].v)?'<p class="m" style="padding:8px">— Ремиксы и другие версии —</p>':''}<div class="t${cur&&cur.id==t.id?' now':''}"><img data-a="p" data-i="${i}" alt="" src="${esc(t.cover||'')}" onerror="this.style.visibility='hidden'"><div class="i" data-a="p" data-i="${i}"><b>${esc(t.title)}</b><span>${esc(t.artist)}${t.dur?' · '+fmt(t.dur):''}</span><small>${esc(t.from||'')}${t.lic?' · '+esc(t.lic):''}${t.prev?' · превью 30 сек':''}</small></div><button class="more" data-a="m" aria-label="Действия">⋮</button><div class="act">${tab==1?`<button data-a="a" data-i="${i}" aria-label="В плейлист">+</button>`:`<button data-a="d" data-i="${i}" aria-label="Удалить">×</button>`}${t.prev?`<button data-a="l" data-i="${i}" aria-label="Слушать полностью">🔗</button>`:`<button class="${t.off?'ok':''}" data-a="o" data-i="${i}" aria-label="Сохранить для оффлайна">${t.off?'✔':'⬇'}</button>`}<button data-a="s" data-i="${i}" aria-label="Поделиться">↗</button></div></div>`).join('');addLinks();
+  $('#list').innerHTML=L.map((t,i)=>`${tab==1&&t.v&&(i==0||!L[i-1].v)?'<p class="m" style="padding:8px">— Ремиксы и другие версии —</p>':''}<div class="t${cur&&cur.id==t.id?' now':''}"><img data-a="p" data-i="${i}" alt="" src="${esc(t.cover||'')}" onerror="this.style.visibility='hidden'"><div class="i" data-a="p" data-i="${i}"><b>${esc(t.title)}</b><span>${esc(t.artist)}${t.dur?' · '+fmt(t.dur):''}</span><small>${esc(t.from||'')}${t.lic?' · '+esc(t.lic):''}${t.prev?' · превью 30 сек':''}</small></div><button class="more" data-a="m" aria-label="Действия">⋮</button><div class="act">${tab==1?`<button data-a="a" data-i="${i}" aria-label="В плейлист">+</button>`:`<button data-a="d" data-i="${i}" aria-label="Удалить">×</button>`}${t.radio?'':t.prev?`<button data-a="l" data-i="${i}" aria-label="Слушать полностью">🔗</button>`:`<button class="${t.off?'ok':''}" data-a="o" data-i="${i}" aria-label="Сохранить для оффлайна">${t.off?'✔':'⬇'}</button>`}<button data-a="s" data-i="${i}" aria-label="Поделиться">↗</button></div></div>`).join('');addLinks();
 }
 $('#list').onclick=e=>{
   if(Date.now()<noClick)return;
@@ -379,6 +426,7 @@ $('#list').onclick=e=>{
   const a=b.dataset.a,row=b.closest('.t');
   if(a=='q'){$('#q').value=b.dataset.q;search(b.dataset.q);return}
   if(a=='g'){explore(+b.dataset.i);return}
+  if(a=='r'){exploreRadio(+b.dataset.i);return}
   if(a=='m'){const o=row.classList.contains('open');document.querySelectorAll('.t.open').forEach(r=>r.classList.remove('open'));if(!o)row.classList.add('open');return}
   if(a=='x'){row.classList.remove('open');return}
   const L=tab==1?results:pl,i=+b.dataset.i;
