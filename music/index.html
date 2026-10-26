@@ -78,6 +78,10 @@ form .b{flex:none;padding:0 14px}
 #toast.s{transform:translate(-50%,0)}
 :focus-visible{outline:3px solid var(--yel);outline-offset:2px}
 @media(prefers-reduced-motion:reduce){*{animation:none!important}}
+.np{display:flex;align-items:center;gap:8px;margin:0 0 8px;color:var(--lcd);font-size:21px}
+.np[hidden]{display:none}
+.np span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np .ch{padding:3px 10px;font-size:18px;white-space:nowrap}
 form input{width:100%}
 .sb{position:relative;flex:1;min-width:0}
 #qx{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:none;border-radius:50%;background:#0003;color:#111;font-size:18px;cursor:pointer;box-shadow:none}
@@ -110,6 +114,7 @@ html[data-theme=mono]{--pink:#fff;--cy:#cfcfcf;--yel:#fff;--vio:#777;--lcd:#e8e8
     <div class="win"><i class="reel"></i><i class="reel"></i></div>
   </div>
   <div class="lcd"><div id="ti"><i>— нет кассеты —</i></div><div id="tm">0:00</div></div>
+  <div class="np" id="np" hidden><span id="npt"></span><button class="ch" id="npq" aria-label="Найти трек">🔎 Найти</button></div>
   <canvas id="vz" width="520" height="64"></canvas>
   <input type="range" id="seek" min="0" max="1000" value="0" aria-label="Перемотка">
   <div class="btns">
@@ -362,6 +367,31 @@ async function byId(id){
   }catch(e){}
 }
 
+// --- Радио: что играет сейчас (без микрофона, из данных самой станции) ---
+let npQ='';
+const splitT=raw=>{const p=String(raw).split(' - ');return p.length>1?{a:p[0].trim(),t:p.slice(1).join(' - ').trim()}:{a:'',t:String(raw).trim()}};
+async function nowPlaying(t){
+  const u=new URL(t.src),o=u.origin,J=async p=>(await fetch(o+p)).json();
+  const tries=[
+    async()=>{const m=/\/listen\/([^\/]+)\//.exec(u.pathname);if(!m)return;const j=await J('/api/nowplaying/'+m[1]);const s=j.now_playing&&j.now_playing.song;return s&&s.title?{a:s.artist||'',t:s.title}:null},
+    async()=>{const j=await J('/status-json.xsl');const src=[].concat((j.icestats&&j.icestats.source)||[]);const s=src.find(x=>String(x.listenurl||'').endsWith(u.pathname))||(src.length==1?src[0]:null);const r=s&&(s.title||s.yp_currently_playing);return r?splitT(r):null},
+    async()=>{const j=await J('/stats?sid=1&json=1');return j.songtitle?splitT(j.songtitle):null}];
+  for(const f of tries){try{const r=await f();if(r&&r.t&&r.t.length>1&&norm(r.t)!==norm(t.title)&&!/https?:/i.test(r.t))return r}catch(e){}}
+}
+function setNP(r,t){
+  const el=$('#np');
+  if(!r){el.hidden=true;return}
+  npQ=(r.a?r.a+' — ':'')+r.t;$('#npt').textContent='♪ '+npQ;el.hidden=false;
+  if('mediaSession' in navigator)navigator.mediaSession.metadata=new MediaMetadata({title:r.t,artist:r.a||t.title,album:t.title,artwork:t.cover?[{src:t.cover,sizes:'96x96'}]:[]});
+}
+async function pollNP(){
+  if(!cur||!cur.radio||au.paused)return;
+  const t=cur,r=await nowPlaying(t);
+  if(cur===t)setNP(r,t);
+}
+setInterval(pollNP,15000);
+$('#npq').onclick=()=>{if(!npQ)return;$('#q').value=npQ;$('#qx').hidden=false;tab=1;tabs();search(npQ)};
+
 // --- Плеер ---
 function play(list,i,back,pos){
   initAudio();
@@ -375,6 +405,7 @@ function play(list,i,back,pos){
 }
 function ui(){
   if(!cur)return;
+  $('#np').hidden=true;
   $('#lt').textContent=cur.title;$('#la').textContent=cur.artist||'';
   if(cur.cover)$('#cv').src=cur.cover;
   $('#ti').innerHTML='<i>'+esc(cur.artist)+' — '+esc(cur.title)+'</i>';
@@ -404,7 +435,7 @@ au.onplay=()=>{userPaused=false;$('#deck').classList.add('play');$('#pp').textCo
 au.onpause=()=>{if(!document.hidden&&!au.ended&&au.readyState>1)userPaused=true;$('#deck').classList.remove('play');$('#pp').textContent='▶';if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused'};
 au.onended=()=>{if(mode==2){au.currentTime=0;au.play()}else step(1)};
 au.onerror=()=>{if(!au.src)return;toast('Трек недоступен');if(++errs<3)setTimeout(()=>step(1),800)};
-au.onplaying=()=>{errs=0};
+au.onplaying=()=>{errs=0;if(cur&&cur.radio)setTimeout(pollNP,1500)};
 function saveState(){try{if(!cur)return;localStorage.setItem('tape_state',JSON.stringify({cur,pos:au.currentTime||pendingPos||0,q:(()=>{const k=PLS.findIndex(p=>p.t===queue);return k>=0?'pl:'+k:queue.slice(0,40)})()}))}catch(e){}}
 function posState(force){
   if(!('mediaSession' in navigator)||!isFinite(au.duration)||!au.duration)return;
