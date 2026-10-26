@@ -59,8 +59,9 @@ form .b{flex:none;padding:0 14px}
 .t button{font-size:20px;background:#000;color:#fff;border:2px solid var(--pink);border-radius:8px;width:42px;height:42px;cursor:pointer}
 .t button.ok{border-color:var(--lcd)}
 .t{position:relative;overflow:hidden}
-.t .more{border:none;background:transparent;width:34px;font-size:28px;line-height:1}
-.act{position:absolute;right:0;top:0;bottom:0;display:flex;align-items:center;gap:7px;padding:0 9px;background:#2a0a4a;border-left:3px solid var(--pink);transform:translateX(100%);visibility:hidden;transition:transform .2s,visibility .2s}
+.t .more{border:none;background:transparent;width:34px;font-size:28px;line-height:1;position:relative;z-index:2}
+.t.open .more{color:var(--yel)}
+.act{position:absolute;right:46px;top:0;bottom:0;display:flex;align-items:center;gap:7px;padding:0 9px;background:#2a0a4a;border-left:3px solid var(--pink);transform:translateX(calc(100% + 46px));visibility:hidden;transition:transform .2s,visibility .2s}
 .t.open .act{transform:none;visibility:visible}
 .eq input:disabled{opacity:.35}
 .lk{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
@@ -328,7 +329,7 @@ function addLinks(){
 function render(){
   const L=tab==1?results:pl;
   if(!L.length){$('#list').innerHTML=`<p class="m">${tab==1?'Введи название или исполнителя и жми OK':'Плейлист пуст. Жми «⋮» → «+» у трека'}</p>`;addLinks();return}
-  $('#list').innerHTML=L.map((t,i)=>`${tab==1&&t.v&&(i==0||!L[i-1].v)?'<p class="m" style="padding:8px">— Ремиксы и другие версии —</p>':''}<div class="t${cur&&cur.id==t.id?' now':''}"><img data-a="p" data-i="${i}" alt="" src="${esc(t.cover||'')}" onerror="this.style.visibility='hidden'"><div class="i" data-a="p" data-i="${i}"><b>${esc(t.title)}</b><span>${esc(t.artist)}${t.dur?' · '+fmt(t.dur):''}</span><small>${esc(t.from||'')}${t.lic?' · '+esc(t.lic):''}${t.prev?' · превью 30 сек':''}</small></div><button class="more" data-a="m" aria-label="Действия">⋮</button><div class="act">${tab==1?`<button data-a="a" data-i="${i}" aria-label="В плейлист">+</button>`:`<button data-a="d" data-i="${i}" aria-label="Удалить">×</button>`}${t.prev?`<button data-a="l" data-i="${i}" aria-label="Слушать полностью">🔗</button>`:`<button class="${t.off?'ok':''}" data-a="o" data-i="${i}" aria-label="Сохранить для оффлайна">${t.off?'✔':'⬇'}</button>`}<button data-a="s" data-i="${i}" aria-label="Поделиться">↗</button><button data-a="x" aria-label="Закрыть">✕</button></div></div>`).join('');addLinks();
+  $('#list').innerHTML=L.map((t,i)=>`${tab==1&&t.v&&(i==0||!L[i-1].v)?'<p class="m" style="padding:8px">— Ремиксы и другие версии —</p>':''}<div class="t${cur&&cur.id==t.id?' now':''}"><img data-a="p" data-i="${i}" alt="" src="${esc(t.cover||'')}" onerror="this.style.visibility='hidden'"><div class="i" data-a="p" data-i="${i}"><b>${esc(t.title)}</b><span>${esc(t.artist)}${t.dur?' · '+fmt(t.dur):''}</span><small>${esc(t.from||'')}${t.lic?' · '+esc(t.lic):''}${t.prev?' · превью 30 сек':''}</small></div><button class="more" data-a="m" aria-label="Действия">⋮</button><div class="act">${tab==1?`<button data-a="a" data-i="${i}" aria-label="В плейлист">+</button>`:`<button data-a="d" data-i="${i}" aria-label="Удалить">×</button>`}${t.prev?`<button data-a="l" data-i="${i}" aria-label="Слушать полностью">🔗</button>`:`<button class="${t.off?'ok':''}" data-a="o" data-i="${i}" aria-label="Сохранить для оффлайна">${t.off?'✔':'⬇'}</button>`}<button data-a="s" data-i="${i}" aria-label="Поделиться">↗</button></div></div>`).join('');addLinks();
 }
 $('#list').onclick=e=>{
   if(Date.now()<noClick)return;
@@ -337,7 +338,12 @@ $('#list').onclick=e=>{
   if(a=='m'){const o=row.classList.contains('open');document.querySelectorAll('.t.open').forEach(r=>r.classList.remove('open'));if(!o)row.classList.add('open');return}
   if(a=='x'){row.classList.remove('open');return}
   const L=tab==1?results:pl,i=+b.dataset.i;
-  if(a=='p')play(L,i);else if(a=='a')add(L[i]);else if(a=='o')offline(L[i]);else if(a=='s')share(L[i]);else if(a=='d')del(i);else if(a=='l')window.open('https://music.yandex.ru/search?text='+encodeURIComponent(L[i].artist+' '+L[i].title),'_blank');
+  if(a=='p'){
+    const same=cur&&L[i].id===cur.id;
+    if(same&&au.src){if(queue!==L){queue=L;qi=i;hist=[]}if(au.paused)resumePlay()}
+    else if(same)play(L,i,true,pendingPos);
+    else play(L,i);
+  }else if(a=='a')add(L[i]);else if(a=='o')offline(L[i]);else if(a=='s')share(L[i]);else if(a=='d')del(i);else if(a=='l')window.open('https://music.yandex.ru/search?text='+encodeURIComponent(L[i].artist+' '+L[i].title),'_blank');
   row.classList.remove('open');
 };
 document.addEventListener('click',e=>{if(!e.target.closest('.t.open'))document.querySelectorAll('.t.open').forEach(r=>r.classList.remove('open'))});
