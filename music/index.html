@@ -99,6 +99,12 @@ form input{width:100%}
 #md{position:fixed;inset:0;background:#000a;display:flex;align-items:flex-end;justify-content:center;z-index:30}
 #md[hidden]{display:none}
 .mdb{width:100%;max-width:560px;background:var(--d2);border:3px solid var(--pink);border-radius:16px 16px 0 0;padding:14px 14px 22px}
+#stx{font-size:15px;padding:22px 0 4px;opacity:.75}
+#stx a{color:var(--cy)}
+#dbgb{position:fixed;left:8px;bottom:8px;z-index:40;font:10px 'Press Start 2P',monospace;padding:8px 10px;background:#000;color:var(--lcd);border:2px solid var(--lcd);border-radius:8px;opacity:.85}
+#dbgp{position:fixed;inset:0;z-index:50;background:#000;display:flex;flex-direction:column;padding:10px;gap:8px}
+#dbgp[hidden]{display:none}
+#dbgp pre{flex:1;margin:0;overflow:auto;font:11px/1.4 ui-monospace,Menlo,Consolas,monospace;color:#8f8;white-space:pre-wrap;word-break:break-all}
 html[data-theme=winamp]{--pink:#c8c8d0;--cy:#00d800;--yel:#ffcf00;--vio:#555;--lcd:#00ff00;--bg:linear-gradient(#2b2b36,#14141a);--d1:#4a4a58;--d2:#22222c;--lcdbg:#000;--glow:#0000}
 html[data-theme=cassette]{--pink:#e4572e;--cy:#76b041;--yel:#f2c14e;--vio:#6b4423;--lcd:#ffb347;--bg:linear-gradient(170deg,#3b2a1e,#1d140d);--d1:#6b5440;--d2:#3a2c20;--lcdbg:#1c1005;--glow:#e4572e66}
 html[data-theme=cyber]{--pink:#ff00e5;--cy:#00fff0;--yel:#f5ff00;--vio:#7a00ff;--lcd:#00fff0;--bg:radial-gradient(circle at 20% 0,#7a00ff55,transparent 55%),radial-gradient(circle at 90% 40%,#ff00e544,transparent 50%),#05010f;--d1:#1a0f2e;--d2:#0a0516;--lcdbg:#02060d;--glow:#ff00e5aa}
@@ -125,12 +131,13 @@ html[data-theme=mono]{--pink:#fff;--cy:#cfcfcf;--yel:#fff;--vio:#777;--lcd:#e8e8
     <button class="b pk" id="save" aria-label="В плейлист">+</button>
     <button class="b cy" id="shr" aria-label="Поделиться">↗</button>
   </div>
-  <div class="row"><button class="b cy" id="mode" aria-label="Режим воспроизведения">🔁</button><button class="b pk" id="thm" aria-label="Тема оформления">🎨</button><button class="b" id="fxb" aria-label="Точные индикаторы">VU</button></div>
+  <div class="row"><button class="b cy" id="mode" aria-label="Режим воспроизведения">🔁</button><button class="b pk" id="thm" aria-label="Тема оформления">🎨</button></div>
 </section>
 
 <form id="f"><div class="sb"><input id="q" placeholder="Название или исполнитель" autocomplete="off" aria-label="Поиск"><button type="button" id="qx" aria-label="Очистить" hidden>✕</button><div id="sg" hidden></div></div><button class="b go" aria-label="Найти">OK</button></form>
 <div class="tabs"><button class="b on" id="t1">Поиск</button><button class="b" id="t3">Радио</button><button class="b" id="t2">Плейлист</button><label class="b pk" for="fi" style="display:block;text-align:center;font-size:10px;line-height:2.2;cursor:pointer">+ Файл</label><input type="file" id="fi" accept="audio/*" multiple hidden></div>
 <div id="list"></div>
+<p class="m" id="stx"><span id="sts"></span> · <a href="#" id="stt"></a></p>
 <div id="toast"></div>
 <div id="md" hidden><div class="mdb"><p class="m h" style="padding-top:0">Добавить в плейлист</p><div id="mdl"></div><button class="b" id="mdc" style="width:100%;margin-top:6px;font-size:11px">Отмена</button></div></div>
 
@@ -139,12 +146,15 @@ html[data-theme=mono]{--pink:#fff;--cy:#cfcfcf;--yel:#fff;--vio:#777;--lcd:#e8e8
 const APP='GADAEV_MUSIC';
 const JAMENDO_KEY='6683c7da'; // необязательно: client_id с devportal.jamendo.com — добавит второй каталог (CC-музыка)
 const DEF_HOST='https://discoveryprovider.audius.co';
+const STATS_URL='';           // ← сюда адрес веб-приложения Google Apps Script (см. collector.gs). Пусто = статистика никуда не отправляется
+const STATS_KEY='kassete-2026'; // тот же ключ, что в collector.gs (защита от случайного мусора)
+const APP_VER='2026-10-30';
+const AUTO_RESUME=true;       // сторож: сам продолжает игру после звонка/прерывания. false = только по возвращению на экран
 // =====================
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let FX=false;try{FX=localStorage.getItem('tape_fx')==='1'}catch(e){}
-const au=new Audio();if(FX)au.crossOrigin='anonymous';au.preload='auto';
-let ctx,an,filt=[],HOST,results=[],queue=[],qi=-1,cur=null,tab=1;
+const au=new Audio();au.preload='auto';
+let HOST,results=[],queue=[],qi=-1,cur=null,tab=1;
 let PLS=[],cp=0,pl=[];
 try{PLS=JSON.parse(localStorage.getItem('tape_pls')||'null')||[]}catch(e){}
 if(!PLS.length){let old=[];try{old=JSON.parse(localStorage.getItem('tape_pl')||'[]')}catch(e){}PLS=[{n:'Мой плейлист',t:old}]}
@@ -161,37 +171,237 @@ const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('s');clearTi
 const fmt=s=>isFinite(s)?Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'):'0:00';
 const key=id=>location.origin+'/__tape/'+encodeURIComponent(id);
 
+// ===== Журнал событий (для отладки). Включить: открой плеер с ?debug=1 в адресе, выключить: ?debug=0 =====
+let DBG=false;try{const p=new URLSearchParams(location.search);if(p.get('debug')==='1')localStorage.setItem('tape_debug','1');if(p.get('debug')==='0')localStorage.removeItem('tape_debug');DBG=localStorage.getItem('tape_debug')==='1'}catch(e){}
+let LOG=[],logDirty=false,dbgOpen=false,dbgRefresh=()=>{};try{LOG=JSON.parse(localStorage.getItem('tape_log')||'[]')}catch(e){}
+const hms=()=>{const d=new Date();return d.toTimeString().slice(0,8)+'.'+String(d.getMilliseconds()).padStart(3,'0')};
+function LG(ev,x){
+  try{
+    const st=(au.paused?'P':'>')+' rs'+au.readyState+' ns'+au.networkState+' t'+(au.currentTime||0).toFixed(1)+' '+(document.hidden?'hid':'vis')+(userPaused?' UP':'');
+    LOG.push(hms()+' '+ev+(x!=null&&x!==''?' '+(typeof x==='string'?x:JSON.stringify(x)):'')+'  ['+st+']');
+    if(LOG.length>500)LOG.splice(0,LOG.length-500);
+    logDirty=true;if(dbgOpen)dbgRefresh();
+  }catch(e){}
+}
+const logSave=()=>{if(!logDirty)return;logDirty=false;try{localStorage.setItem('tape_log',JSON.stringify(LOG))}catch(e){}};
+setInterval(logSave,3000);
+LG('=== запуск '+APP_VER+' ===',navigator.userAgent);
+if(DBG){
+  const b=document.createElement('button');b.id='dbgb';b.textContent='LOG';
+  const p=document.createElement('div');p.id='dbgp';p.hidden=true;
+  p.innerHTML='<pre id="dbgt"></pre><div class="btns"><button class="b go" id="dbgc">Копир.</button><button class="b cy" id="dbgs">Тест</button><button class="b" id="dbgr">Очист.</button><button class="b pk" id="dbgx">Закр.</button></div>';
+  document.body.append(b,p);
+  const pre=p.querySelector('#dbgt');
+  const head=()=>['Кассета '+APP_VER,navigator.userAgent,
+    'экран-значок (standalone): '+((navigator.standalone||matchMedia('(display-mode: standalone)').matches)?'да':'нет'),
+    'audioSession: '+(navigator.audioSession?navigator.audioSession.state+' / '+navigator.audioSession.type:'нет'),
+    'статистика: '+(STATS_URL?'адрес задан':'АДРЕС НЕ ЗАДАН')+', вкл='+ST.on+', в очереди='+ST.q.length+', отправлено='+ST.sent+', сбоев='+ST.fail].join('\n');
+  dbgRefresh=()=>{pre.textContent=head()+'\n\n'+LOG.slice(-250).join('\n');pre.scrollTop=pre.scrollHeight};
+  b.onclick=()=>{dbgOpen=true;p.hidden=false;dbgRefresh()};
+  p.querySelector('#dbgx').onclick=()=>{dbgOpen=false;p.hidden=true};
+  p.querySelector('#dbgr').onclick=()=>{LOG=[];logDirty=true;logSave();dbgRefresh()};
+  p.querySelector('#dbgs').onclick=()=>{track('test',{x:1});flush();toast('Тестовое событие отправлено');dbgRefresh()};
+  p.querySelector('#dbgc').onclick=async()=>{
+    const txt=head()+'\n\n'+LOG.join('\n');
+    try{await navigator.clipboard.writeText(txt);toast('Журнал скопирован')}
+    catch(e){pre.textContent=txt;const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Выдели текст и скопируй')}
+  };
+}
+
+// ===== Анонимная статистика: без IP, без имён, только случайный номер устройства =====
+const ST={on:true,q:[],sent:0,fail:0,hc:0,ec:0,vis:0,lis:0,bg:0,sysp:0,rec:0,stuck:0,errn:0,vid:'',sid:''};
+let seg=null,HOW='tap',lastNp='',pkey='';
+try{ST.on=localStorage.getItem('tape_stats_off')!=='1';const p=new URLSearchParams(location.search);if(p.get('stats')==='0'){localStorage.setItem('tape_stats_off','1');ST.on=false}if(p.get('stats')==='1'){localStorage.removeItem('tape_stats_off');ST.on=true}}catch(e){}
+const rid=n=>{let s='';for(let i=0;i<n;i++)s+=Math.floor(Math.random()*256).toString(16).padStart(2,'0');return s};
+try{ST.vid=localStorage.getItem('tape_vid')||'';if(!ST.vid){ST.vid=rid(8);localStorage.setItem('tape_vid',ST.vid)}}catch(e){ST.vid=rid(8)}
+ST.sid=Date.now().toString(36)+rid(2);
+try{ST.q=JSON.parse(localStorage.getItem('tape_sq')||'[]')}catch(e){}
+const cut=(s,n)=>String(s==null?'':s).slice(0,n);
+// поля трека для статистики (для своих файлов названия не отправляются)
+const tf=t=>{
+  if(!t)return{};
+  if(String(t.id).startsWith('lo:'))return{id:'lo',kind:'file',dur:Math.round(t.dur||0)};
+  return{id:t.id,ti:cut(t.title,100),ar:cut(t.artist,80),fr:String(t.from||'').startsWith('Видео')?'Видео':(t.from||''),lc:cut(t.lic,24),kind:t.radio?'radio':t.prev?'preview':t.video?'video':'track',dur:Math.round(t.dur||0)};
+};
+function track(type,d){
+  if(type!=='ping')LG('STAT '+type,d&&d.id?d.id:'');
+  if(!ST.on)return;
+  const e=Object.assign({t:type,ts:Date.now(),vid:ST.vid,sid:ST.sid},DBG?{dbg:1}:{},d||{});
+  ST.q.push(e);if(ST.q.length>300)ST.q.splice(0,ST.q.length-300);
+  if(ST.q.length>=20)flush();
+}
+function sendBatch(beacon){
+  const batch=ST.q.splice(0,40),body=JSON.stringify({k:STATS_KEY,v:APP_VER,e:batch});
+  try{
+    if(beacon&&navigator.sendBeacon&&navigator.sendBeacon(STATS_URL,body)){ST.sent+=batch.length;return}
+    fetch(STATS_URL,{method:'POST',mode:'no-cors',keepalive:true,body}).then(()=>{ST.sent+=batch.length},()=>{ST.fail++;ST.q.unshift(...batch);ST.q.splice(300)});
+  }catch(e){ST.fail++;ST.q.unshift(...batch);ST.q.splice(300)}
+}
+function flush(beacon){
+  if(!ST.on||!ST.q.length)return;
+  if(!STATS_URL){ST.q.length=0;return}   // адрес не задан: события видны только в журнале
+  for(let k=0;k<(beacon?4:1)&&ST.q.length;k++)sendBatch(beacon);
+}
+function stSave(){try{localStorage.setItem('tape_sq',JSON.stringify(ST.q.slice(-300)))}catch(e){}}
+setInterval(()=>{flush();stSave()},20000);
+setInterval(()=>{if(!document.hidden)ST.vis++},1000);
+function health(k,d){if(++ST.hc>80)return;track('health',Object.assign({k},d||{}))}
+// прослушивание: считаем по часам время, пока реально играет звук
+function segStart(t,how){seg={t,how,sec:0,ps:0}}
+function segTick(){if(seg&&seg.ps){const n=Date.now(),d=(n-seg.ps)/1000;seg.sec+=d;ST.lis+=d;if(document.hidden)ST.bg+=d;seg.ps=n}}
+function segEnd(why){
+  if(!seg)return;segTick();const s=seg;seg=null;
+  if(s.sec<.3&&(why==='switch'||why==='leave'))return;
+  const dur=Math.round(s.t.dur||(isFinite(au.duration)?au.duration:0)||0),pct=dur?+(s.sec/dur).toFixed(2):0;
+  const skip=(why==='next'||why==='prev'||why==='switch')&&!s.t.radio&&(s.sec<30||pct<.5)?1:0;
+  track('end',Object.assign(tf(s.t),{sec:+s.sec.toFixed(1),pct,why,how:s.how,skip}));
+}
+setInterval(segTick,5000);
+function ping(w){
+  segTick();
+  const o={w,vs:Math.round(ST.vis),ls:Math.round(ST.lis),bg:Math.round(ST.bg),sp:ST.sysp,rc:ST.rec,sk:ST.stuck,er:ST.errn,pl:(cur&&!au.paused)?1:0};
+  if(cur&&!au.paused&&seg)Object.assign(o,tf(cur),{now:Math.round(seg.sec)});
+  track('ping',o);
+}
+setInterval(()=>{const k=Math.round(ST.vis)+'|'+Math.round(ST.lis);if(k!==pkey){pkey=k;ping('tick')}},60000);
+const srcCount=list=>{const o={};list.forEach(t=>{const k=String(t.from||'?').split(' ')[0];o[k]=(o[k]||0)+1});return Object.entries(o).map(([k,v])=>k+':'+v).join(',')};
+function devInfo(){
+  const u=navigator.userAgent;let os='?',br='?',m;
+  const v=re=>{const x=re.exec(u);return x?x[1]:''};
+  if(/iPhone|iPod/.test(u)){m=/OS (\d+)[_.](\d+)/.exec(u);os='iOS '+(m?m[1]+'.'+m[2]:'')}
+  else if(/iPad/.test(u)||(/Macintosh/.test(u)&&navigator.maxTouchPoints>1)){m=/OS (\d+)[_.](\d+)/.exec(u);os='iPadOS'+(m?' '+m[1]+'.'+m[2]:'')}
+  else if(/Android/.test(u))os='Android '+v(/Android (\d+)/);
+  else if(/Windows/.test(u))os='Windows';
+  else if(/Mac OS X/.test(u))os='macOS';
+  else if(/CrOS/.test(u))os='ChromeOS';
+  else if(/Linux/.test(u))os='Linux';
+  if(/YaBrowser/.test(u))br='Yandex '+v(/YaBrowser\/(\d+)/);
+  else if(/Edg(?:e|A|iOS)?\//.test(u))br='Edge '+v(/Edg(?:e|A|iOS)?\/(\d+)/);
+  else if(/OPR\//.test(u))br='Opera '+v(/OPR\/(\d+)/);
+  else if(/SamsungBrowser/.test(u))br='Samsung '+v(/SamsungBrowser\/(\d+)/);
+  else if(/Firefox|FxiOS/.test(u))br='Firefox '+v(/(?:Firefox|FxiOS)\/(\d+)/);
+  else if(/Chrome|CriOS/.test(u))br='Chrome '+v(/(?:Chrome|CriOS)\/(\d+)/);
+  else if(/Safari/.test(u))br='Safari '+v(/Version\/(\d+)/);
+  return{os,br,mob:/Mobi|Android|iPhone/.test(u)?1:0};
+}
+function visit(){
+  let vc=1,fv=Date.now();
+  try{vc=(+localStorage.getItem('tape_vc')||0)+1;localStorage.setItem('tape_vc',vc);fv=+localStorage.getItem('tape_fv')||0;if(!fv){fv=Date.now();localStorage.setItem('tape_fv',fv)}}catch(e){}
+  const c=navigator.connection||{};let ref='';try{ref=document.referrer?new URL(document.referrer).hostname:''}catch(e){}
+  track('visit',Object.assign({vc,fd:Math.floor((Date.now()-fv)/864e5),ref:ref===location.hostname?'':ref,
+    pwa:(navigator.standalone||matchMedia('(display-mode: standalone)').matches)?1:0,
+    sc:screen.width+'x'+screen.height+'@'+(devicePixelRatio||1),vp:innerWidth+'x'+innerHeight,lg:navigator.language,
+    tz:(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||''}catch(e){return''}})(),
+    net:c.effectiveType||'',sv:c.saveData?1:0,on:navigator.onLine?1:0,thm:THEMES[ti][0],md:mode,
+    pls:PLS.length,plt:PLS.reduce((a,p)=>a+p.t.length,0),off:PLS.reduce((a,p)=>a+p.t.filter(x=>x.off).length,0),
+    ms:('mediaSession' in navigator)?1:0,as:navigator.audioSession?1:0,lnk:new URLSearchParams(location.search).get('t')||''},devInfo()));
+}
+function stRender(){$('#sts').textContent=ST.on?'Анонимная статистика прослушиваний (без IP и имён)':'Статистика отключена';$('#stt').textContent=ST.on?'отключить':'включить'}
+$('#stt').onclick=e=>{e.preventDefault();ST.on=!ST.on;try{ST.on?localStorage.removeItem('tape_stats_off'):localStorage.setItem('tape_stats_off','1')}catch(x){}if(!ST.on)ST.q.length=0;stRender()};
+stRender();
+addEventListener('error',e=>{LG('JS-ERROR',cut(e.message,120));if(++ST.ec<=10)track('jserr',{m:cut(e.message,160),s:cut(String(e.filename||'').split('/').pop(),40),l:e.lineno||0})});
+addEventListener('unhandledrejection',e=>{const m=cut((e.reason&&e.reason.message)||e.reason,160);LG('PROMISE-ERROR',m);if(++ST.ec<=10)track('jserr',{m,p:1})});
+addEventListener('appinstalled',()=>track('install',{}));
+
+// ===== Сторож воспроизведения: звук должен играть, пока пользователь сам не нажал паузу =====
+// userPaused = true ТОЛЬКО от нажатия пользователя (кнопка, экран блокировки, гарнитура).
+// Любая другая пауза (звонок, Siri, смена наушников, сбой сети) считается прерыванием: сторож пробует продолжить.
+const wd={sysPause:0,retry:0,nextTry:0,route:false,routeAt:0,lastDev:0,lastT:-1,lastMove:Date.now(),stuckN:0,radioErr:0,by:''};
+function tryPlay(why){
+  if(!cur||!au.src)return;
+  wd.by=why;let p;
+  try{p=au.play()}catch(e){LG('play() throw',why+' '+e);return}
+  if(p&&p.then)p.then(()=>LG('play() ok',why),e=>LG('play() FAIL',why+' '+(e&&e.name)+' '+cut(e&&e.message,60)));
+}
+function reload(why){
+  if(!cur)return;
+  const pos=cur.radio?0:(au.currentTime||pendingPos||0);
+  LG('RELOAD',why+' pos'+pos.toFixed(1));
+  wd.lastT=-1;wd.lastMove=Date.now();
+  au.src=blobs.get(cur.id)||srcOf(cur);
+  if(pos>1)au.addEventListener('loadedmetadata',()=>{try{au.currentTime=pos}catch(e){}},{once:true});
+  tryPlay(why);
+}
+setInterval(()=>{
+  if(!cur||userPaused||!au.src)return;
+  const now=Date.now();
+  if(navigator.audioSession&&navigator.audioSession.state==='interrupted'){wd.lastMove=now;return}
+  if(au.paused&&!au.ended){
+    wd.lastMove=now;
+    if(!AUTO_RESUME||wd.route)return;
+    if(!wd.sysPause){wd.sysPause=now;wd.retry=0;wd.nextTry=now+2500;return}
+    if(now-wd.sysPause>1800000||now<wd.nextTry)return;
+    wd.retry++;wd.nextTry=now+Math.min(15000,2000*wd.retry);
+    LG('WD retry','#'+wd.retry);
+    if(au.error||au.networkState===3)reload('retry'+wd.retry);else tryPlay('wd');
+    return;
+  }
+  const t=au.currentTime;
+  if(Math.abs(t-wd.lastT)>0.05){wd.lastT=t;wd.lastMove=now;wd.stuckN=0;return}
+  const lim=au.readyState>=3?5000:(cur.radio?9000:15000);
+  if(now-wd.lastMove>lim){
+    wd.lastMove=now;
+    if(!navigator.onLine&&!blobs.has(cur.id))return;   // нет сети: ждём её возвращения
+    wd.stuckN++;ST.stuck++;
+    LG('WD STUCK','#'+wd.stuckN+' lim'+lim);
+    health('stuck',{n:wd.stuckN,rs:au.readyState,ns:au.networkState,hid:document.hidden?1:0,fr:cur.from||'',kind:cur.radio?'radio':'track'});
+    if(wd.stuckN<=3)reload('stuck'+wd.stuckN);
+    else if(cur.radio){wd.stuckN=0;toast('Станция не отвечает')}
+    else{wd.stuckN=0;toast('Трек завис, переключаю');segEnd('error');HOW='errskip';step(1)}
+  }
+},1000);
+if(navigator.mediaDevices&&navigator.mediaDevices.addEventListener)navigator.mediaDevices.addEventListener('devicechange',async()=>{
+  const n=Date.now();let c='';
+  try{const d=await navigator.mediaDevices.enumerateDevices();c=d.filter(x=>x.kind==='audiooutput').length+'/'+d.length}catch(e){}
+  LG('devicechange',c);
+  if(au.paused&&!userPaused&&cur&&au.src){
+    if(!wd.route&&wd.sysPause&&n-wd.sysPause<2500){wd.route=true;wd.routeAt=n;LG('→ пауза из-за смены устройства, жду возврата наушников')}
+    else if(wd.route&&n-wd.routeAt>2500&&AUTO_RESUME){wd.route=false;wd.nextTry=0;LG('→ устройство вернулось, продолжаю');tryPlay('devicechange')}
+  }
+  wd.lastDev=n;
+});
+try{const as=navigator.audioSession;if(as){
+  try{as.type='playback'}catch(e){}
+  LG('audioSession',as.type+' / '+as.state);
+  as.addEventListener('statechange',()=>{
+    LG('audioSession.state',as.state);health('asess',{s:as.state});
+    if(as.state==='active'&&cur&&!userPaused&&au.src&&au.paused&&!wd.route&&AUTO_RESUME)setTimeout(()=>{if(au.paused&&!userPaused)tryPlay('asess')},300);
+  });
+}}catch(e){}
+['play','pause','playing','waiting','stalled','suspend','emptied','abort','ended','canplay'].forEach(ev=>au.addEventListener(ev,()=>LG('audio:'+ev)));
+au.addEventListener('waiting',()=>{segTick();if(seg)seg.ps=0});
+au.addEventListener('seeked',()=>LG('seeked'));
+addEventListener('online',()=>{LG('online');wd.lastMove=Date.now();if(cur&&!userPaused&&au.src&&!blobs.has(cur.id)&&(au.error||au.readyState<3))reload('online')});
+addEventListener('offline',()=>LG('offline'));
+document.addEventListener('freeze',()=>LG('page freeze'));document.addEventListener('resume',()=>LG('page resume'));
+addEventListener('blur',()=>LG('blur'));
+
 // --- Индикаторы уровня и темы ---
-$('#fxb').classList.toggle('on',FX);
-$('#fxb').onclick=()=>{try{localStorage.setItem('tape_fx',FX?'0':'1')}catch(e){}saveState();toast(FX?'Точные индикаторы выключены':'Точные индикаторы включены. В фоне звук может обрываться');setTimeout(()=>location.reload(),1200)};
 const THEMES=[['neon','Неон 90-х'],['winamp','Винамп'],['cassette','Кассета'],['cyber','Киберпанк'],['sunset','Закат'],['mono','Монохром']];
 let ti=0,VC=['#00e5ff','#ffe600','#ff2d95'];try{ti=+localStorage.getItem('tape_theme')||0}catch(e){}
 function applyTheme(i,say){
   ti=i;document.documentElement.setAttribute('data-theme',THEMES[i][0]);try{localStorage.setItem('tape_theme',i)}catch(e){}
   const g=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();VC=[g('--cy'),g('--yel'),g('--pink')];
-  if(say)toast('Тема: '+THEMES[i][1]);
+  if(say){toast('Тема: '+THEMES[i][1]);track('theme',{n:THEMES[i][0]})}
 }
 $('#thm').onclick=()=>applyTheme((ti+1)%THEMES.length,1);applyTheme(ti,0);
-function initAudio(){
-  if(ctx||!FX)return;
-  ctx=new(window.AudioContext||window.webkitAudioContext)();
-  const n=ctx.createMediaElementSource(au);
-  ctx.onstatechange=()=>{if(!au.paused&&ctx.state!=='running')ctx.resume().catch(()=>{})};
-  an=ctx.createAnalyser();an.fftSize=128;an.smoothingTimeConstant=.75;n.connect(an);an.connect(ctx.destination);
-}
 
-// --- Визуализатор ---
+// --- Анимация индикатора (не зависит от звука, не трогает плеер) ---
 const cv=$('#vz'),c2=cv.getContext('2d');
-(function draw(){
+let lastDraw=0,idleDraw=false;
+(function draw(ts){
   requestAnimationFrame(draw);
+  if(document.hidden||ts-lastDraw<33)return;lastDraw=ts;
+  const playing=!au.paused;
+  if(!playing&&idleDraw)return;idleDraw=!playing;
   c2.fillStyle='#08080e';c2.fillRect(0,0,cv.width,cv.height);
   const N=26,w=cv.width/N;let d=new Uint8Array(64);
-  if(an&&!au.paused)an.getByteFrequencyData(d);else if(!an&&!au.paused){const t=Date.now()/180;for(let i=0;i<64;i++)d[i]=Math.max(0,Math.min(255,150+90*Math.sin(t+i*.9)*Math.sin(t*.37+i*.31)-i*2))}
+  if(playing){const t=Date.now()/180;for(let i=0;i<64;i++)d[i]=Math.max(0,Math.min(255,150+90*Math.sin(t+i*.9)*Math.sin(t*.37+i*.31)-i*2))}
   for(let i=0;i<N;i++){
     const h=d[i+1]/255*cv.height,segs=Math.round(h/6);
     for(let s=0;s<segs;s++){c2.fillStyle=s>9?VC[2]:s>6?VC[1]:VC[0];c2.fillRect(i*w+2,cv.height-(s+1)*6,w-4,4)}
   }
-})();
+})(0);
 
 // --- Источники музыки ---
 async function host(){
@@ -267,13 +477,15 @@ async function search(q){
   $('#qx').hidden=!$('#q').value;showSg([]);lastQ=q;remember(q);$('#list').innerHTML='<p class="m">Ищу во всех каталогах…</p>';
   const rm=/^(радио|radio)\s+(.+)/i.exec(q);
   if(rm){tab=3;tabs();return radioSearch(rm[2])}
+  const t0=Date.now();let fx=0;
   let qs=[q];if(hasRu(q))qs.push(translit(q));
   let out=rank(await runAll(qs),qs);
   if(out.length<6){ // мало найдено: пробуем исправить раскладку
     const sw=swap(q);
-    if(sw!==q){const q2=[sw];if(hasRu(sw))q2.push(translit(sw));qs=qs.concat(q2);out=rank(out.concat(await runAll(q2)),qs)}
+    if(sw!==q){fx=1;const q2=[sw];if(hasRu(sw))q2.push(translit(sw));qs=qs.concat(q2);out=rank(out.concat(await runAll(q2)),qs)}
   }
   results=out;tab=1;tabs();render();
+  track('search',{q:cut(q,80),n:out.length,ms:Date.now()-t0,src:srcCount(out),kind:'search',fx});
   if(!out.length)toast('Ничего не найдено или каталоги недоступны');
 }
 // Подборки по настроению и жанру (самое популярное за неделю)
@@ -314,6 +526,7 @@ async function explore(i){
   const J=JAMENDO_KEY&&c.t?fetch(`https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_KEY}&format=json&limit=25&order=popularity_week&tags=${encodeURIComponent(c.t)}`).then(r=>r.json()).then(j=>j.results.map(jaT)).catch(()=>[]):[];
   const parts=await Promise.all([A,J,c.q?srcIt(c.q):[],c.wc?srcWc(c.wc):[],c.ia?srcIaC(c.ia[0],c.ia[1]):[]]);
   results=rank(parts.flat(),['']);tab=1;tabs();render();toast(MOODS[i][0]);
+  track('mood',{n:MOODS[i][2]+'/'+MOODS[i][0],res:results.length});
 }
 // Интернет-радио (открытый каталог radio-browser): эфирная музыка, в т.ч. хиты
 const RB=['https://de1.api.radio-browser.info','https://at1.api.radio-browser.info','https://nl1.api.radio-browser.info'];
@@ -324,10 +537,12 @@ async function exploreRadio(i){
   const c=RADIO[i][1];tab=3;tabs();radioTitle=RADIO[i][0];radioRes=[];$('#list').innerHTML='<p class="m">Ищу радиостанции…</p>';
   radioRes=await radioList(c.tag?'tag='+encodeURIComponent(c.tag):'countrycode='+c.cc,60);
   renderRadio();if(!radioRes.length)toast('Радиостанции недоступны');
+  track('radio_cat',{n:RADIO[i][0],res:radioRes.length});
 }
-async function radioSearch(q){
+async function radioSearch(q,quiet){
   radioTitle='Результаты: '+q;radioRes=[];$('#list').innerHTML='<p class="m">Ищу радиостанции…</p>';
   radioRes=await radioList('name='+encodeURIComponent(q),60);renderRadio();if(!radioRes.length)toast('Станции не найдены');
+  if(!quiet)track('search',{q:cut(q,80),n:radioRes.length,kind:'radio'});
 }
 const flag=cc=>[...String(cc).toUpperCase()].map(c=>String.fromCodePoint(127397+c.charCodeAt(0))).join('');
 const cname=(cc,def)=>{try{return new Intl.DisplayNames(['ru'],{type:'region'}).of(cc.toUpperCase())||def}catch(e){return def}};
@@ -343,6 +558,7 @@ function toggleFav(t){
   favs=isFav(t)?favs.filter(x=>x.id!=t.id):[{...t},...favs];
   try{localStorage.setItem('tape_rfav',JSON.stringify(favs))}catch(e){}
   toast(isFav(t)?'Станция добавлена в избранное ♥':'Убрана из избранного');renderRadio();
+  track('fav',Object.assign(tf(t),{on:isFav(t)?1:0}));
 }
 async function loadCharts(){try{const j=await(await fetch('https://rss.applemarketingtools.com/api/v2/ru/music/most-played/15/songs.json')).json();chartsC=j.feed.results.map(d=>d.artistName+' — '+d.name)}catch(e){}}
 function homeHtml(){
@@ -383,6 +599,7 @@ function setNP(r,t){
   const el=$('#np');
   if(!r){el.hidden=true;return}
   npQ=(r.a?r.a+' — ':'')+r.t;$('#npt').textContent='♪ '+npQ;el.hidden=false;
+  if(lastNp!==t.id+'|'+npQ){lastNp=t.id+'|'+npQ;track('np',Object.assign(tf(t),{np:cut(npQ,120)}))}
   if('mediaSession' in navigator)navigator.mediaSession.metadata=new MediaMetadata({title:r.t,artist:r.a||t.title,album:t.title,artwork:t.cover?[{src:t.cover,sizes:'96x96'}]:[]});
 }
 async function pollNP(){
@@ -395,13 +612,19 @@ $('#npq').onclick=()=>{if(!npQ)return;$('#q').value=npQ;$('#qx').hidden=false;ta
 
 // --- Плеер ---
 function play(list,i,back,pos){
-  initAudio();
+  const how=HOW;HOW='tap';
+  segEnd('switch');
   if(cur&&queue===list&&!back)hist.push(qi);else if(queue!==list)hist=[];
   queue=list;qi=i;cur=list[i];
+  userPaused=false;wd.route=false;wd.sysPause=0;wd.retry=0;wd.lastT=-1;wd.lastMove=Date.now();wd.stuckN=0;wd.radioErr=0;
+  if(how==='tap')errs=0;
   au.src=blobs.get(cur.id)||srcOf(cur);
   if(pos)au.addEventListener('loadedmetadata',()=>{au.currentTime=pos},{once:true});pendingPos=0;
-  if(ctx)ctx.resume();
-  au.play().catch(()=>toast('Не играет. Попробуй другой трек'));
+  LG('PLAY',cur.id+' '+how);
+  segStart(cur,how);
+  track('play',Object.assign(tf(cur),{how,src:queue===results?'s':queue===pl?'p':queue===RL?'r':'x',i,n:queue.length,off:blobs.has(cur.id)?1:0,q:(queue===results&&lastQ)?cut(lastQ,60):''}));
+  wd.by='play';
+  const pr=au.play();if(pr&&pr.catch)pr.catch(e=>{LG('play() FAIL',(e&&e.name)+' '+cut(e&&e.message,60));if(!e||e.name!=='AbortError')toast('Не играет. Попробуй другой трек')});
   ui();render();
 }
 function ui(){
@@ -414,29 +637,77 @@ function ui(){
   if('mediaSession' in navigator)navigator.mediaSession.metadata=new MediaMetadata({title:cur.title,artist:cur.artist||'',album:'GADAEV TAPE',artwork:cur.cover?[{src:cur.cover,sizes:'480x480'}]:[]});
   setupMS();
 }
-function resumePlay(){
-  userPaused=false;
-  if(!au.src&&cur)return play(queue,qi,true,pendingPos);
+function resumePlay(by){
+  userPaused=false;wd.route=false;wd.by=by||'user';
+  LG('RESUME',wd.by);
+  if(!au.src&&cur){HOW='restore';return play(queue,qi,true,pendingPos)}
   if(cur&&cur.radio&&au.paused&&au.src)au.src=srcOf(cur);
-  if(ctx&&ctx.state!=='running')ctx.resume().catch(()=>{});
   if(au.error&&cur){const t=au.currentTime;au.src=blobs.get(cur.id)||srcOf(cur);au.addEventListener('loadedmetadata',()=>{au.currentTime=t},{once:true})}
-  au.play().catch(()=>toast('Нажми ▶ в плеере'));
+  const p=au.play();if(p&&p.catch)p.catch(e=>{LG('play() FAIL',(e&&e.name)+' '+cut(e&&e.message,60));toast('Нажми ▶ в плеере')});
 }
-const toggle=()=>{if(!cur)return toast('Сначала найди трек');if(!au.src)return play(queue,qi,true,pendingPos);au.paused?resumePlay():(userPaused=true,au.pause())};
+const toggle=()=>{
+  if(!cur)return toast('Сначала найди трек');
+  if(!au.src){HOW='restore';return play(queue,qi,true,pendingPos)}
+  if(au.paused)resumePlay('user');else{userPaused=true;LG('USER pause');au.pause()}
+};
 const MICON=['🔁','🔀','🔂'],MNAME=['По порядку','Вперемешку','Повтор одного трека'];
 function nextIdx(){const n=queue.length;if(mode==1&&n>1){let r;do{r=Math.floor(Math.random()*n)}while(r==qi);return r}return(qi+1)%n}
 const step=d=>{
   if(!queue.length)return;
   if(d<0){if(au.currentTime>3){au.currentTime=0;return}
+    segEnd('prev');if(HOW==='tap')HOW='prev';
     return play(queue,mode==1&&hist.length?hist.pop():(qi-1+queue.length)%queue.length,true)}
+  segEnd('next');if(HOW==='tap')HOW='next';
   play(queue,nextIdx());
 };
-function setMode(m,say){mode=m;try{localStorage.setItem('tape_mode',m)}catch(e){}$('#mode').textContent=MICON[m];if(say)toast(MNAME[m])}
-au.onplay=()=>{userPaused=false;$('#deck').classList.add('play');$('#pp').textContent='❚❚';if('mediaSession' in navigator)navigator.mediaSession.playbackState='playing'};
-au.onpause=()=>{if(!document.hidden&&!au.ended&&au.readyState>1)userPaused=true;$('#deck').classList.remove('play');$('#pp').textContent='▶';if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused'};
-au.onended=()=>{if(mode==2){au.currentTime=0;au.play()}else step(1)};
-au.onerror=()=>{if(!au.src)return;if(cur&&cur.radio){toast(FX?'С включённым VU радио не играет. Выключи кнопку VU':'Станция сейчас не отвечает');return}toast('Трек недоступен');if(++errs<3)setTimeout(()=>step(1),800)};
-au.onplaying=()=>{errs=0;if(cur&&cur.radio)setTimeout(pollNP,1500)};
+function setMode(m,say){mode=m;try{localStorage.setItem('tape_mode',m)}catch(e){}$('#mode').textContent=MICON[m];if(say){toast(MNAME[m]);track('mode',{m})}}
+au.onplay=()=>{userPaused=false;wd.lastMove=Date.now();$('#deck').classList.add('play');$('#pp').textContent='❚❚';if('mediaSession' in navigator)navigator.mediaSession.playbackState='playing'};
+au.onpause=()=>{
+  segTick();if(seg)seg.ps=0;
+  $('#deck').classList.remove('play');$('#pp').textContent='▶';if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused';
+  // пауза, которую не нажимал пользователь = прерывание системой (звонок, Siri, наушники...)
+  if(!userPaused&&!au.ended&&cur&&au.src){
+    const n=Date.now();wd.sysPause=wd.sysPause||n;wd.retry=0;wd.nextTry=n+2500;
+    wd.route=n-wd.lastDev<2500;if(wd.route)wd.routeAt=n;
+    ST.sysp++;health('syspause',{rt:wd.route?1:0,hid:document.hidden?1:0,as:(navigator.audioSession&&navigator.audioSession.state)||''});
+    LG('SYS-PAUSE',wd.route?'сразу после смены устройства':'');
+  }
+};
+au.onended=()=>{
+  segTick();if(seg)seg.ps=0;
+  if(cur&&cur.radio){segEnd('dropped');reload('radio-ended');return}   // эфир оборвался: переподключаемся, а не прыгаем на другую станцию
+  segEnd('ended');
+  if(mode==2){segStart(cur,'repeat');track('play',Object.assign(tf(cur),{how:'repeat'}));au.currentTime=0;au.play().catch(()=>{})}
+  else{HOW='auto';step(1)}
+};
+au.onerror=()=>{
+  if(!au.src)return;
+  segTick();if(seg)seg.ps=0;ST.errn++;
+  const code=au.error&&au.error.code;
+  LG('ERROR','code '+code+' '+cut(au.error&&au.error.message,80));
+  health('err',{code,fr:(cur&&cur.from)||'',kind:cur&&cur.radio?'radio':'track',n:errs});
+  if(cur&&cur.radio){   // радио: несколько попыток переподключения с нарастающей паузой
+    if(++wd.radioErr<=6){toast('Станция не отвечает, переподключаюсь…');setTimeout(()=>{if(cur&&cur.radio&&!userPaused)reload('radio-err'+wd.radioErr)},Math.min(15000,1500*wd.radioErr))}
+    else toast('Станция сейчас не отвечает');
+    return;
+  }
+  if(++errs<=2){setTimeout(()=>{if(cur&&!userPaused)reload('err'+errs)},1200);return}   // два повтора того же трека, потом пропуск
+  toast('Трек недоступен');
+  if(errs<=4)setTimeout(()=>{segEnd('error');HOW='errskip';step(1)},800);
+};
+au.onplaying=()=>{
+  errs=0;wd.radioErr=0;wd.stuckN=0;wd.lastMove=Date.now();
+  if(!seg&&cur)segStart(cur,'resume');
+  if(seg&&!seg.ps)seg.ps=Date.now();
+  if(wd.sysPause){
+    const s=Math.round((Date.now()-wd.sysPause)/1000);
+    if(s>=2){ST.rec++;health('resumed',{s,n:wd.retry,by:wd.by,hid:document.hidden?1:0})}
+    LG('RESUMED','через '+s+' c, попыток '+wd.retry+', кем: '+wd.by);
+    wd.sysPause=0;wd.retry=0;
+  }
+  wd.route=false;
+  if(cur&&cur.radio)setTimeout(pollNP,1500);
+};
 function saveState(){try{if(!cur)return;localStorage.setItem('tape_state',JSON.stringify({cur,pos:au.currentTime||pendingPos||0,q:(()=>{const k=PLS.findIndex(p=>p.t===queue);return k>=0?'pl:'+k:queue.slice(0,40)})()}))}catch(e){}}
 function posState(force){
   if(!('mediaSession' in navigator)||!isFinite(au.duration)||!au.duration)return;
@@ -444,7 +715,9 @@ function posState(force){
   try{navigator.mediaSession.setPositionState({duration:au.duration,position:Math.min(au.currentTime,au.duration),playbackRate:1})}catch(e){}
 }
 ['play','pause','seeked','loadedmetadata','durationchange'].forEach(ev=>au.addEventListener(ev,()=>posState(1)));
-au.addEventListener('pause',saveState);addEventListener('pagehide',saveState);document.addEventListener('visibilitychange',()=>{if(document.hidden)saveState()});
+au.addEventListener('pause',saveState);
+addEventListener('pagehide',()=>{LG('pagehide');saveState();segEnd('leave');ping('leave');flush(true);stSave();logSave()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)saveState()});
 au.ontimeupdate=()=>{$('#tm').textContent=fmt(au.currentTime)+' / '+fmt(au.duration);if(au.duration){$('#seek').value=au.currentTime/au.duration*1000;posState()}if(Date.now()-lastSave>3000){lastSave=Date.now();saveState()}};
 $('#seek').oninput=e=>{if(au.duration)au.currentTime=e.target.value/1000*au.duration};
 $('#pp').onclick=toggle;$('#prev').onclick=()=>step(-1);$('#next').onclick=()=>step(1);
@@ -452,33 +725,36 @@ $('#pp').onclick=toggle;$('#prev').onclick=()=>step(-1);$('#next').onclick=()=>s
 function setupMS(){
 if('mediaSession' in navigator){
   const h=(a,f)=>{try{navigator.mediaSession.setActionHandler(a,f)}catch(e){}};
-  h('play',resumePlay);
-  h('pause',()=>{userPaused=true;au.pause()});
-  h('previoustrack',()=>step(-1));
-  h('nexttrack',()=>step(1));
+  h('play',()=>{LG('MS play');resumePlay('lock')});
+  h('pause',()=>{LG('MS pause');userPaused=true;au.pause()});
+  h('previoustrack',()=>{LG('MS prev');step(-1)});
+  h('nexttrack',()=>{LG('MS next');step(1)});
   h('seekto',e=>{if(!isFinite(au.duration)||!au.duration)return;au.currentTime=Math.max(0,Math.min(e.seekTime,au.duration-.3));posState(1)});
   h('seekbackward',null);h('seekforward',null);
 }}
 setupMS();
-const wake=()=>{if(!cur||userPaused)return;if(au.paused&&!au.ended&&au.src)resumePlay();else if(ctx&&ctx.state!=='running')ctx.resume().catch(()=>{})};
-if(navigator.mediaDevices&&navigator.mediaDevices.addEventListener)navigator.mediaDevices.addEventListener('devicechange',()=>setTimeout(()=>{if(au.paused)userPaused=true},400));
-document.addEventListener('visibilitychange',()=>{if(ctx&&!au.paused&&ctx.state!=='running')ctx.resume().catch(()=>{});if(!document.hidden)wake()});
-addEventListener('pageshow',wake);addEventListener('focus',wake);
-$('#stop').onclick=()=>{userPaused=true;au.pause();au.currentTime=0};
+// возвращение на экран / в приложение: если играть должно, а звук стоит — продолжаем
+const wake=()=>{if(!cur||userPaused)return;if(au.paused&&!au.ended&&au.src&&!wd.route){LG('wake → продолжаю');resumePlay('wake')}};
+document.addEventListener('visibilitychange',()=>{
+  LG('visibility '+(document.hidden?'hidden':'visible'));
+  if(document.hidden){segTick();ping('hide');flush(true);stSave();logSave()}else wake();
+});
+addEventListener('pageshow',()=>{LG('pageshow');wake()});addEventListener('focus',()=>{LG('focus');wake()});
+$('#stop').onclick=()=>{userPaused=true;segEnd('stop');au.pause();au.currentTime=0};
 $('#save').onclick=()=>cur&&add(cur);
 $('#shr').onclick=()=>cur&&share(cur);
 $('#mode').onclick=()=>setMode((mode+1)%3,1);setMode(mode,0);
 
 // --- Плейлист, оффлайн, шеринг ---
 let addPending=null;
-function addTo(i,t){const P=PLS[i];if(P.t.some(x=>x.id==t.id))return toast('Уже в «'+P.n+'»');P.t.push({...t,off:t.off||0});savePL();toast('Добавлено в «'+P.n+'»');render()}
+function addTo(i,t){const P=PLS[i];if(P.t.some(x=>x.id==t.id))return toast('Уже в «'+P.n+'»');P.t.push({...t,off:t.off||0});savePL();toast('Добавлено в «'+P.n+'»');render();track('pl_add',Object.assign(tf(t),{pn:P.t.length,pls:PLS.length}))}
 function add(t){
   if(PLS.length<2)return addTo(0,t);
   addPending=t;
   $('#mdl').innerHTML=PLS.map((p,i)=>`<button class="b go" data-i="${i}" style="width:100%;margin:6px 0;font-size:11px">${esc(p.n)} (${p.t.length})</button>`).join('')+'<button class="b pk" data-i="new" style="width:100%;margin:6px 0;font-size:11px">＋ Новый плейлист</button>';
   $('#md').hidden=false;
 }
-function newPL(){const n=(prompt('Название плейлиста','Новый плейлист')||'').trim();if(!n)return null;PLS.push({n,t:[]});return PLS.length-1}
+function newPL(){const n=(prompt('Название плейлиста','Новый плейлист')||'').trim();if(!n)return null;PLS.push({n,t:[]});track('pl_new',{pls:PLS.length});return PLS.length-1}
 function switchPL(i){cp=((i%PLS.length)+PLS.length)%PLS.length;pl=PLS[cp].t;savePL();render()}
 $('#mdl').onclick=e=>{const b=e.target.closest('button');if(!b||!addPending)return;let i=b.dataset.i;if(i=='new'){i=newPL();if(i==null)return}addTo(+i,addPending);addPending=null;$('#md').hidden=true};
 $('#mdc').onclick=()=>{$('#md').hidden=true;addPending=null};
@@ -492,15 +768,17 @@ async function offline(t){
     await(await caches.open('tapes')).put(key(t.id),r);
     if(!pl.some(x=>x.id==t.id))pl.push({...t});
     pl.find(x=>x.id==t.id).off=1;savePL();loadBlobs();toast('Сохранено: играет без интернета');render();
-  }catch(e){toast('Не удалось сохранить этот трек')}
+    track('offline',Object.assign(tf(t),{ok:1}));
+  }catch(e){toast('Не удалось сохранить этот трек');track('offline',Object.assign(tf(t),{ok:0}))}
 }
 async function share(t){
   if(t.id.startsWith('lo:'))return toast('Свой файл нельзя отправить ссылкой');
+  track('share',tf(t));
   const url=location.origin+location.pathname+'?t='+encodeURIComponent(t.id);
   try{if(navigator.share)return await navigator.share({title:t.title,text:(t.artist||'')+' — '+t.title,url})}catch(e){return}
   try{await navigator.clipboard.writeText(url);toast('Ссылка скопирована')}catch(e){prompt('Ссылка:',url)}
 }
-async function del(i){const t=pl[i];if(blobs.has(t.id)){URL.revokeObjectURL(blobs.get(t.id));blobs.delete(t.id)}try{await(await caches.open('tapes')).delete(key(t.id))}catch(e){}pl.splice(i,1);savePL();render()}
+async function del(i){const t=pl[i];track('pl_del',tf(t));if(blobs.has(t.id)){URL.revokeObjectURL(blobs.get(t.id));blobs.delete(t.id)}try{await(await caches.open('tapes')).delete(key(t.id))}catch(e){}pl.splice(i,1);savePL();render()}
 
 // --- Список ---
 function tabs(){
@@ -555,16 +833,16 @@ $('#list').onclick=async e=>{
   if(a=='pn'){switchPL(cp+1);return}
   if(a=='pa'){const k=newPL();if(k!=null)switchPL(k);return}
   if(a=='pr'){const n=(prompt('Новое название',PLS[cp].n)||'').trim();if(n){PLS[cp].n=n;savePL();render()}return}
-  if(a=='px'){if(PLS.length<2)return toast('Нужен хотя бы один плейлист');if(confirm('Удалить плейлист «'+PLS[cp].n+'»?')){PLS.splice(cp,1);cp=Math.min(cp,PLS.length-1);switchPL(cp)}return}
-  if(a=='c'){const cc=b.dataset.c;openC=openC==cc?'':cc;renderRadio();if(openC&&!cst[cc]){cst[cc]=await radioList('countrycode='+cc,600);renderRadio()}return}
+  if(a=='px'){if(PLS.length<2)return toast('Нужен хотя бы один плейлист');if(confirm('Удалить плейлист «'+PLS[cp].n+'»?')){PLS.splice(cp,1);cp=Math.min(cp,PLS.length-1);switchPL(cp);track('pl_remove',{pls:PLS.length})}return}
+  if(a=='c'){const cc=b.dataset.c;openC=openC==cc?'':cc;if(openC)track('radio_country',{cc:openC});renderRadio();if(openC&&!cst[cc]){cst[cc]=await radioList('countrycode='+cc,600);renderRadio()}return}
   if(a=='more'){const cc=b.dataset.c;cshow[cc]=(cshow[cc]||100)+100;renderRadio();return}
   if(a=='m'){const o=row.classList.contains('open');document.querySelectorAll('.t.open').forEach(r=>r.classList.remove('open'));if(!o)row.classList.add('open');return}
   if(a=='x'){row.classList.remove('open');return}
   const L=tab==1?results:tab==2?pl:RL,i=+b.dataset.i;
   if(a=='p'){
     const same=cur&&L[i].id===cur.id;
-    if(same&&au.src){if(queue!==L){queue=L;qi=i;hist=[]}if(au.paused)resumePlay()}
-    else if(same)play(L,i,true,pendingPos);
+    if(same&&au.src){if(queue!==L){queue=L;qi=i;hist=[]}if(au.paused)resumePlay('user')}
+    else if(same){HOW='restore';play(L,i,true,pendingPos)}
     else play(L,i);
   }else if(a=='a')add(L[i]);else if(a=='o')offline(L[i]);else if(a=='s')share(L[i]);else if(a=='d')del(i);else if(a=='f')toggleFav(L[i]);
   row.classList.remove('open');
@@ -619,10 +897,11 @@ $('#fi').onchange=async e=>{
     }
   }catch(err){}
   e.target.value='';savePL();await loadBlobs();tab=2;tabs();render();toast(n?'Добавлено файлов: '+n:'Не удалось добавить');
+  track('file_add',{n});
 };
-$('#t1').onclick=()=>{tab=1;tabs();render()};
-$('#t2').onclick=()=>{tab=2;tabs();render()};
-$('#t3').onclick=()=>{tab=3;tabs();render();if(!countriesC.length)loadCountries().then(()=>{if(tab==3)render()})};
+$('#t1').onclick=()=>{tab=1;tabs();render();track('nav',{tab:'s'})};
+$('#t2').onclick=()=>{tab=2;tabs();render();track('nav',{tab:'p'})};
+$('#t3').onclick=()=>{tab=3;tabs();render();track('nav',{tab:'r'});if(!countriesC.length)loadCountries().then(()=>{if(tab==3)render()})};
 let sx=0,sy=0,s0=0;
 $('#list').addEventListener('touchstart',e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY;s0=Date.now()},{passive:true});
 $('#list').addEventListener('touchend',e=>{
@@ -643,7 +922,7 @@ async function suggest(v){
   showSg([...new Set([...hs,...st,...rest])].slice(0,8));
 }
 let sgT;
-$('#q').oninput=e=>{const v=e.target.value.trim();$('#qx').hidden=!e.target.value;clearTimeout(sgT);if(!v){sgSeq++;showSg([]);if(tab==3){radioRes=[];renderRadio()}return}if(tab==3){sgSeq++;showSg([]);sgT=setTimeout(()=>radioSearch(v),500);return}sgT=setTimeout(()=>suggest(v),250)};
+$('#q').oninput=e=>{const v=e.target.value.trim();$('#qx').hidden=!e.target.value;clearTimeout(sgT);if(!v){sgSeq++;showSg([]);if(tab==3){radioRes=[];renderRadio()}return}if(tab==3){sgSeq++;showSg([]);sgT=setTimeout(()=>radioSearch(v,1),500);return}sgT=setTimeout(()=>suggest(v),250)};
 $('#qx').onclick=()=>{const q=$('#q');q.value='';$('#qx').hidden=true;sgSeq++;showSg([]);lastQ='';radioRes=[];if(tab!=3){results=[];tab=1}tabs();render();q.focus()};
 $('#sg').onclick=e=>{const d=e.target.closest('.sgi');if(!d)return;$('#q').value=d.dataset.q;showSg([]);search(d.dataset.q)};
 document.addEventListener('click',e=>{if(!e.target.closest('.sb'))$('#sg').hidden=true});
@@ -667,6 +946,7 @@ document.addEventListener('click',e=>{if(!e.target.closest('.sb'))$('#sg').hidde
   if(!navigator.onLine&&pl.length){tab=2;tabs()}
   fillDL();host();loadBlobs();render();loadCharts().then(()=>{if(tab==1&&!results.length&&!lastQ)render()});
 })();
+visit();
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>
 </body>
