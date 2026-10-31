@@ -155,7 +155,7 @@ const AUTO_RESUME=true;       // сторож: сам продолжает иг�
 // =====================
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const au=new Audio();au.preload='auto';
+const au=new Audio();au.preload='auto';au.setAttribute('playsinline','');au.style.display='none';document.body.appendChild(au);   // как у sefon: <audio> живёт в странице, а не «в воздухе»
 let HOST,results=[],queue=[],qi=-1,cur=null,tab=1;
 let PLS=[],cp=0,pl=[];
 try{PLS=JSON.parse(localStorage.getItem('tape_pls')||'null')||[]}catch(e){}
@@ -188,6 +188,7 @@ function LG(ev,x){
 const logSave=()=>{if(!logDirty)return;logDirty=false;try{localStorage.setItem('tape_log',JSON.stringify(LOG))}catch(e){}};
 setInterval(logSave,3000);
 LG('=== запуск '+APP_VER+' ===',navigator.userAgent);
+try{const nv=performance.getEntriesByType('navigation')[0];LG('запуск: тип='+(nv&&nv.type)+', wasDiscarded='+document.wasDiscarded)}catch(e){}
 if(DBG){
   const b=document.createElement('button');b.id='dbgb';b.textContent='LOG';
   const p=document.createElement('div');p.id='dbgp';p.hidden=true;
@@ -643,7 +644,8 @@ function resumePlay(by){
   userPaused=false;wd.route=false;wd.by=by||'user';
   LG('RESUME',wd.by);
   if(!au.src&&cur){HOW='restore';return play(queue,qi,true,pendingPos)}
-  if(cur&&cur.radio&&au.paused&&au.src)au.src=srcOf(cur);
+  // радио: заново подключаем эфир только после долгой паузы или сбоя; после короткой просто продолжаем (иначе на экране блокировки тишина 3-8 с)
+  if(cur&&cur.radio&&au.paused&&au.src&&(Date.now()-(wd.pausedAt||0)>20000||au.error||au.readyState<2))au.src=srcOf(cur);
   if(au.error&&cur){const t=au.currentTime;au.src=blobs.get(cur.id)||srcOf(cur);au.addEventListener('loadedmetadata',()=>{au.currentTime=t},{once:true})}
   const p=au.play();if(p&&p.catch)p.catch(e=>{LG('play() FAIL',(e&&e.name)+' '+cut(e&&e.message,60));toast('Нажми ▶ в плеере')});
 }
@@ -665,6 +667,7 @@ const step=d=>{
 function setMode(m,say){mode=m;try{localStorage.setItem('tape_mode',m)}catch(e){}$('#mode').textContent=MICON[m];if(say){toast(MNAME[m]);track('mode',{m})}}
 au.onplay=()=>{userPaused=false;wd.lastMove=Date.now();$('#deck').classList.add('play');$('#pp').textContent='❚❚';if('mediaSession' in navigator)navigator.mediaSession.playbackState='playing'};
 au.onpause=()=>{
+  wd.pausedAt=Date.now();
   segTick();if(seg)seg.ps=0;
   $('#deck').classList.remove('play');$('#pp').textContent='▶';if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused';
   // пауза, которую не нажимал пользователь = прерывание системой (звонок, Siri, наушники...)
@@ -719,7 +722,7 @@ function posState(force){
 }
 ['play','pause','seeked','loadedmetadata','durationchange'].forEach(ev=>au.addEventListener(ev,()=>posState(1)));
 au.addEventListener('pause',saveState);
-addEventListener('pagehide',()=>{LG('pagehide');saveState();segEnd('leave');ping('leave');flush(true);stSave();logSave()});
+addEventListener('pagehide',e=>{LG('pagehide','persisted='+e.persisted);saveState();segEnd('leave');ping('leave');flush(true);stSave();logSave()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)saveState()});
 au.ontimeupdate=()=>{$('#tm').textContent=fmt(au.currentTime)+' / '+fmt(au.duration);if(au.duration){$('#seek').value=au.currentTime/au.duration*1000;posState()}if(Date.now()-lastSave>3000){lastSave=Date.now();saveState()}};
 $('#seek').oninput=e=>{if(au.duration)au.currentTime=e.target.value/1000*au.duration};
@@ -742,7 +745,7 @@ document.addEventListener('visibilitychange',()=>{
   LG('visibility '+(document.hidden?'hidden':'visible'));
   if(document.hidden){segTick();ping('hide');flush(true);stSave();logSave()}else wake();
 });
-addEventListener('pageshow',()=>{LG('pageshow');wake()});addEventListener('focus',()=>{LG('focus');wake()});
+addEventListener('pageshow',e=>{LG('pageshow','persisted='+e.persisted);wake()});addEventListener('focus',()=>{LG('focus');wake()});
 $('#stop').onclick=()=>{userPaused=true;segEnd('stop');au.pause();au.currentTime=0};
 $('#save').onclick=()=>cur&&add(cur);
 $('#shr').onclick=()=>cur&&share(cur);
