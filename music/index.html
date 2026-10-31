@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- Кассета © gadaev.pro. Копирование и использование кода без разрешения автора запрещено. -->
 <html lang="ru">
 <head>
 <meta charset="utf-8">
@@ -142,6 +143,7 @@ html[data-theme=mono]{--pink:#fff;--cy:#cfcfcf;--yel:#fff;--vio:#777;--lcd:#e8e8
 <div id="md" hidden><div class="mdb"><p class="m h" style="padding-top:0">Добавить в плейлист</p><div id="mdl"></div><button class="b" id="mdc" style="width:100%;margin-top:6px;font-size:11px">Отмена</button></div></div>
 
 <script>
+/* Кассета © gadaev.pro. Все права защищены. Копирование и использование кода без письменного разрешения автора запрещено. */
 // ===== Настройки =====
 const APP='GADAEV_MUSIC';
 const JAMENDO_KEY='6683c7da'; // необязательно: client_id с devportal.jamendo.com — добавит второй каталог (CC-музыка)
@@ -696,6 +698,7 @@ au.onerror=()=>{
   if(errs<=4)setTimeout(()=>{segEnd('error');HOW='errskip';step(1)},800);
 };
 au.onplaying=()=>{
+  setupMS();   // как у sefon: обработчики экрана блокировки переустанавливаются при каждом старте звука, iOS крепче держит сессию
   errs=0;wd.radioErr=0;wd.stuckN=0;wd.lastMove=Date.now();
   if(!seg&&cur)segStart(cur,'resume');
   if(seg&&!seg.ps)seg.ps=Date.now();
